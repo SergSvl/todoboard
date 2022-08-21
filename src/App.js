@@ -7,7 +7,7 @@ import Main from '@/Pages/Main';
 
 function App() {
   return (
-    <div className="w-screen h-screen bg-gray-100">
+    <div className="w-screen h-full">
       <Header />
       <Routes>
         <Route path="/" element={ <Main /> } />

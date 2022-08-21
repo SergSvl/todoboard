@@ -17,13 +17,27 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
     },
     setBoard(state, action) {
-      state.boards = [...state.boards, action.payload];
-      setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
+      const boards = [...state.boards, action.payload];
+      console.log("setBoard:", boards);
+      state.boards = boards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, boards);
+    },
+    setTitleBoard(state, action) {
+      const { id, newTitle } = action.payload;
+      const updatedBoards = state.boards.map((board) => {
+        if (board.id === id) {
+          board.title = newTitle;
+        }
+        return board;
+      });
+      console.log("updatedBoards:", updatedBoards);
+      state.boards = updatedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
   }
 });
 
-export const { initState, setBoard } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard } = homeSlice.actions;
 
 export default homeSlice.reducer;
