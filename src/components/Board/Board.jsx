@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Card from '@/components/Card';
 import Delete from '@/assets/icons/close.svg';
 import Popover from '@/components/Popover';
 import { setTitleBoard } from "@/store/main/mainSlice";
+import useDraggable from '@/hooks/useDraggable';
 
-export const Board = ({ board, deleteBoard }) => {
+export const Board = ({ board, deleteBoard, changeBoards }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const { boards } = useSelector((state) => state.main);
+  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } = useDraggable();
   const dispatch = useDispatch();
 
   const clickOutHandler = () => {
@@ -42,7 +45,7 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     setNewTitle(board.title);
-  }, [])
+  }, []);
 
   return (
     <>
@@ -56,7 +59,14 @@ export const Board = ({ board, deleteBoard }) => {
 
       {board && (
         <div className="w-full h-fit bg-white mb-4 min-h-[12rem] text-center border rounded-md"
+          id={board.id}
           onClick={(e) => clickOutHandler(e)}
+          draggable={true}
+          onDragStart={(e) => onDragStart(e, board)}
+          onDragLeave={(e) => onDragLeave(e)}
+          onDragOver={(e) => onDragOver(e)}
+          onDragEnd={(e) => onDragEnd(e)}
+          onDrop={(e) => onDrop(e, board, boards)}
         >
           <div className='flex justify-beetwen border-b mb-2'>
             {isEditTitle ? (

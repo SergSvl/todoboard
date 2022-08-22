@@ -14,6 +14,8 @@ export const Main = () => {
   const [groupTitle, setGroupTitle] = useState('');
 
   const CARD = {
+    id: '',
+    order: '',
     title: '',
     description: '',
     tasks: {
@@ -28,6 +30,7 @@ export const Main = () => {
   
   const newBoard = {
     id: '',
+    order: '',
     title: '',
     cards: [
       CARD
@@ -59,6 +62,7 @@ export const Main = () => {
   const onChangeGroupTitle = () => {
     setIsAddTitleOpenned(false);
     newBoard.id = `group#${Date.now()}`;
+    newBoard.order = `${boards.length+1}`;
     newBoard.title = groupTitle;
     dispatch(setBoard(newBoard));
   }
@@ -119,7 +123,11 @@ export const Main = () => {
       <div className='container flex flex-wrap mx-auto mt-24 -border'>
         {boards && (
           boards.map((board) => {
-            return <Board key={board.id} board={board} deleteBoard={deleteBoard} />;
+            return <Board 
+              key={board.id}
+              board={board}
+              deleteBoard={deleteBoard}
+            />;
           })
         )}
       </div>
