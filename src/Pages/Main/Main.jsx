@@ -73,10 +73,17 @@ export const Main = () => {
   }
 
   const deleteBoard = (cardId) => {
-    // console.log("cardId::", cardId);
-    const filteredBoard = boards.filter((board) => board.id !== cardId ? board : null);
-    // console.log("filteredBoard::", filteredBoard);
-    dispatch(initState([...filteredBoard]));
+    const filteredBoard = boards.filter((board) => board.id !== cardId ? true : false);
+
+    let counter = 1;
+
+    const orderedBoard = filteredBoard.map((board) => {
+      const newBoard = {...board};
+      newBoard.order = ''+counter++;
+      return newBoard;
+    });
+    // console.log("filteredBoard::", orderedBoard);
+    dispatch(initState([...orderedBoard]));
   }
 
   useEffect(() => {
