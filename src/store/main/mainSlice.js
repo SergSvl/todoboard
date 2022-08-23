@@ -16,12 +16,14 @@ export const homeSlice = createSlice({
       state.error = '';
       setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
     },
+
     setBoard(state, action) {
       const boards = [...state.boards, action.payload];
-      console.log("setBoard:", boards);
+      // console.log("setBoard:", boards);
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
+
     setTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
       const updatedBoards = state.boards.map((board) => {
@@ -30,14 +32,63 @@ export const homeSlice = createSlice({
         }
         return board;
       });
-      console.log("updatedBoards:", updatedBoards);
       state.boards = updatedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
+    setTitleCard(state, action) {
+      const { cardId, boardId, newTitle } = action.payload;
+      console.log("setTitleCard:", { cardId, boardId, newTitle });
+
+      const updatedBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const newBoard = board.cards.map((card) => {
+            if (card.id === cardId) {
+              card.title = newTitle;
+            }
+            return card;
+          });
+          console.log("newBoard:", newBoard);
+          board.cards = newBoard;
+        }
+        return board;
+      });
+      state.boards = updatedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
+    },
+
+    addCard(state, action) {
+      const id = action.payload.id;
+      let card = {
+        id: '',
+        order: '',
+        title: '',
+        description: '',
+        tasks: {
+          title: '',
+          list: [
+            {
+              text: ''
+            }
+          ]
+        }
+      }
+      const newBoards = state.boards.map((board) => {
+        if (board.id === id) {
+          card.id = `card#${Date.now()}`;
+          card.order = `${board.cards.length+1}`;
+          card.title = `Новая карточка ${board.cards.length+1}`;
+          board.cards = [...board.cards, card];
+        }
+        return board;
+      });
+      // console.log("newBoards:", newBoards);
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
   }
 });
 
-export const { initState, setBoard, setTitleBoard } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard } = homeSlice.actions;
 
 export default homeSlice.reducer;

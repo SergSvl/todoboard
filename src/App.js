@@ -2,17 +2,17 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import '@/App.css';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Main from '@/Pages/Main';
 
 function App() {
   return (
-    <div className="w-screen h-full">
+    <div className="w-full -h-screen">
       <Header />
-      <Routes>
-        <Route path="/" element={ <Main /> } />
-      </Routes>
-      <Footer />
+      {/* <div className="w-full h-full top-0 bottom-0 -absolute -bg-gray-50/50 -border border-1 -box-border backdrop-blur-sm"> */}
+        <Routes>
+          <Route path="/" element={ <Main /> } />
+        </Routes>
+      {/* </div> */}
     </div>
   );
 }

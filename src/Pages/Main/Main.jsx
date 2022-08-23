@@ -12,29 +12,12 @@ export const Main = () => {
   const [isAddTitleOpenned, setIsAddTitleOpenned] = useState(false);
   const [isDeleteBoardsOpenned, setIsDeleteBoardsOpenned] = useState(false);
   const [groupTitle, setGroupTitle] = useState('');
-
-  const CARD = {
-    id: '',
-    order: '',
-    title: '',
-    description: '',
-    tasks: {
-      title: '',
-      list: [
-        {
-          text: ''
-        }
-      ]
-    }
-  }
   
   const newBoard = {
     id: '',
     order: '',
     title: '',
-    cards: [
-      CARD
-    ],
+    cards: [],
   }
 
   console.log("boards", boards);
@@ -100,43 +83,53 @@ export const Main = () => {
 
   return (
     <>
-      <div className='w-full h-12 mt-12 fixed -border-2 border-red-600 top-0 left-0 right-0'>
-        <div className='container w-full mx-auto flex justify-between'>
-          <button className='btn border border-sky-200 p-1 px-2 my-2 rounded-md -absolute -mx-auto bg-sky-400 text-white' onClick={addBoardHandler}>Добавить группу</button>
-          <button className='btn border border-sky-200 p-1 px-2 my-2 rounded-md -absolute -mx-auto bg-red-400 text-white' onClick={deleteBoardsHandler}>Удалить все группы</button>
+      <div className='w-full h-8 mt-12 fixed -border border-red-600 top-0 left-0 right-0 bg-gray-50/50 z-10'>
+        <div className='container w-full mx-auto flex justify-between items-center'>
+          <button className='btn p-1 px-2 -my-1 bg-transparent text-gray-500 hover:text-gray-600' onClick={addBoardHandler}>
+            <div className='container w-full mx-auto flex justify-between items-center'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0'>+</div><div className='text-base -border border-red-400 pl-1'>Добавить группу</div>
+            </div>
+          </button>
+          <button className='btn p-1 px-2 -my-1 bg-transparent text-gray-500 hover:text-gray-600' onClick={deleteBoardsHandler}>
+            <div className='container w-full mx-auto flex justify-between items-center'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 rotate-45'>+</div><div className='text-base -border border-red-400 pl-1'> Удалить все группы</div>
+            </div>
+          </button>
         </div>
       </div>
 
-      {isAddTitleOpenned && (
-        <Popover clickOut={clickOutHandler}>
-          <div className='w-full text-center mb-4 font-bold text-lg'>Создание новой группы карточек</div>
-          <div className='text-center mb-2 font-semibold'>Заголовок группы:</div>
-          <input className='w-full border rounded-md h-8 px-2 mb-4'
-            value={groupTitle}
-            onChange={(e) => addGroupTitleHandler(e.target.value)}
-          />
-          <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={onChangeGroupTitle}>OK</button>
-        </Popover>
-      )}
-
-      {isDeleteBoardsOpenned && (
-        <Popover clickOut={clickOutHandler}>
-          <div className='w-full text-center mb-4 font-semibold'>Удалить все группы?</div>
-          <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={() => onDeleteBoards()}>Да</button>
-          <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={clickOutHandler}>Нет</button>
-        </Popover>
-      )}
-
-      <div className='container flex flex-wrap mx-auto mt-24 -border'>
-        {boards && (
-          boards.map((board) => {
-            return <Board 
-              key={board.id}
-              board={board}
-              deleteBoard={deleteBoard}
-            />;
-          })
+      <div className="w-full h-full backdrop-blur-sm">
+        {isAddTitleOpenned && (
+          <Popover clickOut={clickOutHandler}>
+            <div className='w-full text-center mb-4 font-bold text-lg'>Создание новой группы карточек</div>
+            <div className='text-center mb-2 font-semibold'>Заголовок группы:</div>
+            <input className='w-full border rounded-md h-8 px-2 mb-4'
+              value={groupTitle}
+              onChange={(e) => addGroupTitleHandler(e.target.value)}
+            />
+            <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={onChangeGroupTitle}>OK</button>
+          </Popover>
         )}
+
+        {isDeleteBoardsOpenned && (
+          <Popover clickOut={clickOutHandler}>
+            <div className='w-full text-center mb-4 font-semibold'>Удалить все группы?</div>
+            <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={() => onDeleteBoards()}>Да</button>
+            <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={clickOutHandler}>Нет</button>
+          </Popover>
+        )}
+
+        <div className='container flex flex-wrap mx-auto mt-24 -border'>
+          {boards && (
+            boards.map((board) => {
+              return <Board 
+                key={board.id}
+                board={board}
+                deleteBoard={deleteBoard}
+              />;
+            })
+          )}
+        </div>
       </div>
     </>
   );
