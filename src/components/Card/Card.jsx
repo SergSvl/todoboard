@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setTitleCard } from "@/store/main/mainSlice";
 import Popover from '@/components/Popover';
 import useDraggable from '@/hooks/useDraggable';
@@ -10,6 +10,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
   const [newTitle, setNewTitle] = useState('');
   const titleInputRef = useRef();
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
+  const { boards } = useSelector((state) => state.main);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,7 +37,8 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
     setIsConfirmOpenned(true);
   }
 
-  const clickOutHandler = () => {
+  const clickOutHandler = (e) => {
+    e.stopPropagation();
     setIsConfirmOpenned(false);
     setIsEditTitle(false);
 
@@ -67,7 +69,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
         onDragLeave={(e) => onDragLeave(e)}
         onDragOver={(e) => onDragOver(e)}
         onDragEnd={(e) => onDragEnd(e)}
-        onDrop={(e) => onDrop(e, card, cards)}
+        onDrop={(e) => onDrop(e, card, cards, boardId)}
       >
         <div className='flex justify-beetwen mb-1'>
           {isEditTitle ? (

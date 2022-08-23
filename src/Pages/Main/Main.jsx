@@ -20,7 +20,7 @@ export const Main = () => {
     cards: [],
   }
 
-  console.log("boards", boards);
+  // console.log("boards", boards);
   // console.log("newBoard", newBoard);
 
   const addBoardHandler = () => {

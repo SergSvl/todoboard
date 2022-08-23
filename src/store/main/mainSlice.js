@@ -19,7 +19,6 @@ export const homeSlice = createSlice({
 
     setBoard(state, action) {
       const boards = [...state.boards, action.payload];
-      // console.log("setBoard:", boards);
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
@@ -38,7 +37,7 @@ export const homeSlice = createSlice({
 
     setTitleCard(state, action) {
       const { cardId, boardId, newTitle } = action.payload;
-      console.log("setTitleCard:", { cardId, boardId, newTitle });
+      // console.log("setTitleCard:", { cardId, boardId, newTitle });
 
       const updatedBoards = state.boards.map((board) => {
         if (board.id === boardId) {
@@ -82,13 +81,26 @@ export const homeSlice = createSlice({
         }
         return board;
       });
-      // console.log("newBoards:", newBoards);
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
+
+    setSortedCards(state, action) {
+      const { boardId, sortedCards } = action.payload;
+
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          board.cards = [...sortedCards];
+        }
+        return board;
+      });
+      console.log("newBoards:", newBoards);
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards } = homeSlice.actions;
 
 export default homeSlice.reducer;

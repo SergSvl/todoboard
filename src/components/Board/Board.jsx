@@ -16,8 +16,6 @@ export const Board = ({ board, deleteBoard }) => {
   const titleInputRef = useRef();
   const scrollRef = useHorizontalScroll();
 
-  
-
   const clickOutHandler = () => {
     setIsConfirmOpenned(false);
     setIsEditTitle(false);
