@@ -45,6 +45,10 @@ const useDraggable = () => {
     console.log("---------------------");
     event.target.style.background = '';
 
+    if (dragElementId === dropElement.id || dragElementId.cards === undefined && dropElement.cards !== undefined) {
+      return;
+    }
+
     const changedElements = allElements.map(current => {
       if (current.id === dropElement.id) {
         return {...current, order: dragElementOrder}
