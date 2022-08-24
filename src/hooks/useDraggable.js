@@ -8,10 +8,10 @@ const useDraggable = () => {
   const onDragStart = (event, dragElement) => {
     event.stopPropagation();
     console.log("---------------------");
-    // console.log("DragStart dragElement:", dragElement);
-    console.log("DragStart dragElement.id:", dragElement.id);
-    console.log("DragStart dragElement.order:", dragElement.order);
-    // console.log("DragStart event.target:", event.target);
+    // console.log("Drag dragElement:", dragElement);
+    console.log("Drag Element.id:", dragElement.id);
+    console.log("Drag Element.order:", dragElement.order);
+    // console.log("Drag event.target:", event.target);
 
     event.dataTransfer.setData("dragElementId",  dragElement.id);
     event.dataTransfer.setData("dragElementOrder",  dragElement.order);
@@ -32,10 +32,10 @@ const useDraggable = () => {
   const onDragEnd = (event) => {
   }
 
-  const onDrop = (event, dragElement, allElements, boardId = undefined) => {
+  const onDrop = (event, dropElement, allElements, boardId = undefined) => {
     event.stopPropagation();
     console.log("---------------------");
-    console.log("Drop dragElement:", dragElement);
+    console.log("Drop Element:", dropElement);
     console.log("Drop allElements:", allElements);
 
     const dragElementId = event.dataTransfer.getData("dragElementId");
@@ -46,11 +46,11 @@ const useDraggable = () => {
     event.target.style.background = '';
 
     const changedElements = allElements.map(current => {
-      if (current.id === dragElement.id) {
+      if (current.id === dropElement.id) {
         return {...current, order: dragElementOrder}
       }
       if (current.id === dragElementId) {
-        return {...current, order: dragElement.order}
+        return {...current, order: dropElement.order}
       }
       return current;
     });

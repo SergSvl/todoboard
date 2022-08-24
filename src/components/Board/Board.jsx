@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from '@/components/Card';
-import Popover from '@/components/Popover';
+import Confirm from '@/components/Confirm';
 import { initState, setTitleBoard, addCard } from "@/store/main/mainSlice";
 import useDraggable from '@/hooks/useDraggable';
 import useHorizontalScroll from '@/hooks/useHorizontalScroll';
@@ -85,11 +85,11 @@ export const Board = ({ board, deleteBoard }) => {
   return (
     <>
       {isConfirmOpenned && (
-        <Popover clickOut={clickOutHandler}>
-          <div className='w-full text-center mb-4 font-semibold'>Удалить группу с карточками?</div>
-          <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={() => onDeleteGroup(board.id)}>Да</button>
-          <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={clickOutHandler}>Нет</button>
-        </Popover>
+        <Confirm
+          title={'Удалить группу с карточками?'}
+          yesHandler={onDeleteGroup}
+          noHandler={clickOutHandler}
+        />
       )}
 
       {board && (
