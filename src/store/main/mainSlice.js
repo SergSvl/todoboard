@@ -1,6 +1,7 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 import { setLSData, deleteLSData } from '@/utils/helpers/local-storage-helpers';
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
+import { updateCard } from '@/utils/helpers/arrays-helpers';
 
 const initialState = {
   boards: [],
@@ -37,41 +38,17 @@ export const homeSlice = createSlice({
 
     setTitleCard(state, action) {
       const { cardId, boardId, newTitle } = action.payload;
-      // console.log("setTitleCard:", { cardId, boardId, newTitle });
-
-      const updatedBoards = state.boards.map((board) => {
-        if (board.id === boardId) {
-          const newBoard = board.cards.map((card) => {
-            if (card.id === cardId) {
-              card.title = newTitle;
-            }
-            return card;
-          });
-          console.log("newBoard:", newBoard);
-          board.cards = newBoard;
-        }
-        return board;
+      const updatedBoards = updateCard(state.boards, boardId, cardId, {
+        title: newTitle
       });
       state.boards = updatedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
     setDescriptionCard(state, action) {
-      const { cardId, boardId, descriptionText } = action.payload;
-      // console.log("setTitleCard:", { cardId, boardId, newTitle });
-
-      const updatedBoards = state.boards.map((board) => {
-        if (board.id === boardId) {
-          const newBoard = board.cards.map((card) => {
-            if (card.id === cardId) {
-              card.description = descriptionText;
-            }
-            return card;
-          });
-          console.log("newBoard:", newBoard);
-          board.cards = newBoard;
-        }
-        return board;
+      const { cardId, boardId, newDescription } = action.payload;
+      const updatedBoards = updateCard(state.boards, boardId, cardId, {
+        description: newDescription
       });
       state.boards = updatedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
@@ -93,15 +70,28 @@ export const homeSlice = createSlice({
           ]
         }
       }
-      const newBoards = state.boards.map((board) => {
-        if (board.id === id) {
-          card.id = `card#${Date.now()}`;
-          card.order = `${board.cards.length+1}`;
-          card.title = `Новая карточка ${board.cards.length+1}`;
-          board.cards = [...board.cards, card];
-        }
-        return board;
-      });
+      let newBoards = [];
+
+      if (action.payload.hasOwnProperty('card')) {
+        newBoards = state.boards.map((board) => {
+          if (board.id === id) {
+            card = action.payload.card;
+            card.order = `${board.cards.length+1}`;
+            board.cards = [...board.cards, card];
+          }
+          return board;
+        });
+      } else {
+        newBoards = state.boards.map((board) => {
+          if (board.id === id) {
+            card.id = `card#${Date.now()}`;
+            card.order = `${board.cards.length+1}`;
+            card.title = `Новая карточка ${board.cards.length+1}`;
+            board.cards = [...board.cards, card];
+          }
+          return board;
+        });
+      }
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
@@ -115,7 +105,6 @@ export const homeSlice = createSlice({
         }
         return board;
       });
-      // console.log("newBoards:", newBoards);
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },

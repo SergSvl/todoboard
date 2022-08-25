@@ -5,6 +5,7 @@ import Confirm from '@/components/Confirm';
 import { initState, setTitleBoard, addCard } from "@/store/main/mainSlice";
 import useDraggable from '@/hooks/useDraggable';
 import useHorizontalScroll from '@/hooks/useHorizontalScroll';
+import { deleteCardFromBoard } from '@/utils/helpers/arrays-helpers';
 
 export const Board = ({ board, deleteBoard }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
@@ -59,27 +60,12 @@ export const Board = ({ board, deleteBoard }) => {
   }, []);
 
   const deleteCard = (boardId, cardId) => {
-    const filteredBoard = boards.map((board) => {
-      const newBoard = {...board};
-      const newCards = newBoard.cards.filter((card) => {
-        return card.id !== cardId ? true : false;
-      });
-      newBoard.cards = newCards;
-      // console.log("newCards::", newCards);
-      let counter = 1;
-
-      const orderedBoard = newBoard.cards.map((board) => {
-        const orderBoard = {...board};
-        orderBoard.order = ''+counter++;
-        return orderBoard;
-      });
-      newBoard.cards = orderedBoard;
-      return newBoard;
-    });
+    const filteredBoards = deleteCardFromBoard(boards, boardId, cardId);
     // console.log("boards::", boards);
-    // console.log("filteredBoard::", filteredBoard);
-    
-    dispatch(initState([...filteredBoard]));
+    // console.log("boardId::", boardId);
+    // console.log("cardId::", cardId);
+    // console.log("filteredBoard::", filteredBoards);
+    dispatch(initState([...filteredBoards]));
   }
 
   return (
