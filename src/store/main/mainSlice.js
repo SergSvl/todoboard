@@ -69,6 +69,15 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
+    removeTaskList(state, action) {
+      const { boardId, cardId, taskId } = action.payload;
+      const updatedBoards = updateCard(state.boards, boardId, cardId, {
+        removeTaskId: taskId
+      });
+      state.boards = updatedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
+    },
+
     addTaskListElement(state, action) {
       const { boardId, cardId, taskId, newTaskListText } = action.payload;
       // console.log("addTask:", { boardId, cardId });
@@ -81,15 +90,15 @@ export const homeSlice = createSlice({
     },
 
     updateTask(state, action) {
-      const { boardId, cardId, taskId, listId, checked, taskTitle } = action.payload;
-      console.log("updateTask:", { boardId, cardId, taskId, listId, checked, taskTitle });
+      const { boardId, cardId, taskId, listId, checked, taskTitle, taskListElemText } = action.payload;
+      console.log("updateTask:", { boardId, cardId, taskId, listId, checked, taskTitle, taskListElemText });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         taskId,
         listId,
         checked,
-        taskTitle
+        taskTitle,
+        taskListElemText
       });
-      console.log("updateTask:", updatedBoards);
       state.boards = updatedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
@@ -141,9 +150,19 @@ export const homeSlice = createSlice({
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
+
+    removeTaskListElement(state, action) {
+      const { boardId, cardId, taskId, listId } = action.payload;
+      const updatedBoards = updateCard(state.boards, boardId, cardId, {
+        taskId,
+        removeListId: listId
+      });
+      state.boards = updatedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
+    },
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, updateTask, addTaskListElement } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement } = homeSlice.actions;
 
 export default homeSlice.reducer;

@@ -44,8 +44,8 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
     setIsConfirmOpenned(false);
     setIsEditTitleOut(false);
 
-    console.log("Card newTitle::", newTitle);
-    console.log("card.title::", card.title);
+    // console.log("Card newTitle::", newTitle);
+    // console.log("card.title::", card.title);
 
     if (newTitle !== card.title) {
       dispatch(setTitleCard({ cardId: card.id, boardId, cardTitle: newTitle }));

@@ -36,7 +36,7 @@ export const Button = ({ text, clickHandler, type = 'base' }) => {
           onClick={clickHandler}
         >
           <div className='flex justify-between items-center'>
-            <div className={signClasses}>+</div><div className='text-base -border border-red-400 pl-1'>{text}</div>
+            <div className={signClasses}>+</div><div className='text-base pl-1'>{text}</div>
           </div>
         </button>
       ) : (

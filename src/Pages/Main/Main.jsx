@@ -12,7 +12,7 @@ export const Main = () => {
   const { boards } = useSelector((state) => state.main);
   const dispatch = useDispatch();
   const [isAddTitleOpenned, setIsAddTitleOpenned] = useState(false);
-  const [isDeleteBoardsOpenned, setIsDeleteBoardsOpenned] = useState(false);
+  const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
   const [groupTitle, setGroupTitle] = useState('');
   
   const newBoard = {
@@ -30,13 +30,8 @@ export const Main = () => {
     setGroupTitle(`Новая группа №${boards.length+1}`);
   }
 
-  const deleteBoardsHandler = () => {
-    setIsDeleteBoardsOpenned(true);
-    // setGroupTitle(`Новая группа №${boards.length+1}`);
-  }
-
   const onDeleteBoards = () => {
-    setIsDeleteBoardsOpenned(false);
+    setIsOpenConfirmDialog(false);
     dispatch(initState([]));
   }
 
@@ -52,22 +47,14 @@ export const Main = () => {
     dispatch(setBoard(newBoard));
   }
 
-  const clickOutHandler = () => {
-    setIsAddTitleOpenned(false);
-    setIsDeleteBoardsOpenned(false);
-  }
-
   const deleteBoard = (boardId) => {
     const filteredBoard = boards.filter((board) => board.id !== boardId ? true : false);
-
     let counter = 1;
-
     const orderedBoard = filteredBoard.map((board) => {
       const newBoard = {...board};
       newBoard.order = ''+counter++;
       return newBoard;
     });
-    // console.log("filteredBoard::", orderedBoard);
     dispatch(initState([...orderedBoard]));
   }
 
@@ -88,24 +75,24 @@ export const Main = () => {
       <div className='w-full h-8 mt-12 fixed -border border-red-600 top-0 left-0 right-0 bg-gray-50/50 z-10'>
         <div className='container w-full mx-auto flex justify-between items-center'>
           <Button text={'Добавить группу'} clickHandler={addBoardHandler} type={'lightAdd'} />
-          <Button text={'Удалить все группы'} clickHandler={deleteBoardsHandler} type={'lightDel'} />
+          <Button text={'Удалить все группы'} clickHandler={() => setIsOpenConfirmDialog(true)} type={'lightDel'} />
         </div>
       </div>
 
       {isAddTitleOpenned && (
         <CreateCardsGroup
           groupTitle={groupTitle}
-          clickOutHandler={clickOutHandler}
+          clickOutHandler={() => setIsAddTitleOpenned(false)}
           addGroupTitleHandler={addGroupTitleHandler}
           onChangeGroupTitle={onChangeGroupTitle}
         />
       )}
 
-      {isDeleteBoardsOpenned && (
+      {isOpenConfirmDialog && (
         <Confirm
           title={'Удалить все группы?'}
           yesHandler={onDeleteBoards}
-          noHandler={clickOutHandler}
+          noHandler={() => setIsOpenConfirmDialog(false)}
         />
       )}
 

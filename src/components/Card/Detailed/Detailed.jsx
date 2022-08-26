@@ -87,7 +87,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         />
       ) : (
         <div
-          className='w-full text-center mb-4 font-semibold hover:cursor-pointer whitespace-pre-wrap break-all'
+          className='w-full text-center mb-4 font-semibold hover:cursor-pointer hover:bg-slate-100 whitespace-pre-wrap break-all'
           onClick={(e) => onEditTitleHandler(e)}
         >
           {card.title}
@@ -111,7 +111,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         </>
       ) : card.description === "" ? (
         <div
-          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer'
+          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4'
           onClick={editDescriptionHandler}
         >
           Добавить описание

@@ -22,8 +22,8 @@ export const deleteCardFromBoard = (boards, boardId, cardId) => {
   return filteredBoards;
 }
 
-export const updateCard = (boards, boardId, cardId, { cardTitle, description, task, taskId, listId, checked, newTaskListText, taskTitle }) => {
-  console.log("updateCard:", { cardTitle, description, task, taskId, listId, checked, newTaskListText });
+export const updateCard = (boards, boardId, cardId, { cardTitle, description, task, taskId, listId, checked, newTaskListText, taskTitle, removeTaskId, taskListElemText, removeListId }) => {
+  console.log("updateCard:", { cardTitle, description, task, taskId, listId, checked, newTaskListText, removeTaskId, taskListElemText, removeListId });
   const updatedBoards = boards.map((board) => {
 
     if (board.id === boardId) {
@@ -32,7 +32,7 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
           if (cardTitle !== undefined) { card.title = cardTitle }
           if (description !== undefined) { card.description = description }
           if (task !== undefined) { card.tasks.push(task) }
-          if (listId !== undefined) {
+          if (checked !== undefined) {
             const newTasks = card.tasks.map((task) => {
               if (task.id === taskId) {
                 const newList = task.list.map((listElem) => {
@@ -64,6 +64,33 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
             const newTasks = card.tasks.map((task) => {
               if (task.id === taskId) {
                 task.title = taskTitle;
+              }
+              return task;
+            });
+            card.tasks = newTasks;
+          }
+          if (removeTaskId !== undefined) {
+            card.tasks = card.tasks.filter((task) => task.id !== removeTaskId ? true : false);
+          }
+          if (taskListElemText !== undefined) {
+            const newTasks = card.tasks.map((task) => {
+              if (task.id === taskId) {
+                const newList = task.list.map((listElem) => {
+                  if (listElem.id === listId) {
+                    listElem.text = taskListElemText;
+                  }
+                  return listElem;
+                });
+                task.list = newList;
+              }
+              return task;
+            });
+            card.tasks = newTasks;
+          }
+          if (removeListId !== undefined) {
+            const newTasks = card.tasks.map((task) => {
+              if (task.id === taskId) {
+                task.list = task.list.filter((listElem) => listElem.id !== removeListId ? true : false);
               }
               return task;
             });
