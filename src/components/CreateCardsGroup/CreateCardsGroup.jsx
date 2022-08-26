@@ -1,5 +1,6 @@
 import React from "react";
 import Popover from '@/components/Popover';
+import Button from "@/components/Button";
 
 export const CreateCardsGroup = ({ groupTitle, clickOutHandler, addGroupTitleHandler, onChangeGroupTitle }) => {
 
@@ -11,7 +12,7 @@ export const CreateCardsGroup = ({ groupTitle, clickOutHandler, addGroupTitleHan
         value={groupTitle}
         onChange={(e) => addGroupTitleHandler(e.target.value)}
       />
-      <button className='btn rounded-md bg-sky-400 text-white py-2 px-8 mx-auto relative' onClick={onChangeGroupTitle}>OK</button>
+      <Button text={'Создать'} clickHandler={onChangeGroupTitle} />
     </Popover>
   );
 }

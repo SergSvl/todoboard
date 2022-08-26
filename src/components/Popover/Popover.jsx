@@ -1,11 +1,11 @@
 import React from 'react';
 
 export const Popover = ({ children, clickOut, type = '' }) => {
-  let styleWindow = 'bg-slate-50 p-4 rounded-md [max-height:calc(100vh-10%)] border z-30 flex flex-wrap overflow-y-auto';
+  let styleWindow = 'bg-slate-50 p-4 sm:p-8 rounded-md max-h-[90vh] border z-30 flex flex-col overflow-y-auto';
   if (type === 'confirm') {
-    styleWindow = styleWindow + 'w-[300px] min-w-[100px] sm:min-w-[200px] md:min-w-[250px] xl:min-w-[300px]';
+    styleWindow = styleWindow + 'w-[300px] min-w-[100px] sm:min-w-[200px] md:min-w-[250px] xl:min-w-[300px] mx-4';
   } else {
-    styleWindow = styleWindow + 'w-[500px] min-w-[300px] sm:min-w-[450px] md:min-w-[750px] xl:min-w-[950px]';
+    styleWindow = styleWindow + 'w-[300px] w-fit mx-[20px] sm:w-[500px] md:w-[650px] xl:min-w-[950px] w-min mx-4';
   }
   return (
     <>
