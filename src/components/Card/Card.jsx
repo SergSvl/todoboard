@@ -5,6 +5,7 @@ import Confirm from "@/components/Confirm";
 import Input from "@/components/Input";
 import useDraggable from "@/hooks/useDraggable";
 import Detailed from '@/components/Card/Detailed';
+import Tags from '@/components/Card/Tags';
 import lang from '@/locales/ru/common.json';
 
 export const Card = ({ card, cards, boardId, deleteCard }) => {
@@ -113,7 +114,8 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
           ) : null}
         </div>
 
-        <div className='w-full h-8 -border border-red-400 absolute flex justify-end right-2 bottom-2'>
+        <div className='w-full _h-8 -border border-red-400 -absolute flex justify-end right-0 bottom-0'>
+          <Tags tags={card.tags} />
           <div
             className='h-7 hover:cursor-pointer -border'
             title={`${lang.openCard}`}

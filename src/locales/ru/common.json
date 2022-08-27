@@ -20,9 +20,17 @@
   "questionRemoveGroupWithCards": "Удалить группу с карточками?",
   "newGroupNumber": "Новая группа №",
   "listTitle": "Заголовок списка",
+  "newCard": "Новая карточка",
   "yes": "Да",
   "no": "Нет",
   "create": "Создать",
   "save": "Сохранить",
-  "cansel": "Отменить"
+  "cansel": "Отменить",
+  "tags": "Тэги",
+  "tag": "Тэг",
+  "addTag": "Добавить тэг",
+  "tagText": "Текст тэга",
+  "tagColor": "Цвет тэга",
+  "addingTag": "Добавление тэга",
+  "tasks": "Задачи"
 }

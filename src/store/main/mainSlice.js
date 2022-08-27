@@ -2,6 +2,7 @@ import { createSlice, current } from '@reduxjs/toolkit';
 import { setLSData, deleteLSData } from '@/utils/helpers/local-storage-helpers';
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from '@/utils/helpers/card-board-helpers';
+import lang from '@/locales/ru/common.json';
 
 const initialState = {
   boards: [],
@@ -38,7 +39,6 @@ export const homeSlice = createSlice({
 
     setTitleCard(state, action) {
       const { cardId, boardId, cardTitle } = action.payload;
-      // console.log("setTitleCard:", { cardId, boardId, cardTitle });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         cardTitle
       });
@@ -80,7 +80,6 @@ export const homeSlice = createSlice({
 
     addTaskListElement(state, action) {
       const { boardId, cardId, taskId, newTaskListText } = action.payload;
-      // console.log("addTask:", { boardId, cardId });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         taskId,
         newTaskListText
@@ -111,6 +110,7 @@ export const homeSlice = createSlice({
         title: '',
         description: '',
         tasks: [],
+        tags: [],
       }
       let newBoards = [];
 
@@ -128,7 +128,7 @@ export const homeSlice = createSlice({
           if (board.id === id) {
             card.id = `card#${Date.now()}`;
             card.order = `${board.cards.length+1}`;
-            card.title = `Новая карточка ${board.cards.length+1}`;
+            card.title = `${lang.newCard} ${board.cards.length+1}`;
             board.cards = [...board.cards, card];
           }
           return board;
@@ -160,9 +160,31 @@ export const homeSlice = createSlice({
       state.boards = updatedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
+
+    addTag(state, action) {
+      const { boardId, cardId, newTagText, newTagColor } = action.payload;
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const newCards = board.cards.map((card) => {
+            if (card.id === cardId) {
+              card.tags.push({
+                id: `tag#${Date.now()}`,
+                text: newTagText,
+                color: newTagColor
+              });
+            }
+            return card;
+          });
+          board.cards = newCards;
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag } = homeSlice.actions;
 
 export default homeSlice.reducer;
