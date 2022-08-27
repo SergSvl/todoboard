@@ -7,6 +7,7 @@ import { initState, setTitleBoard, addCard } from "@/store/main/mainSlice";
 import useDraggable from "@/hooks/useDraggable";
 import useHorizontalScroll from "@/hooks/useHorizontalScroll";
 import { deleteCardFromBoard } from "@/utils/helpers/card-board-helpers";
+import lang from '@/locales/ru/common.json';
 
 export const Board = ({ board, deleteBoard }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
@@ -63,10 +64,6 @@ export const Board = ({ board, deleteBoard }) => {
 
   const deleteCard = (boardId, cardId) => {
     const filteredBoards = deleteCardFromBoard(boards, boardId, cardId);
-    // console.log("boards::", boards);
-    // console.log("boardId::", boardId);
-    // console.log("cardId::", cardId);
-    // console.log("filteredBoard::", filteredBoards);
     dispatch(initState([...filteredBoards]));
   };
 
@@ -74,7 +71,7 @@ export const Board = ({ board, deleteBoard }) => {
     <>
       {isConfirmOpenned && (
         <Confirm
-          title={"Удалить группу с карточками?"}
+          title={`${lang.questionRemoveGroupWithCards}`}
           yesHandler={onDeleteGroup}
           noHandler={clickOutHandler}
         />
@@ -92,7 +89,7 @@ export const Board = ({ board, deleteBoard }) => {
           onDragEnd={(e) => onDragEnd(e)}
           onDrop={(e) => onDrop(e, board, boards)}
         >
-          <div className='flex justify-beetwen mb-1'>
+          <div className='flex justify-beetwen mb-1 hover:transition-all duration-200 hover:bg-slate-200'>
             {isEditTitle ? (
               <Input
                 inputRef={titleInputRef}
@@ -134,11 +131,11 @@ export const Board = ({ board, deleteBoard }) => {
               className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
               onClick={(e) => addCardHandler(e, board.id)}
             >
-              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 hover:transition-all duration-200'>
                 +
               </div>
-              <div className='text-base -border border-red-400 pl-1'>
-                Добавить карточку
+              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
+                {`${lang.addCard}`}
               </div>
             </div>
 
@@ -146,11 +143,11 @@ export const Board = ({ board, deleteBoard }) => {
               className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
               onClick={(e) => onDeleteHandler(e, board.id)}
             >
-              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 rotate-45'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 rotate-45 hover:transition-all duration-200'>
                 +
               </div>
-              <div className='text-base -border border-red-400 pl-1'>
-                Удалить группу
+              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
+                {`${lang.removeGroup}`}
               </div>
             </div>
           </div>

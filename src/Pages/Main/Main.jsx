@@ -7,6 +7,7 @@ import CreateCardsGroup from '@/components/CreateCardsGroup';
 import { getLSData } from "@/utils/helpers/local-storage-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import Button from "@/components/Button";
+import lang from '@/locales/ru/common.json';
 
 export const Main = () => {
   const { boards } = useSelector((state) => state.main);
@@ -27,7 +28,7 @@ export const Main = () => {
 
   const addBoardHandler = () => {
     setIsAddTitleOpenned(true);
-    setGroupTitle(`Новая группа №${boards.length+1}`);
+    setGroupTitle(`${lang.newGroupNumber}${boards.length+1}`);
   }
 
   const onDeleteBoards = () => {
@@ -74,8 +75,8 @@ export const Main = () => {
     <>
       <div className='w-full h-8 mt-12 fixed -border border-red-600 top-0 left-0 right-0 bg-gray-50/50 z-10'>
         <div className='container w-full mx-auto flex justify-between items-center'>
-          <Button text={'Добавить группу'} clickHandler={addBoardHandler} type={'lightAdd'} />
-          <Button text={'Удалить все группы'} clickHandler={() => setIsOpenConfirmDialog(true)} type={'lightDel'} />
+          <Button text={`${lang.addGroup}`} clickHandler={addBoardHandler} type={'lightAdd'} />
+          <Button text={`${lang.removeAllGroups}`} clickHandler={() => setIsOpenConfirmDialog(true)} type={'lightDel'} />
         </div>
       </div>
 
@@ -90,7 +91,7 @@ export const Main = () => {
 
       {isOpenConfirmDialog && (
         <Confirm
-          title={'Удалить все группы?'}
+          title={`${lang.questionRemoveAllGroups}`}
           yesHandler={onDeleteBoards}
           noHandler={() => setIsOpenConfirmDialog(false)}
         />

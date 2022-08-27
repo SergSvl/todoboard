@@ -5,6 +5,7 @@ import Popover from "@/components/Popover";
 import Button from "@/components/Button";
 import TaskList from "@/components/TaskList";
 import Input from "@/components/Input";
+import lang from '@/locales/ru/common.json';
 
 export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   const dispatch = useDispatch();
@@ -52,8 +53,6 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   };
 
   const saveCardTitle = () => {
-    // console.log("saveCardTitle cardTitle::", cardTitle);
-    // console.log("saveCardTitle card.title::", card.title);
     setIsEditTitleCard(false);
 
     if (cardTitle !== card.title) {
@@ -87,7 +86,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         />
       ) : (
         <div
-          className='w-full text-center mb-4 font-semibold hover:cursor-pointer hover:bg-slate-100 whitespace-pre-wrap break-all'
+          className='w-full text-center mb-4 font-semibold hover:cursor-pointer hover:bg-slate-100 whitespace-pre-wrap break-all hover:transition-all duration-200 hover:bg-slate-100'
           onClick={(e) => onEditTitleHandler(e)}
         >
           {card.title}
@@ -105,16 +104,16 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
             onChange={(e) => setNewDescription(e.target.value)}
           ></textarea>
           <div className='flex'>
-            <Button text={'Сохранить'} clickHandler={saveDescriptionHandler} />
-            <Button text={'Отменить'} clickHandler={() => setIsEditDescription(false)} />
+            <Button text={`${lang.save}`} clickHandler={saveDescriptionHandler} />
+            <Button text={`${lang.cansel}`} clickHandler={() => setIsEditDescription(false)} />
           </div>
         </>
       ) : card.description === "" ? (
         <div
-          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4'
+          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4 hover:transition-all duration-200 hover:bg-slate-100'
           onClick={editDescriptionHandler}
         >
-          Добавить описание
+          {`${lang.addDescription}`}
         </div>
       ) : (
         <div
@@ -130,8 +129,8 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       {isAddTaskList && (
         <Popover clickOut={() => setIsAddTaskList(false)}>
           <div className='w-full text-center my-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>Создание нового списка задач</div>
-            <div className='w-full text-left font-semibold mb-2'>Заголовок списка:</div>
+            <div className='w-full text-center font-bold mb-6'>{`${lang.creatingNewTaskList}`}</div>
+            <div className='w-full text-left font-semibold mb-2'>{`${lang.listTitle}`}:</div>
             <Input
               inputRef={titleTaskRef}
               value={newTaskTitle}
@@ -139,8 +138,8 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
             />
           </div>
           <div className='flex mb-2'>
-            <Button text={'Сохранить'} clickHandler={saveTaskTitleHandler} />
-            <Button text={'Отменить'} clickHandler={() => setIsAddTaskList(false)} />
+            <Button text={`${lang.save}`} clickHandler={saveTaskTitleHandler} />
+            <Button text={`${lang.cansel}`} clickHandler={() => setIsAddTaskList(false)} />
           </div>
         </Popover>
       )}
@@ -155,10 +154,10 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       )}
 
       <div
-        className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer'
+        className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100'
         onClick={editTasksHandler}
       >
-        Добавить список задач
+        {`${lang.addTaskList}`}
       </div>
     </Popover>
   )

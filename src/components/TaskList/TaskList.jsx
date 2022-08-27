@@ -10,6 +10,7 @@ import {
   removeTaskList,
   removeTaskListElement
 } from "@/store/main/mainSlice";
+import lang from '@/locales/ru/common.json';
 
 export const TaskList = ({ boardId, cardId, tasks }) => {
   const dispatch = useDispatch();
@@ -108,7 +109,6 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
   };
 
   const saveTaskListElemText = () => {
-    console.log("saveTaskListElemText taskListElemText:", taskListElemText);
     if (taskListElemText) {
       setIsEditTaskListElement(false);
       dispatch(
@@ -134,10 +134,10 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
       {isAddTaskListElement && (
         <Popover clickOut={() => setIsAddTaskListElement(false)}>
           <div className='w-full text-center my-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>
-              Добавление нового пункта списка задач
+            <div className='w-full text-center font-bold mb-6 break-normal'>
+            {`${lang.addNewTaskListElement}`}
             </div>
-            <div className='w-full text-left font-semibold mb-2'>Текст:</div>
+            <div className='w-full text-left font-semibold mb-2'> {`${lang.text}`}:</div>
             <Input
               inputRef={taskListElementRef}
               value={newTaskListText}
@@ -145,9 +145,9 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
             />
           </div>
           <div className='flex mb-2'>
-            <Button text={"Сохранить"} clickHandler={addListElem} />
+            <Button text={`${lang.save}`} clickHandler={addListElem} />
             <Button
-              text={"Отменить"}
+              text={`${lang.cansel}`}
               clickHandler={(e) => setIsAddTaskListElement(false)}
             />
           </div>
@@ -170,7 +170,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
             ) : (
               <div
                 key={task.id}
-                className={`${task.id} w-full mb-5 font-semibold overflow-y-auto whitespace-pre-wrap break-all hover:cursor-pointer hover:bg-slate-100`}
+                className={`${task.id} w-full mb-5 font-semibold overflow-y-auto whitespace-pre-wrap break-all hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100`}
                 onClick={(e) => onEditTitleHandler(e, task.title, task.id)}
               >
                 {task.title}
@@ -179,7 +179,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
 
             {task.list.map((elem) => {
               let styleText =
-                "w-full flex items-center text-left font-normal mt-2 overflow-y-auto whitespace-pre-wrap break-all hover:bg-slate-100 hover:cursor-pointer";
+                "w-full flex items-center text-left font-normal mt-2 overflow-y-auto whitespace-pre-wrap break-all hover:bg-slate-100 hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100";
               if (elem.checked) styleText = `${styleText} line-through`;
               return (
                 <div key={elem.id} className='flex'>
@@ -220,12 +220,12 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
 
             <div className='-w-full flex justify-between mt-5 border-t'>
               <Button
-                text={"Добавить элемент спика"}
+                text={`${lang.addTaskListElement}`}
                 clickHandler={() => addListElemHandler(task.id)}
                 type={"lightAdd"}
               />
               <Button
-                text={"Удалить список"}
+                text={`${lang.removeList}`}
                 clickHandler={() => deleteTaskListHandler(task.id)}
                 type={"lightDel"}
               />
@@ -233,7 +233,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
 
             {isOpenConfirmDialog && (
               <Confirm
-                title={"Удалить список задач?"}
+                title={`${lang.questionRemoveTaskList}`}
                 yesHandler={deleteTaskList}
                 noHandler={() => setIsOpenConfirmDialog(false)}
               />
