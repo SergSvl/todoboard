@@ -80,7 +80,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
       )}
 
       <div
-        className='w-[300px] min-h-[80px] p-2 flex flex-wrap items-stretch grow-0 items-end relative bg-slate-50 border rounded ml-2 my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
+        className='w-[300px] min-h-[80px] p-2 mb-8 flex flex-wrap items-stretch shrink-0 grow-0 items-end relative bg-slate-50 border rounded ml-2 my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
         onClick={(e) => clickOutHandler(e)}
         draggable={true}
         onDragStart={(e) => onDragStart(e, card, boardId)}

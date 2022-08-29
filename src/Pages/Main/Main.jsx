@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initState, setBoard } from "@/store/main/mainSlice";
 import Board from '@/components/Board';
@@ -11,6 +11,7 @@ import lang from '@/locales/ru/common.json';
 
 export const Main = () => {
   const { boards } = useSelector((state) => state.main);
+  const titleGroupRef = useRef()
   const dispatch = useDispatch();
   const [isAddTitleOpenned, setIsAddTitleOpenned] = useState(false);
   const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
@@ -24,7 +25,12 @@ export const Main = () => {
   }
 
   console.log("boards", boards);
-  // console.log("newBoard", newBoard);
+
+  useEffect(() => {
+    if (groupTitle) {
+      titleGroupRef.current.focus();
+    }
+  }, [groupTitle]);
 
   const addBoardHandler = () => {
     setIsAddTitleOpenned(true);
@@ -40,12 +46,14 @@ export const Main = () => {
     setGroupTitle(value);
   }
   
-  const onChangeGroupTitle = () => {
-    setIsAddTitleOpenned(false);
-    newBoard.id = `group#${Date.now()}`;
-    newBoard.order = `${boards.length+1}`;
-    newBoard.title = groupTitle;
-    dispatch(setBoard(newBoard));
+  const onChangeGroupTitle = (e) => {
+    if (e.code === 'Enter' || e.type === 'click') {
+      setIsAddTitleOpenned(false);
+      newBoard.id = `group#${Date.now()}`;
+      newBoard.order = `${boards.length+1}`;
+      newBoard.title = groupTitle;
+      dispatch(setBoard(newBoard));
+    }
   }
 
   const deleteBoard = (boardId) => {
@@ -84,6 +92,7 @@ export const Main = () => {
 
       {isAddTitleOpenned && (
         <CreateCardsGroup
+          inputRef={titleGroupRef}
           groupTitle={groupTitle}
           clickOutHandler={() => setIsAddTitleOpenned(false)}
           addGroupTitleHandler={addGroupTitleHandler}
