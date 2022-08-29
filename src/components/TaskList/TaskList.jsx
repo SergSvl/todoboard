@@ -68,12 +68,14 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
     setIsEditTaskTitle(true);
   };
 
-  const addListElem = () => {
-    if (newTaskListText) {
-      dispatch(
-        addTaskListElement({ boardId, cardId, taskId, newTaskListText })
-      );
-      setIsAddTaskListElement(false);
+  const addListElem = (e) => {
+    if (e.code === 'Enter' || e.type === 'click') {
+      if (newTaskListText) {
+        dispatch(
+          addTaskListElement({ boardId, cardId, taskId, newTaskListText })
+        );
+        setIsAddTaskListElement(false);
+      }
     }
   };
 
@@ -142,6 +144,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
               inputRef={taskListElementRef}
               value={newTaskListText}
               onChangeHandler={onChangeTaskTextHandler}
+              onBlurHandler={addListElem}
             />
           </div>
           <div className='flex mb-2'>
@@ -171,6 +174,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
               <div
                 key={task.id}
                 className={`${task.id} w-full mb-5 font-semibold overflow-y-auto whitespace-pre-wrap break-all hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100`}
+                title={`${lang.editTitle}`}
                 onClick={(e) => onEditTitleHandler(e, task.title, task.id)}
               >
                 {task.title}

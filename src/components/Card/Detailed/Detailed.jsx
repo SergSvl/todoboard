@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { setTitleCard, setDescriptionCard, addTask, addTag } from "@/store/main/mainSlice";
+import { setTitleCard, setDescriptionCard, addTask, addTag, updateTag, deleteTag } from "@/store/main/mainSlice";
 import Popover from "@/components/Popover";
 import Button from "@/components/Button";
 import TaskList from "@/components/TaskList";
@@ -24,6 +24,8 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   const [newTagText, setNewTagText] = useState("");
   const [newTagColor, setNewTagColor] = useState("");
   const [isAddTag, setIsAddTag] = useState(false);
+  const [titleTagWindow, setTitleTagWindow] = useState(lang.addingTag);
+  const [tagId, setTagId] = useState('');
 
   useEffect(() => {
     setCardTitle(card.title);
@@ -77,16 +79,20 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
     setNewTaskTitle(title);
   };
 
-  const saveTaskTitleHandler = () => {
-    if (newTaskTitle) {
-      setIsAddTaskList(false);
-      dispatch(addTask({ boardId, cardId: card.id, title: newTaskTitle }));
+  const saveTaskTitleHandler = (e) => {
+    if (e.code === 'Enter' || e.type === 'click') {
+      if (newTaskTitle) {
+        setIsAddTaskList(false);
+        dispatch(addTask({ boardId, cardId: card.id, title: newTaskTitle }));
+      }
     }
   };
 
   const editTagHandler = () => {
     setNewTagText('');
     setNewTagColor('');
+    setTitleTagWindow(lang.addingTag);
+    setTagId('');
     setIsAddTag(true);
   };
 
@@ -95,13 +101,30 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   }
 
   const selectTagColorHandler = (bgColor) => {
-    console.log('selectTagColorHandler:', bgColor);
     setNewTagColor(bgColor);
   }
 
-  const saveTagHandler = (tag) => {
-    console.log('saveTagHandler:', { newTagText, newTagColor });
-    dispatch(addTag({ boardId, cardId: card.id, newTagText, newTagColor }));
+  const saveTagHandler = (e) => {
+    if (e.code === 'Enter' || e.type === 'click') {
+      setIsAddTag(false);
+      if (tagId) {
+        dispatch(updateTag({ boardId, cardId: card.id, tagId, newTagText, newTagColor }));
+      } else {
+        dispatch(addTag({ boardId, cardId: card.id, newTagText, newTagColor }));
+      }
+    }
+  }
+
+  const changeTagHandler = (tag) => {
+    setNewTagText(tag.text);
+    setNewTagColor(tag.color);
+    setTagId(tag.id);
+    setIsAddTag(true);
+    setTitleTagWindow(lang.changingTag);
+  }
+
+  const deleteTagHandler = (tagId) => {
+    dispatch(deleteTag({ boardId, cardId: card.id, tagId }));
   }
 
   return (
@@ -116,6 +139,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       ) : (
         <div
           className='w-full text-center mb-4 font-semibold hover:cursor-pointer hover:bg-slate-100 whitespace-pre-wrap break-all hover:transition-all duration-200 hover:bg-slate-100'
+          title={`${lang.editTitle}`}
           onClick={(e) => onEditTitleHandler(e)}
         >
           {card.title}
@@ -139,7 +163,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         </>
       ) : card.description === "" ? (
         <div
-          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4 hover:transition-all duration-200 hover:bg-slate-100'
+          className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4 hover:transition-all duration-200'
           onClick={editDescriptionHandler}
         >
           {`${lang.addDescription}`}
@@ -164,6 +188,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
               inputRef={titleTaskRef}
               value={newTaskTitle}
               onChangeHandler={onChangeTitleTaskHandler}
+              onBlurHandler={saveTaskTitleHandler}
             />
           </div>
           <div className='flex mb-2'>
@@ -183,7 +208,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       )}
 
       <div
-        className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100'
+        className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer hover:transition-all duration-200'
         onClick={editTasksHandler}
       >
         {`${lang.addTaskList}`}
@@ -194,7 +219,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       {isAddTag && (
         <Popover clickOut={() => setIsAddTag(false)}>
           <div className='w-full text-center mt-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>{`${lang.addingTag}`}</div>
+            <div className='w-full text-center font-bold mb-6'>{titleTagWindow}</div>
             <div className='w-full text-left font-semibold mb-2'>{`${lang.tagText}`}:</div>
             <div className='flex items-center'>
               <div className='w-[50%]'>
@@ -202,6 +227,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
                   inputRef={tagTextRef}
                   value={newTagText}
                   onChangeHandler={onChangeTagTextHandler}
+                  onBlurHandler={saveTagHandler}
                 />
               </div>
               <div className='w-[50%] item-center'>
@@ -233,9 +259,10 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         </Popover>
       )}
 
-      <Tags tags={card.tags} />
+      <Tags tags={card.tags} openModalHandler={changeTagHandler} deleteTagHandler={deleteTagHandler} />
+
       <div
-        className='w-full text-center text-gray-400  hover:text-gray-600 border-t mt-2 p-2 hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100'
+        className='w-full text-center text-gray-400  hover:text-gray-600 border-t mt-2 p-2 hover:cursor-pointer hover:transition-all duration-200'
         onClick={editTagHandler}
       >
         {`${lang.addTag}`}

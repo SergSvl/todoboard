@@ -7,7 +7,13 @@ export const Input = ({ value, onChangeHandler, onBlurHandler = undefined, input
 
   if (type === 'taskList') {
     resultClasses = taskElemStyles;
-  } 
+  }
+
+  const onKeyDown = (e) =>{
+    if (e.code === 'Enter') {
+      onBlurHandler(e);
+    }
+  }
 
   return (
     <input
@@ -17,6 +23,7 @@ export const Input = ({ value, onChangeHandler, onBlurHandler = undefined, input
       onChange={(e) => onChangeHandler(e.target.value)}
       onClick={(e) => e.stopPropagation()}
       onBlur={onBlurHandler !== undefined ? (e) => onBlurHandler(e) : null}
+      onKeyDown={onKeyDown}
     />
   );
 }

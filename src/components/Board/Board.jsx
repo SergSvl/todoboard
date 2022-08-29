@@ -100,6 +100,7 @@ export const Board = ({ board, deleteBoard }) => {
             ) : (
               <div
                 className='w-full h-8 pt-1 pl-2 font-semibold hover:cursor-pointer -text-slate-700'
+                title={`${lang.editTitle}`}
                 onClick={(e) => onEditTitleHandler(e)}
               >
                 {board.title}
@@ -126,7 +127,7 @@ export const Board = ({ board, deleteBoard }) => {
               : null}
           </div>
 
-          <div className='w-full h-8 -border border-red-400 absolute bottom-0 flex justify-between'>
+          <div className='w-full h-8 -border border-red-400 -absolute bottom-0 flex justify-between'>
             <div
               className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
               onClick={(e) => addCardHandler(e, board.id)}

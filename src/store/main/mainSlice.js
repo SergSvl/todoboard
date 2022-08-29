@@ -182,9 +182,53 @@ export const homeSlice = createSlice({
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
+
+    updateTag(state, action) {
+      const { boardId, cardId, tagId, newTagText, newTagColor } = action.payload;
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const newCards = board.cards.map((card) => {
+            if (card.id === cardId) {
+              const newTags = card.tags.map((tag) => {
+                if (tag.id === tagId) {
+                  tag.text = newTagText;
+                  tag.color = newTagColor;
+                }
+                return tag;
+              });
+              card.tags = newTags;
+            }
+            return card;
+          });
+          board.cards = newCards;
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
+
+    deleteTag(state, action) {
+      const { boardId, cardId, tagId } = action.payload;
+      console.log("deleteTag:", { boardId, cardId, tagId });
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const newCards = board.cards.map((card) => {
+            if (card.id === cardId) {
+              card.tags = card.tags.filter((tag) => tag.id !== tagId ? true : false);
+            }
+            return card;
+          });
+          board.cards = newCards;
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag, updateTag, deleteTag } = homeSlice.actions;
 
 export default homeSlice.reducer;

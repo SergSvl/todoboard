@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { setTitleCard } from "@/store/main/mainSlice";
+import { setTitleCard, deleteTag } from "@/store/main/mainSlice";
 import Confirm from "@/components/Confirm";
 import Input from "@/components/Input";
 import useDraggable from "@/hooks/useDraggable";
@@ -61,6 +61,10 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
     setIsConfirmOpenned(false);
   };
 
+  const deleteTagHandler = (tagId) => {
+    dispatch(deleteTag({ boardId, cardId: card.id, tagId }));
+  }
+
   return (
     <>
       {isConfirmOpenned && (
@@ -76,7 +80,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
       )}
 
       <div
-        className='w-[300px] min-h-[80px] p-2 shrink-0 relative bg-slate-50 border rounded ml-2 my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
+        className='w-[300px] min-h-[80px] p-2 flex flex-wrap items-stretch grow-0 items-end relative bg-slate-50 border rounded ml-2 my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
         onClick={(e) => clickOutHandler(e)}
         draggable={true}
         onDragStart={(e) => onDragStart(e, card, boardId)}
@@ -85,7 +89,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
         onDragEnd={(e) => onDragEnd(e)}
         onDrop={(e) => onDrop(e, card, cards, boardId)}
       >
-        <div className='flex justify-beetwen mb-1'>
+        <div className='flex justify-beetwen grow mb-1'>
           {isEditTitleOut ? (
             <Input
               inputRef={titleCardRef}
@@ -96,6 +100,7 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
           ) : (
             <div
               className='w-full mr-2 text-left pl-2 hover:cursor-pointer whitespace-pre-wrap break-all -border border-red-600 hover:transition-all duration-200 hover:bg-slate-100'
+              title={`${lang.editTitle}`}
               onClick={(e) => onEditTitleHandler(e)}
             >
               {card.title}
@@ -114,8 +119,8 @@ export const Card = ({ card, cards, boardId, deleteCard }) => {
           ) : null}
         </div>
 
-        <div className='w-full _h-8 -border border-red-400 -absolute flex justify-end right-0 bottom-0'>
-          <Tags tags={card.tags} />
+        <div className='w-full -border border-red-400 flex justify-end items-end right-0 bottom-0'>
+          <Tags tags={card.tags} openModalHandler={null} deleteTagHandler={deleteTagHandler}/>
           <div
             className='h-7 hover:cursor-pointer -border'
             title={`${lang.openCard}`}
