@@ -1,21 +1,21 @@
-import { createSlice, current } from '@reduxjs/toolkit';
-import { setLSData, deleteLSData } from '@/utils/helpers/local-storage-helpers';
+import { createSlice, current } from "@reduxjs/toolkit";
+import { setLSData } from "@/utils/helpers/local-storage-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
-import { updateCard } from '@/utils/helpers/card-board-helpers';
-import lang from '@/locales/ru/common.json';
+import { updateCard } from "@/utils/helpers/card-board-helpers";
+import lang from "@/locales/ru/common.json";
 
 const initialState = {
   boards: [],
-  error: '',
-}
+  error: ""
+};
 
 export const homeSlice = createSlice({
-  name: 'main',
+  name: "main",
   initialState,
   reducers: {
     initState(state, action) {
       state.boards = action.payload;
-      state.error = '';
+      state.error = "";
       setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
     },
 
@@ -61,7 +61,7 @@ export const homeSlice = createSlice({
         id: `task#${Date.now()}`,
         title,
         list: []
-      }
+      };
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         task: task
       });
@@ -89,8 +89,24 @@ export const homeSlice = createSlice({
     },
 
     updateTask(state, action) {
-      const { boardId, cardId, taskId, listId, checked, taskTitle, taskListElemText } = action.payload;
-      console.log("updateTask:", { boardId, cardId, taskId, listId, checked, taskTitle, taskListElemText });
+      const {
+        boardId,
+        cardId,
+        taskId,
+        listId,
+        checked,
+        taskTitle,
+        taskListElemText
+      } = action.payload;
+      console.log("updateTask:", {
+        boardId,
+        cardId,
+        taskId,
+        listId,
+        checked,
+        taskTitle,
+        taskListElemText
+      });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         taskId,
         listId,
@@ -105,20 +121,21 @@ export const homeSlice = createSlice({
     addCard(state, action) {
       const id = action.payload.id;
       let card = {
-        id: '',
-        order: '',
-        title: '',
-        description: '',
+        id: "",
+        order: "",
+        title: "",
+        description: "",
         tasks: [],
-        tags: [],
-      }
+        tags: []
+      };
       let newBoards = [];
 
-      if (action.payload.hasOwnProperty('card')) {
+      if (action.payload.hasOwnProperty("card")) {
         newBoards = state.boards.map((board) => {
           if (board.id === id) {
             card = action.payload.card;
-            card.order = `${board.cards.length+1}`;
+            card.order = `${board.cards.length + 1}`;
+            card.divided = false;
             board.cards = [...board.cards, card];
           }
           return board;
@@ -127,8 +144,8 @@ export const homeSlice = createSlice({
         newBoards = state.boards.map((board) => {
           if (board.id === id) {
             card.id = `card#${Date.now()}`;
-            card.order = `${board.cards.length+1}`;
-            card.title = `${lang.newCard} ${board.cards.length+1}`;
+            card.order = `${board.cards.length + 1}`;
+            card.title = `${lang.newCard} ${board.cards.length + 1}`;
             board.cards = [...board.cards, card];
           }
           return board;
@@ -140,24 +157,25 @@ export const homeSlice = createSlice({
 
     addDivider(state, action) {
       const { boardId, cardOrder } = action.payload;
-      
+
       let divider = {
         id: `divider#${Date.now()}`,
-        order: '',
-        divider: true,
-      }
+        order: "",
+        divider: true
+      };
       let newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           board.cards.splice(cardOrder, 0, divider);
 
           let index = 1;
           const newCards = board.cards.map((card) => {
-            
             if (card.order === cardOrder) {
-              card.divided = true;
+              if (card.divider === undefined) {
+                card.divided = true;
+              }
             }
 
-            card.order = index++
+            card.order = index++;
             return card;
           });
           board.cards = newCards;
@@ -170,14 +188,17 @@ export const homeSlice = createSlice({
 
     removeDivider(state, action) {
       const { boardId, cardOrder } = action.payload;
-      
+
       let newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
-          board.cards = board.cards.filter((card) => card.order !== cardOrder ? true : false);
+          board.cards = board.cards.filter((card) =>
+            card.order !== cardOrder ? true : false
+          );
 
           let index = 1;
           const newCards = board.cards.map((card) => {
-            if (card.order === (cardOrder-1)) {
+
+            if (parseInt(card.order) === cardOrder - 1) {
               card.divided = false;
             }
             card.order = index++;
@@ -237,7 +258,8 @@ export const homeSlice = createSlice({
     },
 
     updateTag(state, action) {
-      const { boardId, cardId, tagId, newTagText, newTagColor } = action.payload;
+      const { boardId, cardId, tagId, newTagText, newTagColor } =
+        action.payload;
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const newCards = board.cards.map((card) => {
@@ -261,14 +283,16 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
 
-    deleteTag(state, action) {
+    removeTag(state, action) {
       const { boardId, cardId, tagId } = action.payload;
-      console.log("deleteTag:", { boardId, cardId, tagId });
+      console.log("removeTag:", { boardId, cardId, tagId });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const newCards = board.cards.map((card) => {
             if (card.id === cardId) {
-              card.tags = card.tags.filter((tag) => tag.id !== tagId ? true : false);
+              card.tags = card.tags.filter((tag) =>
+                tag.id !== tagId ? true : false
+              );
             }
             return card;
           });
@@ -278,10 +302,28 @@ export const homeSlice = createSlice({
       });
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
-    },
+    }
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag, updateTag, deleteTag, addDivider, removeDivider } = homeSlice.actions;
+export const {
+  initState,
+  setBoard,
+  setTitleBoard,
+  setTitleCard,
+  addCard,
+  setSortedCards,
+  setDescriptionCard,
+  addTask,
+  removeTaskList,
+  updateTask,
+  addTaskListElement,
+  removeTaskListElement,
+  addTag,
+  updateTag,
+  removeTag,
+  addDivider,
+  removeDivider
+} = homeSlice.actions;
 
 export default homeSlice.reducer;

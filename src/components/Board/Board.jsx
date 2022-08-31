@@ -63,8 +63,8 @@ export const Board = ({ board, deleteBoard }) => {
     setNewTitle(board.title);
   }, []);
 
-  const deleteCard = (boardId, cardId) => {
-    const filteredBoards = deleteCardFromBoard(boards, boardId, cardId);
+  const deleteCard = (boardId, cardProps) => {
+    const filteredBoards = deleteCardFromBoard(boards, boardId, cardProps);
     dispatch(initState([...filteredBoards]));
   };
 

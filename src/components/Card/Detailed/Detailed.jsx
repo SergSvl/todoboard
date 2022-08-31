@@ -1,15 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { setTitleCard, setDescriptionCard, addTask, addTag, updateTag, deleteTag } from "@/store/main/mainSlice";
+import {
+  setTitleCard,
+  setDescriptionCard,
+  addTask,
+  addTag,
+  updateTag,
+  removeTag
+} from "@/store/main/mainSlice";
 import Popover from "@/components/Popover";
 import Button from "@/components/Button";
 import TaskList from "@/components/TaskList";
 import Input from "@/components/Input";
-import lang from '@/locales/ru/common.json';
-import Tags from '@/components/Card/Tags';
-import { Colors } from '@/components/Card/Tags/Colors';
+import lang from "@/locales/ru/common.json";
+import Tags from "@/components/Card/Tags";
+import { Colors } from "@/components/Card/Tags/Colors";
 
-export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard }) => {
+export const Detailed = ({
+  card,
+  boardId,
+  setIsCardOpenned,
+  setIsDraggableBoard
+}) => {
   const dispatch = useDispatch();
   const titleCardRef = useRef();
   const titleTaskRef = useRef();
@@ -25,7 +37,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
   const [newTagColor, setNewTagColor] = useState("");
   const [isAddTag, setIsAddTag] = useState(false);
   const [titleTagWindow, setTitleTagWindow] = useState(lang.addingTag);
-  const [tagId, setTagId] = useState('');
+  const [tagId, setTagId] = useState("");
 
   useEffect(() => {
     setCardTitle(card.title);
@@ -62,7 +74,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
   };
 
   const editTasksHandler = () => {
-    setNewTaskTitle('');
+    setNewTaskTitle("");
     setIsAddTaskList(true);
   };
 
@@ -83,7 +95,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
   };
 
   const saveTaskTitleHandler = (e) => {
-    if (e.code === 'Enter' || e.type === 'click') {
+    if (e.code === "Enter" || e.type === "click") {
       if (newTaskTitle) {
         setIsAddTaskList(false);
         dispatch(addTask({ boardId, cardId: card.id, title: newTaskTitle }));
@@ -92,31 +104,39 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
   };
 
   const editTagHandler = () => {
-    setNewTagText('');
-    setNewTagColor('');
+    setNewTagText("");
+    setNewTagColor("");
     setTitleTagWindow(lang.addingTag);
-    setTagId('');
+    setTagId("");
     setIsAddTag(true);
   };
 
   const onChangeTagTextHandler = (text) => {
     setNewTagText(text);
-  }
+  };
 
   const selectTagColorHandler = (bgColor) => {
     setNewTagColor(bgColor);
-  }
+  };
 
   const saveTagHandler = (e) => {
-    if (e.code === 'Enter' || e.type === 'click') {
+    if (e.code === "Enter" || e.type === "click") {
       setIsAddTag(false);
       if (tagId) {
-        dispatch(updateTag({ boardId, cardId: card.id, tagId, newTagText, newTagColor }));
+        dispatch(
+          updateTag({
+            boardId,
+            cardId: card.id,
+            tagId,
+            newTagText,
+            newTagColor
+          })
+        );
       } else {
         dispatch(addTag({ boardId, cardId: card.id, newTagText, newTagColor }));
       }
     }
-  }
+  };
 
   const changeTagHandler = (tag) => {
     setNewTagText(tag.text);
@@ -124,11 +144,11 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
     setTagId(tag.id);
     setIsAddTag(true);
     setTitleTagWindow(lang.changingTag);
-  }
+  };
 
   const deleteTagHandler = (tagId) => {
-    dispatch(deleteTag({ boardId, cardId: card.id, tagId }));
-  }
+    dispatch(removeTag({ boardId, cardId: card.id, tagId }));
+  };
 
   return (
     <Popover clickOut={() => setIsCardOpenned(false)}>
@@ -161,7 +181,10 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
           ></textarea>
           <div className='flex'>
             <Button text={lang.save} clickHandler={saveDescriptionHandler} />
-            <Button text={lang.cansel} clickHandler={() => setIsEditDescription(false)} />
+            <Button
+              text={lang.cansel}
+              clickHandler={() => setIsEditDescription(false)}
+            />
           </div>
         </>
       ) : card.description === "" ? (
@@ -185,8 +208,12 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
       {isAddTaskList && (
         <Popover clickOut={() => setIsAddTaskList(false)}>
           <div className='w-full text-center my-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>{lang.creatingNewTaskList}</div>
-            <div className='w-full text-left font-semibold mb-2'>{lang.listTitle}:</div>
+            <div className='w-full text-center font-bold mb-6'>
+              {lang.creatingNewTaskList}
+            </div>
+            <div className='w-full text-left font-semibold mb-2'>
+              {lang.listTitle}:
+            </div>
             <Input
               inputRef={titleTaskRef}
               value={newTaskTitle}
@@ -196,19 +223,19 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
           </div>
           <div className='flex mb-2'>
             <Button text={lang.save} clickHandler={saveTaskTitleHandler} />
-            <Button text={lang.cansel} clickHandler={() => setIsAddTaskList(false)} />
+            <Button
+              text={lang.cansel}
+              clickHandler={() => setIsAddTaskList(false)}
+            />
           </div>
         </Popover>
       )}
 
       {card.tasks.length !== 0 ? (
-        <div
-          className='w-full text-left overflow-y-auto whitespace-pre-wrap break-all'>
-          <TaskList boardId={boardId} cardId={card.id} tasks={card.tasks}/>
+        <div className='w-full text-left overflow-y-auto whitespace-pre-wrap break-all'>
+          <TaskList boardId={boardId} cardId={card.id} tasks={card.tasks} />
         </div>
-      ) : (
-        null
-      )}
+      ) : null}
 
       <div
         className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer hover:transition-all duration-200'
@@ -222,8 +249,12 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
       {isAddTag && (
         <Popover clickOut={() => setIsAddTag(false)}>
           <div className='w-full text-center mt-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>{titleTagWindow}</div>
-            <div className='w-full text-left font-semibold mb-2'>{lang.tagText}:</div>
+            <div className='w-full text-center font-bold mb-6'>
+              {titleTagWindow}
+            </div>
+            <div className='w-full text-left font-semibold mb-2'>
+              {lang.tagText}:
+            </div>
             <div className='flex items-center'>
               <div className='w-[50%]'>
                 <Input
@@ -234,35 +265,49 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
                 />
               </div>
               <div className='w-[50%] item-center'>
-                <div className={`flex inline-flex mb-3 mr-2 border w-fit px-3 rounded-xl ${newTagColor}`}>
+                <div
+                  className={`flex inline-flex mb-3 mr-2 border w-fit px-3 rounded-xl ${newTagColor}`}
+                >
                   #{`${newTagText}`}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className='w-full text-left font-semibold mb-2'>{lang.tagColor}:</div>
-          
+          <div className='w-full text-left font-semibold mb-2'>
+            {lang.tagColor}:
+          </div>
+
           <div className='flex flex-wrap justify-start mb-4 w-fit px-2 rounded-xl'>
-          
-          {Colors && Colors.map((bgColor) => {
-            return <div key={bgColor} 
-              className={`flex justify-center mb-2 mr-2 border w-fit px-3 rounded-xl hover:cursor-pointer hover:border-gray-500 ${bgColor}`}
-              onClick={() => selectTagColorHandler(bgColor)}
-            >
-              #{lang.tag}
-            </div>
-          })}
+            {Colors &&
+              Colors.map((bgColor) => {
+                return (
+                  <div
+                    key={bgColor}
+                    className={`flex justify-center mb-2 mr-2 border w-fit px-3 rounded-xl hover:cursor-pointer hover:border-gray-500 ${bgColor}`}
+                    onClick={() => selectTagColorHandler(bgColor)}
+                  >
+                    #{lang.tag}
+                  </div>
+                );
+              })}
           </div>
 
           <div className='flex mb-2'>
             <Button text={lang.save} clickHandler={saveTagHandler} />
-            <Button text={lang.cansel} clickHandler={() => setIsAddTag(false)} />
+            <Button
+              text={lang.cansel}
+              clickHandler={() => setIsAddTag(false)}
+            />
           </div>
         </Popover>
       )}
 
-      <Tags tags={card.tags} openModalHandler={changeTagHandler} deleteTagHandler={deleteTagHandler} />
+      <Tags
+        tags={card.tags}
+        openModalHandler={changeTagHandler}
+        deleteTagHandler={deleteTagHandler}
+      />
 
       <div
         className='w-full text-center text-gray-400  hover:text-gray-600 border-t mt-2 p-2 hover:cursor-pointer hover:transition-all duration-200'
@@ -271,5 +316,5 @@ export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard 
         {lang.addTag}
       </div>
     </Popover>
-  )
-}
+  );
+};

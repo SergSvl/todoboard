@@ -62,7 +62,7 @@ const useDraggable = () => {
     console.log("DROP cardOrder:", cardOrder);
     console.log("DROP dragElementType:", dragElementType);
     
-    if (cardOrder !== undefined && dragElementType !== "group" && dragElementType !== "card") {
+    if (cardOrder !== undefined && dragElementType !== "group" && dragElementType !== "card" && dropElement === 'dropZone') {
       // console.log("DROP cardOrder:", cardOrder);
       dispatch(addDivider({ boardId, cardOrder }));
     } else {
@@ -89,7 +89,7 @@ const useDraggable = () => {
           parentBoardId === dropElement.id) ||
         (dragElementType === "card" &&
           dropElementType !== "group" &&
-          (parentBoardId !== boardId || dropElement === "divider")) ||
+          (parentBoardId !== boardId || dropElement === "dropZone")) ||
           (dragElementType === "group" &&
           (dropElementType === "card" || dropElementType === "divider"))
       ) {
@@ -109,11 +109,7 @@ const useDraggable = () => {
         // console.log("parentBoardId:", parentBoardId);
         // console.log("DROP boardId:", boardId);
 
-        const filteredBoards = deleteCardFromBoard(
-          boards,
-          parentBoardId,
-          dragElementId
-        );
+        const filteredBoards = deleteCardFromBoard(boards, parentBoardId, { cardId: dragElementId });
         dispatch(initState([...filteredBoards]));
         dispatch(addCard({ card: dragElement, id: dropElement.id }));
         return;

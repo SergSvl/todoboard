@@ -1,16 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { setTitleCard, deleteTag } from "@/store/main/mainSlice";
+import { setTitleCard, removeTag } from "@/store/main/mainSlice";
 import Confirm from "@/components/Confirm";
 import Input from "@/components/Input";
 import useDraggable from "@/hooks/useDraggable";
-import Detailed from '@/components/Card/Detailed';
-import Tags from '@/components/Card/Tags';
-import lang from '@/locales/ru/common.json';
-import Divider from '@/components/Card/Divider';
+import Detailed from "@/components/Card/Detailed";
+import Tags from "@/components/Card/Tags";
+import lang from "@/locales/ru/common.json";
+import Divider from "@/components/Card/Divider";
 
-export const Card = ({ card, cards, boardId, deleteCard, setIsDraggableBoard }) => {
-  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } = useDraggable();
+export const Card = ({
+  card,
+  cards,
+  boardId,
+  deleteCard,
+  setIsDraggableBoard
+}) => {
+  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
+    useDraggable();
   const [isEditTitleOut, setIsEditTitleOut] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const titleCardRef = useRef();
@@ -65,33 +72,42 @@ export const Card = ({ card, cards, boardId, deleteCard, setIsDraggableBoard }) 
     setIsCardOpenned(true);
   };
 
-  const onDeleteCard = (cardId) => {
-    deleteCard(boardId, cardId);
+  const onDeleteCard = (cardProps) => {
+    deleteCard(boardId, cardProps);
     setIsConfirmOpenned(false);
     setIsDraggable(true);
     setIsDraggableBoard(true);
   };
 
   const deleteTagHandler = (tagId) => {
-    dispatch(deleteTag({ boardId, cardId: card.id, tagId }));
-  }
+    dispatch(removeTag({ boardId, cardId: card.id, tagId }));
+  };
 
   return (
     <>
       {isConfirmOpenned && (
         <Confirm
           title={lang.questionRemoveCard}
-          yesHandler={() => onDeleteCard(card.id)}
+          yesHandler={() => onDeleteCard({ cardId: card.id, cardOrder: card.order, cardDivided: card.divided })}
           noHandler={clickOutHandler}
         />
       )}
 
       {isCardOpenned && (
-        <Detailed card={card} boardId={boardId} setIsCardOpenned={setIsCardOpenned} setIsDraggableBoard={setIsDraggableBoard}/>
+        <Detailed
+          card={card}
+          boardId={boardId}
+          setIsCardOpenned={setIsCardOpenned}
+          setIsDraggableBoard={setIsDraggableBoard}
+        />
       )}
 
       {card.divider ? (
-        <Divider divider={card.divider} cardOrder={card.order} boardId={boardId}/>
+        <Divider
+          divider={card.divider}
+          cardOrder={card.order}
+          boardId={boardId}
+        />
       ) : (
         <>
           <div
@@ -135,7 +151,11 @@ export const Card = ({ card, cards, boardId, deleteCard, setIsDraggableBoard }) 
             </div>
 
             <div className='w-full -border border-red-400 flex justify-end items-end right-0 bottom-0'>
-              <Tags tags={card.tags} openModalHandler={null} deleteTagHandler={deleteTagHandler}/>
+              <Tags
+                tags={card.tags}
+                openModalHandler={null}
+                deleteTagHandler={deleteTagHandler}
+              />
               <div
                 className='h-7 hover:cursor-pointer -border'
                 title={lang.openCard}
@@ -149,7 +169,11 @@ export const Card = ({ card, cards, boardId, deleteCard, setIsDraggableBoard }) 
           </div>
 
           {!card.divided && (
-            <Divider divider={undefined} cardOrder={card.order} boardId={boardId}/>
+            <Divider
+              divider={undefined}
+              cardOrder={card.order}
+              boardId={boardId}
+            />
           )}
         </>
       )}

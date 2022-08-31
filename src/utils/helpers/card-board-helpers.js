@@ -1,19 +1,27 @@
-export const deleteCardFromBoard = (boards, boardId, cardId) => {
+export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDivided }) => {
   const filteredBoards = boards.map((board) => {
     if (board.id === boardId) {
       const newBoard = {...board};
-      const newCards = newBoard.cards.filter((card) => {
-        return card.id !== cardId ? true : false;
-      });
+      const newCards = newBoard.cards.filter((card) => card.id !== cardId ? true : false);
       newBoard.cards = newCards;
       let counter = 1;
+      let prevCardOrder = 0;
 
-      const orderedBoard = newBoard.cards.map((board) => {
-        const orderBoard = {...board};
-        orderBoard.order = ''+counter++;
-        return orderBoard;
+      // if (cardDivided && cardOrder > 1) {
+      if (cardDivided) {
+        prevCardOrder = cardOrder - 1;
+      }
+
+      const orderedCards = newBoard.cards.map((card) => {
+        const newCard = {...card};
+        
+        if (newCard.order === prevCardOrder) {
+          newCard.divided = true;
+        }
+        newCard.order = ''+counter++;
+        return newCard;
       });
-      newBoard.cards = orderedBoard;
+      newBoard.cards = orderedCards;
       return newBoard;
     } else {
       return board;

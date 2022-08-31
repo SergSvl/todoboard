@@ -11,7 +11,7 @@ export const Divider = ({ divider, cardOrder, boardId }) => {
   // console.log('Divider:', { divider, cardOrder, boardId });
 
   const baseStyles = 'min-h-[80px] mx-0 mt-1 mb-8 relative -border border-red-400';
-  const dropZoneStyles = 'min-h-[80px] border border-green-400';
+  const dropZoneStyles = 'min-h-[80px] -border border-green-400';
   const dividerStyles = 'min-w-[40px]';
   const noDividerStyles = 'min-w-[20px]';
 
@@ -26,8 +26,8 @@ export const Divider = ({ divider, cardOrder, boardId }) => {
   return (
       <div className={resultStyles}
         draggable={false}
-        onDrop={(e) => onDrop(e, 'divider', null, boardId, cardOrder)}
-        onDoubleClick={onDeleteHandler}
+        onDrop={(e) => onDrop(e, divider !== undefined ? 'divider' : 'dropZone', null, boardId, cardOrder)}
+        onDoubleClick={divider === undefined ? null : onDeleteHandler}
       >
         {divider === undefined ? (
           <div className={dropZoneStyles}></div>
