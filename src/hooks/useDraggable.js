@@ -121,10 +121,10 @@ const useDraggable = () => {
 
       const changedElements = allElements.map((current) => {
         if (current.id === dropElement.id) {
-          return { ...current, order: dragElementOrder };
+          return { ...current, order: dragElementOrder, divided: dragElement.divided };
         }
         if (current.id === dragElementId) {
-          return { ...current, order: dropElement.order };
+          return { ...current, order: dropElement.order, divided: dropElement.divided };
         }
         return current;
       });
