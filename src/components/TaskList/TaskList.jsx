@@ -137,9 +137,9 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
         <Popover clickOut={() => setIsAddTaskListElement(false)}>
           <div className='w-full text-center my-4 font-semibold'>
             <div className='w-full text-center font-bold mb-6 break-normal'>
-            {`${lang.addNewTaskListElement}`}
+            {lang.addNewTaskListElement}
             </div>
-            <div className='w-full text-left font-semibold mb-2'> {`${lang.text}`}:</div>
+            <div className='w-full text-left font-semibold mb-2'> {lang.text}:</div>
             <Input
               inputRef={taskListElementRef}
               value={newTaskListText}
@@ -148,9 +148,9 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
             />
           </div>
           <div className='flex mb-2'>
-            <Button text={`${lang.save}`} clickHandler={addListElem} />
+            <Button text={lang.save} clickHandler={addListElem} />
             <Button
-              text={`${lang.cansel}`}
+              text={lang.cansel}
               clickHandler={(e) => setIsAddTaskListElement(false)}
             />
           </div>
@@ -174,7 +174,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
               <div
                 key={task.id}
                 className={`${task.id} w-full mb-5 font-semibold overflow-y-auto whitespace-pre-wrap break-all hover:cursor-pointer hover:transition-all duration-200 hover:bg-slate-100`}
-                title={`${lang.editTitle}`}
+                title={lang.editTitle}
                 onClick={(e) => onEditTitleHandler(e, task.title, task.id)}
               >
                 {task.title}
@@ -224,12 +224,12 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
 
             <div className='-w-full flex justify-between mt-5 border-t'>
               <Button
-                text={`${lang.addTaskListElement}`}
+                text={lang.addTaskListElement}
                 clickHandler={() => addListElemHandler(task.id)}
                 type={"lightAdd"}
               />
               <Button
-                text={`${lang.removeList}`}
+                text={lang.removeList}
                 clickHandler={() => deleteTaskListHandler(task.id)}
                 type={"lightDel"}
               />
@@ -237,7 +237,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
 
             {isOpenConfirmDialog && (
               <Confirm
-                title={`${lang.questionRemoveTaskList}`}
+                title={lang.questionRemoveTaskList}
                 yesHandler={deleteTaskList}
                 noHandler={() => setIsOpenConfirmDialog(false)}
               />

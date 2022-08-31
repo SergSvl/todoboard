@@ -13,9 +13,9 @@ export const Board = ({ board, deleteBoard }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [isDraggable, setIsDraggable] = useState(true);
   const { boards } = useSelector((state) => state.main);
-  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
-    useDraggable();
+  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } = useDraggable();
   const dispatch = useDispatch();
   const titleInputRef = useRef();
   const scrollRef = useHorizontalScroll();
@@ -54,6 +54,7 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     if (isEditTitle) {
+      setIsDraggable(false);
       titleInputRef.current.focus();
     }
   }, [isEditTitle]);
@@ -71,7 +72,7 @@ export const Board = ({ board, deleteBoard }) => {
     <>
       {isConfirmOpenned && (
         <Confirm
-          title={`${lang.questionRemoveGroupWithCards}`}
+          title={lang.questionRemoveGroupWithCards}
           yesHandler={onDeleteGroup}
           noHandler={clickOutHandler}
         />
@@ -82,7 +83,7 @@ export const Board = ({ board, deleteBoard }) => {
           className='w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center border rounded'
           id={board.id}
           onClick={(e) => clickOutHandler(e)}
-          draggable={true}
+          draggable={isDraggable}
           onDragStart={(e) => onDragStart(e, board)}
           onDragLeave={(e) => onDragLeave(e)}
           onDragOver={(e) => onDragOver(e)}
@@ -91,16 +92,16 @@ export const Board = ({ board, deleteBoard }) => {
         >
           <div className='flex justify-beetwen mb-1 hover:transition-all duration-200 hover:bg-slate-200'>
             {isEditTitle ? (
-              <Input
-                inputRef={titleInputRef}
-                value={newTitle}
-                onChangeHandler={onChangeTitleHandler}
-                onBlurHandler={clickOutHandler}
-              />
+                <Input
+                  inputRef={titleInputRef}
+                  value={newTitle}
+                  onChangeHandler={onChangeTitleHandler}
+                  onBlurHandler={clickOutHandler}
+                />
             ) : (
               <div
                 className='w-full h-8 pt-1 pl-2 font-semibold hover:cursor-pointer -text-slate-700'
-                title={`${lang.editTitle}`}
+                title={lang.editTitle}
                 onClick={(e) => onEditTitleHandler(e)}
               >
                 {board.title}
@@ -121,6 +122,7 @@ export const Board = ({ board, deleteBoard }) => {
                       cards={board.cards}
                       boardId={board.id}
                       deleteCard={deleteCard}
+                      setIsDraggableBoard={setIsDraggable}
                     />
                   );
                 })
@@ -136,7 +138,20 @@ export const Board = ({ board, deleteBoard }) => {
                 +
               </div>
               <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
-                {`${lang.addCard}`}
+                {lang.addCard}
+              </div>
+            </div>
+
+            <div
+              className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
+              title={lang.addCardDivider}
+              draggable={true}
+              onDragStart={(e) => onDragStart(e, 'divider', board.id)}
+              onDragLeave={(e) => onDragLeave(e)}
+              onDragOver={(e) => onDragOver(e)}
+            >
+              <div className='w-[2rem] pb-1 -border border-red-400 text-2xl hover:font-bold hover:transition-all duration-200'>
+                |
               </div>
             </div>
 
@@ -148,7 +163,7 @@ export const Board = ({ board, deleteBoard }) => {
                 +
               </div>
               <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
-                {`${lang.removeGroup}`}
+                {lang.removeGroup}
               </div>
             </div>
           </div>

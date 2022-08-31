@@ -138,6 +138,59 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
     },
 
+    addDivider(state, action) {
+      const { boardId, cardOrder } = action.payload;
+      
+      let divider = {
+        id: `divider#${Date.now()}`,
+        order: '',
+        divider: true,
+      }
+      let newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          board.cards.splice(cardOrder, 0, divider);
+
+          let index = 1;
+          const newCards = board.cards.map((card) => {
+            
+            if (card.order === cardOrder) {
+              card.divided = true;
+            }
+
+            card.order = index++
+            return card;
+          });
+          board.cards = newCards;
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
+
+    removeDivider(state, action) {
+      const { boardId, cardOrder } = action.payload;
+      
+      let newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          board.cards = board.cards.filter((card) => card.order !== cardOrder ? true : false);
+
+          let index = 1;
+          const newCards = board.cards.map((card) => {
+            if (card.order === (cardOrder-1)) {
+              card.divided = false;
+            }
+            card.order = index++;
+            return card;
+          });
+          board.cards = newCards;
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+    },
+
     setSortedCards(state, action) {
       const { boardId, sortedCards } = action.payload;
 
@@ -229,6 +282,6 @@ export const homeSlice = createSlice({
   }
 });
 
-export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag, updateTag, deleteTag } = homeSlice.actions;
+export const { initState, setBoard, setTitleBoard, setTitleCard, addCard, setSortedCards, setDescriptionCard, addTask, removeTaskList, updateTask, addTaskListElement, removeTaskListElement, addTag, updateTag, deleteTag, addDivider, removeDivider } = homeSlice.actions;
 
 export default homeSlice.reducer;

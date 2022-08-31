@@ -105,3 +105,11 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
   });
   return updatedBoards;
 }
+
+export const sortElements = (a, b) => {
+  if (a.order > b.order) {
+    return 1;
+  } else {
+    return -1;
+  }
+};

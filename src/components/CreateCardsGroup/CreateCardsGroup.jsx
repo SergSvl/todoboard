@@ -8,15 +8,15 @@ export const CreateCardsGroup = ({ inputRef, groupTitle, clickOutHandler, addGro
 
   return (
     <Popover clickOut={clickOutHandler}>
-      <div className='w-full text-center mb-4 font-bold text-lg'>{`${lang.creatingNewCardGroup}`}</div>
-      <div className='text-left mb-2 font-semibold'>{`${lang.groupTitle}`}:</div>
+      <div className='w-full text-center mb-4 font-bold text-lg'>{lang.creatingNewCardGroup}</div>
+      <div className='text-left mb-2 font-semibold'>{lang.groupTitle}:</div>
       <Input
         inputRef={inputRef}
         value={groupTitle}
         onChangeHandler={(e) => addGroupTitleHandler(e.target.value)}
         onBlurHandler={onChangeGroupTitle}
       />
-      <Button text={`${lang.create}`} clickHandler={onChangeGroupTitle} />
+      <Button text={lang.create} clickHandler={onChangeGroupTitle} />
     </Popover>
   );
 }

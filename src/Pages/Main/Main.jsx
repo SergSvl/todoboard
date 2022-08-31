@@ -83,9 +83,9 @@ export const Main = () => {
     <>
       <div className='w-full h-8 mt-12 fixed -border border-red-600 top-0 left-0 right-0 bg-gray-50/50 z-10'>
         <div className='container w-full mx-auto flex justify-between items-center'>
-          <Button text={`${lang.addGroup}`} clickHandler={addBoardHandler} type={'lightAdd'} />
+          <Button text={lang.addGroup} clickHandler={addBoardHandler} type={'lightAdd'} />
           {boards.length ? (
-            <Button text={`${lang.removeAllGroups}`} clickHandler={() => setIsOpenConfirmDialog(true)} type={'lightDel'} />
+            <Button text={lang.removeAllGroups} clickHandler={() => setIsOpenConfirmDialog(true)} type={'lightDel'} />
           ):null}
         </div>
       </div>
@@ -102,7 +102,7 @@ export const Main = () => {
 
       {isOpenConfirmDialog && (
         <Confirm
-          title={`${lang.questionRemoveAllGroups}`}
+          title={lang.questionRemoveAllGroups}
           yesHandler={onDeleteBoards}
           noHandler={() => setIsOpenConfirmDialog(false)}
         />

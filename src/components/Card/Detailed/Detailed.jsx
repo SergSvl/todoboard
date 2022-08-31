@@ -9,7 +9,7 @@ import lang from '@/locales/ru/common.json';
 import Tags from '@/components/Card/Tags';
 import { Colors } from '@/components/Card/Tags/Colors';
 
-export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
+export const Detailed = ({ card, boardId, setIsCardOpenned, setIsDraggableBoard }) => {
   const dispatch = useDispatch();
   const titleCardRef = useRef();
   const titleTaskRef = useRef();
@@ -30,6 +30,9 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   useEffect(() => {
     setCardTitle(card.title);
     setNewDescription(card.description);
+    setIsDraggableBoard(false);
+
+    return () => setIsDraggableBoard(true);
   }, []);
 
   useEffect(() => {
@@ -139,7 +142,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
       ) : (
         <div
           className='w-full text-center mb-4 font-semibold hover:cursor-pointer hover:bg-slate-100 whitespace-pre-wrap break-all hover:transition-all duration-200 hover:bg-slate-100'
-          title={`${lang.editTitle}`}
+          title={lang.editTitle}
           onClick={(e) => onEditTitleHandler(e)}
         >
           {card.title}
@@ -157,8 +160,8 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
             onChange={(e) => setNewDescription(e.target.value)}
           ></textarea>
           <div className='flex'>
-            <Button text={`${lang.save}`} clickHandler={saveDescriptionHandler} />
-            <Button text={`${lang.cansel}`} clickHandler={() => setIsEditDescription(false)} />
+            <Button text={lang.save} clickHandler={saveDescriptionHandler} />
+            <Button text={lang.cansel} clickHandler={() => setIsEditDescription(false)} />
           </div>
         </>
       ) : card.description === "" ? (
@@ -166,7 +169,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
           className='w-full text-center text-gray-400  hover:text-gray-600 border p-2 hover:cursor-pointer mb-4 hover:transition-all duration-200'
           onClick={editDescriptionHandler}
         >
-          {`${lang.addDescription}`}
+          {lang.addDescription}
         </div>
       ) : (
         <div
@@ -177,13 +180,13 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         </div>
       )}
 
-      <div className='w-full text-left font-semibold'>{`${lang.tasks}`}:</div>
+      <div className='w-full text-left font-semibold'>{lang.tasks}:</div>
 
       {isAddTaskList && (
         <Popover clickOut={() => setIsAddTaskList(false)}>
           <div className='w-full text-center my-4 font-semibold'>
-            <div className='w-full text-center font-bold mb-6'>{`${lang.creatingNewTaskList}`}</div>
-            <div className='w-full text-left font-semibold mb-2'>{`${lang.listTitle}`}:</div>
+            <div className='w-full text-center font-bold mb-6'>{lang.creatingNewTaskList}</div>
+            <div className='w-full text-left font-semibold mb-2'>{lang.listTitle}:</div>
             <Input
               inputRef={titleTaskRef}
               value={newTaskTitle}
@@ -192,8 +195,8 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
             />
           </div>
           <div className='flex mb-2'>
-            <Button text={`${lang.save}`} clickHandler={saveTaskTitleHandler} />
-            <Button text={`${lang.cansel}`} clickHandler={() => setIsAddTaskList(false)} />
+            <Button text={lang.save} clickHandler={saveTaskTitleHandler} />
+            <Button text={lang.cansel} clickHandler={() => setIsAddTaskList(false)} />
           </div>
         </Popover>
       )}
@@ -211,16 +214,16 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         className='w-full text-center text-gray-400  hover:text-gray-600 border-t p-2 hover:cursor-pointer hover:transition-all duration-200'
         onClick={editTasksHandler}
       >
-        {`${lang.addTaskList}`}
+        {lang.addTaskList}
       </div>
 
-      <div className='w-full text-left font-semibold mb-2'>{`${lang.tags}`}:</div>
+      <div className='w-full text-left font-semibold mb-2'>{lang.tags}:</div>
 
       {isAddTag && (
         <Popover clickOut={() => setIsAddTag(false)}>
           <div className='w-full text-center mt-4 font-semibold'>
             <div className='w-full text-center font-bold mb-6'>{titleTagWindow}</div>
-            <div className='w-full text-left font-semibold mb-2'>{`${lang.tagText}`}:</div>
+            <div className='w-full text-left font-semibold mb-2'>{lang.tagText}:</div>
             <div className='flex items-center'>
               <div className='w-[50%]'>
                 <Input
@@ -238,7 +241,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
             </div>
           </div>
 
-          <div className='w-full text-left font-semibold mb-2'>{`${lang.tagColor}`}:</div>
+          <div className='w-full text-left font-semibold mb-2'>{lang.tagColor}:</div>
           
           <div className='flex flex-wrap justify-start mb-4 w-fit px-2 rounded-xl'>
           
@@ -247,14 +250,14 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
               className={`flex justify-center mb-2 mr-2 border w-fit px-3 rounded-xl hover:cursor-pointer hover:border-gray-500 ${bgColor}`}
               onClick={() => selectTagColorHandler(bgColor)}
             >
-              #{`${lang.tag}`}
+              #{lang.tag}
             </div>
           })}
           </div>
 
           <div className='flex mb-2'>
-            <Button text={`${lang.save}`} clickHandler={saveTagHandler} />
-            <Button text={`${lang.cansel}`} clickHandler={() => setIsAddTag(false)} />
+            <Button text={lang.save} clickHandler={saveTagHandler} />
+            <Button text={lang.cansel} clickHandler={() => setIsAddTag(false)} />
           </div>
         </Popover>
       )}
@@ -265,7 +268,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
         className='w-full text-center text-gray-400  hover:text-gray-600 border-t mt-2 p-2 hover:cursor-pointer hover:transition-all duration-200'
         onClick={editTagHandler}
       >
-        {`${lang.addTag}`}
+        {lang.addTag}
       </div>
     </Popover>
   )
