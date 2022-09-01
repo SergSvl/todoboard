@@ -8,7 +8,11 @@ const useDraggable = () => {
   const { boards } = useSelector((state) => state.main);
 
   const onDragStart = (event, dragElement, boardId = undefined) => {
-    // console.log('useDraggable onDragStart')
+
+    console.log('Start')
+    console.log("Drag event:", event);
+    console.log("Drag event.target:", event.target);
+    
     event.stopPropagation();
     // event.target.style.position = "absolute";
 

@@ -154,6 +154,7 @@ export const Detailed = ({
     <Popover clickOut={() => setIsCardOpenned(false)}>
       {isEditTitleCard ? (
         <Input
+          classProp='mb-4'
           inputRef={titleCardRef}
           value={cardTitle}
           onChangeHandler={onChangeTitleCardHandler}
@@ -215,6 +216,7 @@ export const Detailed = ({
               {lang.listTitle}:
             </div>
             <Input
+              classProp='mb-4'
               inputRef={titleTaskRef}
               value={newTaskTitle}
               onChangeHandler={onChangeTitleTaskHandler}
@@ -258,6 +260,7 @@ export const Detailed = ({
             <div className='flex items-center'>
               <div className='w-[50%]'>
                 <Input
+                  classProp='mb-4'
                   inputRef={tagTextRef}
                   value={newTagText}
                   onChangeHandler={onChangeTagTextHandler}

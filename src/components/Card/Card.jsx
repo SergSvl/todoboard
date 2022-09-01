@@ -8,6 +8,7 @@ import Detailed from "@/components/Card/Detailed";
 import Tags from "@/components/Card/Tags";
 import lang from "@/locales/ru/common.json";
 import Divider from "@/components/Card/Divider";
+import Draggable from '@/components/Draggable';
 
 export const Card = ({
   card,
@@ -110,63 +111,66 @@ export const Card = ({
         />
       ) : (
         <>
-          <div
-            className='w-[300px] min-h-[80px] p-2 mb-8 flex flex-wrap items-stretch shrink-0 grow-0 items-end relative bg-slate-50 border rounded _ml-2 my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
-            onClick={(e) => clickOutHandler(e)}
-            draggable={isDraggable}
-            onDragStart={(e) => onDragStart(e, card, boardId)}
-            onDragLeave={(e) => onDragLeave(e)}
-            onDragOver={(e) => onDragOver(e)}
-            onDragEnd={(e) => onDragEnd(e)}
-            onDrop={(e) => onDrop(e, card, cards, boardId)}
-          >
-            <div className='flex justify-beetwen grow mb-1'>
-              {isEditTitleOut ? (
-                <Input
-                  inputRef={titleCardRef}
-                  value={newTitle}
-                  onChangeHandler={onChangeTitleHandler}
-                  onBlurHandler={clickOutHandler}
-                />
-              ) : (
-                <div
-                  className='w-full mr-2 text-left pl-2 hover:cursor-pointer whitespace-pre-wrap break-all -border border-red-600 hover:transition-all duration-200 hover:bg-slate-100'
-                  title={lang.editTitle}
-                  onClick={(e) => onEditTitleHandler(e)}
-                >
-                  {card.title}
-                </div>
-              )}
-              {!isEditTitleOut ? (
-                <div
-                  className='h-7 hover:cursor-pointer'
-                  title={lang.removeCard}
-                  onClick={(e) => onDeleteHandler(e)}
-                >
-                  <div className='w-[1rem] font-thin text-3xl text-gray-400 hover:text-gray-500 -mt-3 rotate-45 hover:transition-all duration-200'>
-                    +
+          {/* <Draggable> */}
+            <div
+              className='w-[300px] min-h-[80px] p-2 mb-8 flex flex-wrap items-stretch shrink-0 grow-0 items-end relative bg-slate-50 border rounded my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
+              id='card-to-drag'
+              onClick={(e) => clickOutHandler(e)}
+              // draggable={isDraggable}
+              onDragStart={(e) => onDragStart(e, card, boardId)}
+              onDragLeave={(e) => onDragLeave(e)}
+              onDragOver={(e) => onDragOver(e)}
+              onDragEnd={(e) => onDragEnd(e)}
+              onDrop={(e) => onDrop(e, card, cards, boardId)}
+            >
+              <div className='flex justify-beetwen grow mb-1'>
+                {isEditTitleOut ? (
+                  <Input
+                    inputRef={titleCardRef}
+                    value={newTitle}
+                    onChangeHandler={onChangeTitleHandler}
+                    onBlurHandler={clickOutHandler}
+                  />
+                ) : (
+                  <div
+                    className='w-full mr-2 text-left pl-2 hover:cursor-pointer whitespace-pre-wrap break-all -border border-red-600 hover:transition-all duration-200 hover:bg-slate-100'
+                    title={lang.editTitle}
+                    onClick={(e) => onEditTitleHandler(e)}
+                  >
+                    {card.title}
                   </div>
-                </div>
-              ) : null}
-            </div>
+                )}
+                {!isEditTitleOut ? (
+                  <div
+                    className='h-7 hover:cursor-pointer'
+                    title={lang.removeCard}
+                    onClick={(e) => onDeleteHandler(e)}
+                  >
+                    <div className='w-[1rem] h-[1rem] p-0 -mt-1 -mr-1 leading-[1rem] font-thin text-3xl text-gray-400 -border border-red-400  hover:text-gray-500 -mt-3 rotate-45 hover:transition-all duration-200 select-none'>
+                      +
+                    </div>
+                  </div>
+                ) : null}
+              </div>
 
-            <div className='w-full -border border-red-400 flex justify-end items-end right-0 bottom-0'>
-              <Tags
-                tags={card.tags}
-                openModalHandler={null}
-                deleteTagHandler={deleteTagHandler}
-              />
-              <div
-                className='h-7 hover:cursor-pointer -border'
-                title={lang.openCard}
-                onClick={(e) => openCardHandler(e)}
-              >
-                <div className='w-[1rem] font-thin text-sm text-gray-400 hover:text-gray-500 rotate-90 hover:transition-all duration-200'>
-                  &#9998;
+              <div className='w-full -border border-red-400 flex justify-end items-end right-0 bottom-0'>
+                <Tags
+                  tags={card.tags}
+                  openModalHandler={null}
+                  deleteTagHandler={deleteTagHandler}
+                />
+                <div
+                  className='h-7 hover:cursor-pointer -border select-none'
+                  title={lang.openCard}
+                  onClick={(e) => openCardHandler(e)}
+                >
+                  <div className='w-[1rem] font-thin text-sm text-gray-400 hover:text-gray-500 rotate-90 hover:transition-all duration-200'>
+                    &#9998;
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          {/* </Draggable> */}
 
           {!card.divided && (
             <Divider

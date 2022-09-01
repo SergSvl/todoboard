@@ -141,6 +141,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
             </div>
             <div className='w-full text-left font-semibold mb-2'> {lang.text}:</div>
             <Input
+              classProp='mb-4'
               inputRef={taskListElementRef}
               value={newTaskListText}
               onChangeHandler={onChangeTaskTextHandler}
@@ -165,6 +166,7 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
           >
             {isEditTaskTitle && taskId === task.id ? (
               <Input
+                classProp='mb-4'
                 inputRef={taskTitleRef}
                 value={newTaskTitle}
                 onChangeHandler={onChangeTitleTaskHandler}
