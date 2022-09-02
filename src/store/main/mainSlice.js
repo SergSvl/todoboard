@@ -32,6 +32,28 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
 
+    setPhontomBoard(state, action) {
+      if (!state.isPhontomGroupCreated) {
+        const { order } = action.payload;
+        console.log("setPhontomBoard:", { order });
+        const newBoard = {
+          id: 'group#phontom',
+          order,
+          title: order,
+          cards: [],
+        }
+        const boards = [...state.boards, newBoard];
+        state.boards = boards;
+        state.isPhontomGroupCreated = true;
+      }
+    },
+
+    removePhontomBoard(state, action) {
+      const newBoards = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
+      state.boards = newBoards;
+      state.isPhontomGroupCreated = false;
+    },
+
     setTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
       const updatedBoards = state.boards.map((board) => {
@@ -319,6 +341,8 @@ export const {
   setTitleBoard,
   setTitleCard,
   addCard,
+  setPhontomBoard,
+  removePhontomBoard,
   setSortedCards,
   setDescriptionCard,
   addTask,
