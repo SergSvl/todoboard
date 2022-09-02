@@ -20,7 +20,14 @@ export const homeSlice = createSlice({
     },
 
     setBoard(state, action) {
-      const boards = [...state.boards, action.payload];
+      const { groupTitle } = action.payload;
+      const newBoard = {
+        id: `group#${Date.now()}`,
+        order: `${state.boards.length+1}`,
+        title: groupTitle,
+        cards: [],
+      }
+      const boards = [...state.boards, newBoard];
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },

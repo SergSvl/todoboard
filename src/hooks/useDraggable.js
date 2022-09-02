@@ -84,7 +84,7 @@ const useDraggable = () => {
         ? "group"
         : "card";
 
-      console.log("IF dragElementType === 'card' && dropElementType !== 'group' && (parentBoardId !== boardId ("+boardId+") || dropElement === 'divider')):", dragElementType === "card" && dropElementType !== "group" && (parentBoardId !== boardId || dropElement === "divider"));
+      // console.log("IF dragElementType === 'card' && dropElementType !== 'group' && (parentBoardId !== boardId ("+boardId+") || dropElement === 'divider')):", dragElementType === "card" && dropElementType !== "group" && (parentBoardId !== boardId || dropElement === "divider"));
 
       if (
         dragElementId === dropElement.id ||

@@ -17,13 +17,6 @@ export const Main = () => {
   const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
   const [groupTitle, setGroupTitle] = useState('');
   
-  const newBoard = {
-    id: '',
-    order: '',
-    title: '',
-    cards: [],
-  }
-
   console.log("boards", boards);
 
   useEffect(() => {
@@ -49,10 +42,7 @@ export const Main = () => {
   const onChangeGroupTitle = (e) => {
     if (e.code === 'Enter' || e.type === 'click') {
       setIsAddTitleOpenned(false);
-      newBoard.id = `group#${Date.now()}`;
-      newBoard.order = `${boards.length+1}`;
-      newBoard.title = groupTitle;
-      dispatch(setBoard(newBoard));
+      dispatch(setBoard({ groupTitle }));
     }
   }
 
@@ -108,7 +98,7 @@ export const Main = () => {
         />
       )}
 
-      <div className='container flex flex-wrap mx-auto mt-24 -border'>
+      <div className='container flex flex-wrap mx-auto mt-24 -border transition-all duration-500'>
         {boards && (
           boards.map((board) => {
             return <Board 
