@@ -134,10 +134,10 @@ export const Board = ({ board, deleteBoard }) => {
               className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
               onClick={(e) => addCardHandler(e, board.id)}
             >
-              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 hover:transition-all duration-200'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 hover:transition-all duration-200 select-none'>
                 +
               </div>
-              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
+              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200 select-none'>
                 {lang.addCard}
               </div>
             </div>
@@ -150,7 +150,7 @@ export const Board = ({ board, deleteBoard }) => {
               onDragLeave={(e) => onDragLeave(e)}
               onDragOver={(e) => onDragOver(e)}
             >
-              <div className='w-[2rem] pb-1 -border border-red-400 text-2xl hover:font-bold hover:transition-all duration-200'>
+              <div className='w-[2rem] pb-1 -border border-red-400 text-2xl hover:font-bold hover:transition-all duration-200 select-none'>
                 |
               </div>
             </div>
@@ -159,10 +159,10 @@ export const Board = ({ board, deleteBoard }) => {
               className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
               onClick={(e) => onDeleteHandler(e, board.id)}
             >
-              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 rotate-45 hover:transition-all duration-200'>
+              <div className='w-[1rem] -border border-red-400 font-thin text-xl px-0 rotate-45 hover:transition-all duration-200 select-none'>
                 +
               </div>
-              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200'>
+              <div className='text-base -border border-red-400 pl-1 hover:transition-all duration-200 select-none'>
                 {lang.removeGroup}
               </div>
             </div>

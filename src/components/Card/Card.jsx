@@ -143,7 +143,7 @@ export const Card = ({
                   title={lang.removeCard}
                   onClick={(e) => onDeleteHandler(e)}
                 >
-                  <div className='w-[1rem] font-thin text-3xl text-gray-400 hover:text-gray-500 -mt-3 rotate-45 hover:transition-all duration-200'>
+                  <div className='w-[1rem] font-thin text-3xl text-gray-400 hover:text-gray-500 -mt-3 rotate-45 hover:transition-all duration-200 select-none'>
                     +
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export const Card = ({
                 deleteTagHandler={deleteTagHandler}
               />
               <div
-                className='h-7 hover:cursor-pointer -border'
+                className='h-7 hover:cursor-pointer -border select-none'
                 title={lang.openCard}
                 onClick={(e) => openCardHandler(e)}
               >

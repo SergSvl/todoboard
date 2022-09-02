@@ -41,7 +41,7 @@ export const Button = ({ text, clickHandler, type = 'base' }) => {
           className={resultClasses}
           onClick={clickHandler}
         >
-          <div className='flex justify-between items-center '>
+          <div className='flex justify-between items-center select-none'>
             <div className={signClasses} title={type === 'tagDel' ? `${lang.removeTag}` : ''}>+</div><div className='text-base pl-1 break-normal'>{text}</div>
           </div>
         </button>
