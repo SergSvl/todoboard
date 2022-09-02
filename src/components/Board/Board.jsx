@@ -48,7 +48,7 @@ export const Board = ({ board, deleteBoard }) => {
     setNewTitle(title);
   };
 
-  const addCardHandler = (event, boardId) => {
+  const addCardHandler = (e, boardId) => {
     dispatch(addCard({ id: boardId }));
   };
 
@@ -80,7 +80,7 @@ export const Board = ({ board, deleteBoard }) => {
 
       {board && (
         <div
-          className='w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center border rounded'
+          className='w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center border rounded transition-all duration-1000'
           id={board.id}
           onClick={(e) => clickOutHandler(e)}
           draggable={isDraggable}
@@ -100,7 +100,7 @@ export const Board = ({ board, deleteBoard }) => {
                 />
             ) : (
               <div
-                className='w-full h-8 pt-1 pl-2 font-semibold hover:cursor-pointer -text-slate-700'
+                className='w-full h-8 pt-1 pl-2 font-semibold hover:cursor-pointer'
                 title={lang.editTitle}
                 onClick={(e) => onEditTitleHandler(e)}
               >

@@ -7,7 +7,6 @@ export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDi
       let counter = 1;
       let prevCardOrder = 0;
 
-      // if (cardDivided && cardOrder > 1) {
       if (cardDivided) {
         prevCardOrder = cardOrder - 1;
       }
@@ -31,7 +30,7 @@ export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDi
 }
 
 export const updateCard = (boards, boardId, cardId, { cardTitle, description, task, taskId, listId, checked, newTaskListText, taskTitle, removeTaskId, taskListElemText, removeListId }) => {
-  console.log("updateCard:", { cardTitle, description, task, taskId, listId, checked, newTaskListText, removeTaskId, taskListElemText, removeListId });
+  // console.log("updateCard:", { cardTitle, description, task, taskId, listId, checked, newTaskListText, removeTaskId, taskListElemText, removeListId });
   const updatedBoards = boards.map((board) => {
 
     if (board.id === boardId) {

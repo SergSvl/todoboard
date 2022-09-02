@@ -20,7 +20,14 @@ export const homeSlice = createSlice({
     },
 
     setBoard(state, action) {
-      const boards = [...state.boards, action.payload];
+      const { groupTitle } = action.payload;
+      const newBoard = {
+        id: `group#${Date.now()}`,
+        order: `${state.boards.length+1}`,
+        title: groupTitle,
+        cards: [],
+      }
+      const boards = [...state.boards, newBoard];
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
@@ -98,15 +105,6 @@ export const homeSlice = createSlice({
         taskTitle,
         taskListElemText
       } = action.payload;
-      console.log("updateTask:", {
-        boardId,
-        cardId,
-        taskId,
-        listId,
-        checked,
-        taskTitle,
-        taskListElemText
-      });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         taskId,
         listId,
@@ -157,7 +155,6 @@ export const homeSlice = createSlice({
 
     addDivider(state, action) {
       const { boardId, cardOrder } = action.payload;
-
       let divider = {
         id: `divider#${Date.now()}`,
         order: "",
@@ -174,7 +171,6 @@ export const homeSlice = createSlice({
                 card.divided = true;
               }
             }
-
             card.order = index++;
             return card;
           });
