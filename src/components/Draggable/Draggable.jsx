@@ -5,41 +5,46 @@ import { setPhontomBoard, removePhontomBoard } from "@/store/main/mainSlice";
 export const Draggable = ({
   order,
   boardId,
-  elementParkingRef,
-  boardElementRef,
+  // elementParkingRef,
+  // boardElementRef,
   children
 }) => {
   const dispatch = useDispatch();
-  const { isPhontomGroupCreated } = useSelector((state) => state.main);
+  // const { isPhontomGroupCreated } = useSelector((state) => state.main);
   const [mouseDownElement, setMouseDownElement] = useState(null);
   const [mouseDownElementId, setMouseDownElementId] = useState(null);
   const [mouseDownElementOrder, setMouseDownElementOrder] = useState(null);
 
 
-  const [parking, setParking] = useState(null);
-  const [parkingNode, setParkingNode] = useState(null);
-  const [mouseMoveElement, setMouseMoveElement] = useState(null);
-  const [mouseUpElement, setMouseUpElement] = useState(null);
+  // const [parking, setParking] = useState(null);
+  // const [parkingNode, setParkingNode] = useState(null);
+  // const [mouseMoveElement, setMouseMoveElement] = useState(null);
+  // const [mouseUpElement, setMouseUpElement] = useState(null);
   const [globalCoords, setGlobalCoords] = useState({ x: 0, y: 0 });
   const [localCoords, setLocalCoords] = useState({ x: 0, y: 0 });
   const [windowCoords, setWindowCoords] = useState({ x: 0, y: 0 });
-  const [isStartPositioning, setIsStartPositioning] = useState(false);
-  const [isPhontomCreated, setIsPhontomCreated] = useState(false);
+  const [isUp, setIsUp] = useState(false);
+  const [isDown, setIsDown] = useState(false);
+  const [isLeft, setIsLeft] = useState(false);
+  const [isRight, setIsRight] = useState(false);
+  // const [isMoving, setIsMoving] = useState(false);
+
+  // const [isPhontomCreated, setIsPhontomCreated] = useState(false);
   const wait = "300";
 
   useEffect(() => {
-    console.log("====-----!!!!");
-    // console.log('Mouse Events:', { mouseDownElement, mouseUpElement, mouseMoveElement });
-    // console.log('globalCoords:', globalCoords);
-    // console.log('localCoords:', localCoords);
-    // console.log('windowCoords:', windowCoords);
-    console.log("parking:", parking ? "<parking>" : null);
-    console.log(
-      "mouseDownElement:",
-      mouseDownElement ? "<mouseDownElement>" : null
-    );
-    console.log("parkingNode:", parkingNode ? "<parkingNode>" : null);
-    console.log("!!!-----====");
+    // console.log("====-----!!!!");
+    // // console.log('Mouse Events:', { mouseDownElement, mouseUpElement, mouseMoveElement });
+    // // console.log('globalCoords:', globalCoords);
+    // // console.log('localCoords:', localCoords);
+    // // console.log('windowCoords:', windowCoords);
+    // console.log("parking:", parking ? "<parking>" : null);
+    // console.log(
+    //   "mouseDownElement:",
+    //   mouseDownElement ? "<mouseDownElement>" : null
+    // );
+    // console.log("parkingNode:", parkingNode ? "<parkingNode>" : null);
+    // console.log("!!!-----====");
   }, [
     mouseDownElement,
     // mouseUpElement,
@@ -47,80 +52,45 @@ export const Draggable = ({
     // globalCoords,
     // localCoords,
     // windowCoords,
-    parking,
-    parkingNode
+    // parking,
+    // parkingNode
   ]);
 
-  useEffect(() => {
-    const parking = document.getElementById("parking");
-    setParking(parking);
-  }, []);
-
-  useEffect(() => {
-    if (isStartPositioning) {
-      console.log("elementParkingRef:", elementParkingRef);
-      console.log("boardElementRef:", boardElementRef);
-      console.log("Начинаем позиционирование элементов");
-    }
-  }, [isStartPositioning]);
-
   const setMoveStyles = () => {
-    if (!isPhontomCreated) {
-      mouseDownElement.style.transitionProperty = "none";
-      mouseDownElement.style.boxShadow = "2px 2px 10px gray";
-      // elementParkingRef.current = mouseDownElement;
+    if (mouseDownElement.style.position !== 'absolute') {
+      // mouseDownElement.style.transitionProperty = "none";
+      // mouseDownElement.style.boxShadow = "2px 2px 10px gray";
+      // mouseDownElement.style.zIndex = "20";
+      // mouseDownElement.style.border = "1px solid red";
+      // mouseDownElement.style.position = 'absolute';
+      // const width = mouseDownElement.clientWidth + "px";
+      // mouseDownElement.style.width = width;
     }
-
-    // const phantomElement = createElement(
-    //   '<div',
-    //   {
-    //     className: 'bg-yelloq-200 w-[300px] h-[200px]'
-    //   },
-    // );
-    // duplicate.style.backgroundColor = 'yellow';
-
-    // const phantomElement = () => <div className='bg-yellow w-[300px] h-[200px] z-40 board-red-3'>phantomElement</div>;
-    // const phantomElement = () => {return { __html: <div className='bg-yelloq-200 w-[300px] h-[200px]'>phantomElement</div> }}
-
-    // const parkingPhontom = document.getElementById('parkingPhontom');
-
-    // const phantomElement = document.createElement('div');
-    // phantomElement.style.backgroundColor = 'yellow';
-    // phantomElement.style.border = '2px solid red';
-    // phantomElement.style.width = mouseDownElement.style.width;
-    // phantomElement.style.height = mouseDownElement.style.height;
-
-    // parkingPhontom.after(phantomElement);
-
-    // boardElementRef.current = phantomElement;
-    // boardElementRef.current.dangerouslySetInnerHTML = phantomElement();
-
-    // boardElementRef.current = phantomElement;
-    // mouseDownElement.style.position = 'absolute';
   };
 
   const restoreStyles = () => {
+    const phantomElement = document.getElementById('phantomElement');
+    // const phantomX = phantomElement.offsetLeft;
+    // const phantomY = phantomElement.offsetTop;
+    
+    mouseDownElement.style.left = windowCoords.x + 'px';
+    mouseDownElement.style.top = windowCoords.y + 'px';
     mouseDownElement.style.transitionProperty = "left, top, box-shadow";
     mouseDownElement.style.transitionTimingFunction = "linear";
     mouseDownElement.style.transitionDuration = wait + "ms";
     mouseDownElement.style.boxShadow = "0px 0px 0px gray";
-    // mouseDownElement.style.left = windowCoords.x;
-    // mouseDownElement.style.top = windowCoords.y;
-    mouseDownElement.style.position = "";
-    mouseDownElement.style.left = "0px";
-    mouseDownElement.style.top = "0px";
+    
     setTimeout(() => {
-      // mouseDownElement.style.left = '0px';
-      // mouseDownElement.style.top = '0px';
+      phantomElement.remove();
+      mouseDownElement.style.transitionProperty = "none";
+      mouseDownElement.style.left = "0px";
+      mouseDownElement.style.top = "0px";
+      mouseDownElement.style.position = "";
+    }, wait);
+    
+    setTimeout(() => {
       mouseDownElement.style.zIndex = "";
-    }, wait * 5);
-  };
-
-  const calculateDistance = (e) => {
-    if (Math.abs(e.screenY - globalCoords.y) > 250) {
-      console.log("Элемент переместился далеко");
-      setIsStartPositioning(true);
-    }
+    }, wait * 3);
   };
 
   const mouseDown = (e) => {
@@ -130,9 +100,11 @@ export const Draggable = ({
     if (e.target.id !== "board-to-drag" && e.target.id !== "card-to-drag") {
       return;
     }
-    setMouseDownElement(e.target);
-    setMouseDownElementId(e.target.dataset.id);
-    setMouseDownElementOrder(e.target.dataset.order);
+
+    const element = e.target;
+    setMouseDownElement(element);
+    setMouseDownElementId(element.dataset.id);
+    setMouseDownElementOrder(element.dataset.order);
     // e.clientX - координата указателя мыши по оси X относительно окна
     // e.clientY - координата указателя мыши по оси Y относительно окна
     // e.target.offsetLeft - координата смещения окна по X относительно родительского окна
@@ -146,9 +118,28 @@ export const Draggable = ({
       y: e.clientY
     });
     setWindowCoords({
-      x: e.target.offsetLeft,
-      y: e.target.offsetTop
+      x: element.offsetLeft,
+      y: element.offsetTop
     });
+
+    const phantomElement = element.cloneNode(false);
+    const width = element.clientWidth + "px";
+    element.style.width = width;
+    element.style.transitionProperty = "none";
+    element.style.boxShadow = "2px 2px 10px gray";
+    element.style.zIndex = "20";
+    element.style.position = 'absolute';
+
+    phantomElement.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+    phantomElement.style.zIndex = "0";
+    phantomElement.style.left = e.offsetLeft + 'px';
+    phantomElement.style.top = e.offsetTop + 'px';
+    phantomElement.setAttribute ('id', 'phantomElement');
+    const parent = element.parentNode;
+    parent.append(phantomElement);
+    // setTimeout(() => {
+    //   phantomElement.style.position = 'relative';
+    // }, 0);
   };
 
   const createPhontomBoard = () => {
@@ -158,7 +149,7 @@ export const Draggable = ({
     // console.log('parkingNode:', parkingNode);
     // console.log('mouseDownElement:', mouseDownElement);
 
-    if (mouseDownElement !== null && parkingNode === null) {
+    if (mouseDownElement !== null) {
       // 1. Сделать копию исходного эл-та и его фонтом (без дочерних эл-тов)
       // const mouseDownElementCopy = mouseDownElement.cloneNode(true);
       // const mouseDownElementPhantom = mouseDownElement.cloneNode(false);
@@ -196,14 +187,14 @@ export const Draggable = ({
       // const newParkingNode = parking.firstChild;
       mouseDownElement.style.zIndex = "20";
       mouseDownElement.style.border = "1px solid red";
-      setParkingNode(mouseDownElement);
+      // setParkingNode(mouseDownElement);
 
 
       // setMoveStyles();
 
       // console.log("<><><><><><> newParkingNode:", newParkingNode);
       // dispatch(setPhontomBoard({ boardId, order }));
-      setIsPhontomCreated(true);
+      // setIsPhontomCreated(true);
       // return newParkingNode;
       return mouseDownElement;
     }
@@ -214,35 +205,18 @@ export const Draggable = ({
 
   const mouseMove = (e) => {
     if (mouseDownElement !== null) {
-      const newParkingNode = createPhontomBoard();
-
-      // const pointX = e.clientX;
-      // const pointY = e.clientY;
-
-      // const elemFromPoint = document.elementFromPoint(pointX, pointY);
+      setMoveStyles();
 
       console.log("------------------");
-      // console.log('mouseDownElement:', mouseDownElement ? '<mouseDownElement>' : null);
-      // console.log(
-      //   "~~~~ newParkingNode:",
-      //   newParkingNode ? "<newParkingNode>" : null
-      // );
-      // console.log("parkingNode:", parkingNode ? "<parkingNode>" : null);
-
-      // console.log("pointX, pointY:", { pointX, pointY });
       // console.log("elemFromPoint:", elemFromPoint);
       // console.log("elemFromPoint:", elemFromPoint.dataset.id);
 
       // console.log("mouseDownElement:", mouseDownElement);
       console.log("mouseDownElementId:", mouseDownElementId);
+      console.log("isUp, isDown, isLeft, isRight:", { isUp, isDown, isLeft, isRight });
       // console.log("mouseDownElementOrder:", mouseDownElementOrder);
 
       // const mouseOverElement = e.target;
-      const mouseDownElementParent = mouseDownElement.parentNode;
-      const nextElement = mouseDownElementParent.nextElementSibling;
-      const mouseOverElementAfter = nextElement.firstChild;
-      console.log("mouseOverElementAfter id:", mouseOverElementAfter.dataset.id);
-
       // const mouseOverElementId = e.target.dataset.id;
       // const mouseOverElementOrder = e.target.dataset.order;
 
@@ -251,33 +225,112 @@ export const Draggable = ({
       // console.log("e.target.dataset.type:", e.target.dataset.type);
       console.log("------------------");
 
-      // if (mouseDownElementId !== mouseOverElementId) {
-        swap(mouseDownElement, mouseOverElementAfter);
-      // }
+      // let nodeUp;
+      // let nodeDown;
+      // let nodeLeft;
+      // let nodeRight;
 
-      if (parkingNode !== null) {
-        moveElement(e, newParkingNode || parkingNode);
-      }
-      // if (newParkingNode !== null || parkingNode !== null ) {
-      //   moveElement(e, newParkingNode || parkingNode);
-      // }
+      if (isUp) {
+        // swapUp();
+      } else if (isDown) {
+        // swapDown();
+      } else if (isLeft) {
+        // nodeRight = mouseDownElement;
+        // nodeLeft = findNodeDown(nodeRight);
+        // swap(nodeLeft, nodeRight);
+      } else if (isRight) {
+        // nodeLeft = mouseDownElement;
+        // nodeRight = findNodeDown(nodeUp);
+        // swap(nodeLeft, nodeRight);
+      }      
+
+      moveElement(e);
     }
   };
 
-  const swap = (node1, node2) => {
-    const parent = node1.parentNode;
-    const afterNode1 = node1.nextElementSibling;
-    node2.replaceWith(node1);
-    parent.insertBefore(node2, afterNode1);
+  const findNodeUp = (nodeDown) => {
+    const parent = nodeDown.parentNode;
+    const prevElement = parent.previousElementSibling;
+    if (prevElement !== null) {
+      const child = prevElement.firstChild;
+      // console.log("findNodeUp id:", child.dataset.id);
+      // if (child.dataset.id) 
+      return child;
+    }
+    return null;
   }
 
-  const moveElement = (e, newParkingNode) => {
-    // console.log("--newParkingNode--:", newParkingNode);
+  const findNodeDown = (nodeUp) => {
+    const parent = nodeUp.parentNode;
+    const nextElement = parent.nextElementSibling;
+    if (nextElement !== null) {
+      const child = nextElement.firstChild;
+      // console.log("findNodeDown id:", child.dataset.id);
+      // if (child.dataset.id) return child;
+      return child;
+    }
+    return null;
+  }
 
+  // let isPhantomAdded = false;
+
+  const swapUp = () => {
+    const nodeDown = mouseDownElement;
+    const nodeUp = findNodeUp(nodeDown);
+
+    if (nodeUp !== null && nodeDown !== null) {
+      const parentUp = nodeUp.parentNode;
+      const parentDown = nodeDown.parentNode;
+      // const top = nodeUp.top;
+      const nodeDownCopy = nodeDown;
+      // const nodeDownPhantom = nodeDown.cloneNode(false);
+      // nodeDownPhantom.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+      // nodeDownPhantom.style.left = localCoords.x;
+      // nodeDownPhantom.style.top = localCoords.y;
+      // parentDown.append(nodeDownPhantom);
+      // isPhantomAdded = true;
+
+      // nodeDown.replaceWith(nodeUp);
+
+
+      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+      // nodeDownCopy.style.top = 50 + 'px';
+
+      // parent.append(nodeDownPhantom);
+      // parent.append(nodeUp);
+
+      // console.log('nodeDown:', nodeDown);
+      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+    }
+  }
+
+  const swapDown = () => {
+    const nodeUp = mouseDownElement;
+    const nodeDown = findNodeDown(nodeUp);
+
+    if (nodeUp !== null && nodeDown !== null) {
+      const parent = nodeUp.parentNode;
+      // const top = nodeUp.top;
+      const nodeDownCopy = nodeDown;
+      const nodeDownPhantom = nodeUp.cloneNode(false);
+      nodeDownPhantom.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+      nodeDown.replaceWith(nodeUp);
+
+
+      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+      // nodeDownCopy.style.top = 50 + 'px';
+
+      parent.append(nodeDownPhantom);
+      parent.append(nodeUp);
+
+      // console.log('nodeDown:', nodeDown);
+      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+    }
+  }
+
+  const moveElement = (e) => {
     const mouseShiftX = e.screenX - globalCoords.x;
     const mouseShiftY = e.screenY - globalCoords.y;
-
-    // calculateDistance(e);
 
     // console.log('mouseDownElement:', mouseDownElement);
     // console.log('windowCoords:', windowCoords);
@@ -289,31 +342,68 @@ export const Draggable = ({
     // mouseDownElement.style.left = windowCoords.x + mouseShiftX + 'px';
     // mouseDownElement.style.top = windowCoords.y + mouseShiftY + 'px';
 
-    // if (parkingNode !== null) {
-    //   parkingNode.style.left = mouseShiftX + 'px';
-    //   parkingNode.style.top = mouseShiftY + 'px';
-    //   parkingNode.style.zIndex = "20";
-    // } else {
     // newParkingNode.style.position = "absolute";
     // newParkingNode.style.zIndex = "20";
     // newParkingNode.style.border = "1px solid red";
-    // newParkingNode.style.left = windowCoords.x + mouseShiftX + "px";
-    // newParkingNode.style.top = windowCoords.y + mouseShiftY + "px";
-    newParkingNode.style.left = mouseShiftX + "px";
-    newParkingNode.style.top = mouseShiftY + "px";
-    // }
+
+    
+
+    mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
+    mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
+    // mouseDownElement.style.left = mouseShiftX + "px";
+    // mouseDownElement.style.top = mouseShiftY + "px";
+
+    calculateDistance(e);
+  };
+
+  const calculateDistance = (e) => {
+    const step = 50;
+    const distanceY = e.screenY - globalCoords.y;
+    const distanceX = e.screenX - globalCoords.x;
+    // distanceY > 0 - down, < 0 - up
+    // distanceX > 0 - right, < 0 - left
+    
+    console.log("distanceY:", distanceY);
+    console.log("distanceX:", distanceX);
+
+    if (Math.abs(distanceY) > step) {
+      console.log("Элемент над другим элементом по Y");
+      if (distanceY >= 0) {
+        setIsDown(true)
+        setIsUp(false);
+      } else {
+        setIsDown(false);
+        setIsUp(true);
+      }
+    } else {
+      setIsUp(false);
+      setIsDown(false);
+    }
+    
+    if (Math.abs(distanceX) > step) {
+      console.log("Элемент над другим элементом по X");
+      if (distanceX >= 0) {
+        setIsRight(true)
+        setIsLeft(false);
+      } else {
+        setIsRight(false);
+        setIsLeft(true);
+      }
+    } else {
+      setIsRight(false);
+      setIsLeft(false);
+    }
   };
 
   const mouseUp = (e) => {
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
       restoreStyles();
-      setIsStartPositioning(false);
 
       // dispatch(removePhontomBoard());
-      setIsPhontomCreated(false);
+      // setIsPhontomCreated(false);
       // parkingNode.remove();
-      setParkingNode(null);
+      // setParkingNode(null);
     }
   };
 

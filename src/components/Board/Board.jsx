@@ -92,7 +92,6 @@ export const Board = ({ board, deleteBoard }) => {
             data-id={board.id}
             data-type={'board'}
             id='board-to-drag'
-            boardId={board.id}
             onClick={(e) => clickOutHandler(e)}
             // draggable={isDraggable}
             onDragStart={(e) => onDragStart(e, board)}

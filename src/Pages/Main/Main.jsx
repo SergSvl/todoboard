@@ -102,7 +102,7 @@ export const Main = () => {
           })
         )}
       </div>
-      <div id='parking' className='container mx-auto'></div>
+      {/* <div id='parking' className='container mx-auto'></div> */}
     </>
   );
 };
