@@ -80,10 +80,19 @@ export const Board = ({ board, deleteBoard }) => {
       )}
 
       {board && (
-        <Draggable>
+        <Draggable 
+          order={board.order}
+          boardId={board.id}
+          // elementParkingRef={elementParkingRef}
+          // boardElementRef={boardElementRef}
+        >
           <div
             className='w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center -border hover:cursor-move transition-all duration-1000'
+            data-order={board.order}
+            data-id={board.id}
+            data-type={'board'}
             id='board-to-drag'
+            boardId={board.id}
             onClick={(e) => clickOutHandler(e)}
             // draggable={isDraggable}
             onDragStart={(e) => onDragStart(e, board)}
@@ -102,6 +111,8 @@ export const Board = ({ board, deleteBoard }) => {
                   />
               ) : (
                 <div
+                  data-id={board.id}
+                  data-type={'board'}
                   className='h-8 pt-1 pl-2 font-semibold hover:cursor-pointer hover:transition-all duration-200 -text-slate-700 -border border-red-600'
                   title={lang.editTitle}
                   onClick={(e) => onEditTitleHandler(e)}
@@ -113,6 +124,8 @@ export const Board = ({ board, deleteBoard }) => {
 
             <div
               ref={scrollRef}
+              data-id={board.id}
+              data-type={'board'}
               className='flex overflow-hidden -border border-red-600 hover:cursor-default'
             >
               {board.cards.length > 0
@@ -131,7 +144,7 @@ export const Board = ({ board, deleteBoard }) => {
                 : null}
             </div>
 
-            <div className='w-full h-8 -border border-red-400 absolute bottom-0 flex justify-between hover:cursor-default'>
+            <div data-id={board.id} data-type={'board'} className='w-full h-8 -border border-red-400 absolute bottom-0 flex justify-between hover:cursor-default'>
               <div
                 className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'
                 onClick={(e) => addCardHandler(e, board.id)}

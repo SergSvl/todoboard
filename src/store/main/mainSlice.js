@@ -1,5 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { setLSData } from "@/utils/helpers/local-storage-helpers";
+import { sortElements } from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from "@/utils/helpers/card-board-helpers";
 import lang from "@/locales/ru/common.json";
@@ -32,10 +33,27 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
 
+    removeBoard(state, action) {
+      const { boardId } = action.payload;
+      console.log("removeBoard:", { boardId });
+      const filteredBoard = state.boards.filter((board) => board.id !== boardId ? true : false);
+      let counter = 1;
+      const orderedBoards = filteredBoard.map((board) => {
+        board.order = ''+counter++;
+        return board;
+      });
+      state.boards = orderedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, orderedBoards);
+    },
+
     setPhontomBoard(state, action) {
       if (!state.isPhontomGroupCreated) {
-        const { order } = action.payload;
-        console.log("setPhontomBoard:", { order });
+        const { boardId, order } = action.payload;
+        console.log("setPhontomBoard:", { boardId, order });
+
+        const filteredBoard = state.boards.filter((board) => board.id !== boardId ? true : false);
+        state.boards = filteredBoard;
+        
         const newBoard = {
           id: 'group#phontom',
           order,
@@ -43,7 +61,10 @@ export const homeSlice = createSlice({
           cards: [],
         }
         const boards = [...state.boards, newBoard];
-        state.boards = boards;
+
+        const sortedBoards = boards.sort(sortElements);
+
+        state.boards = sortedBoards;
         state.isPhontomGroupCreated = true;
       }
     },
@@ -338,6 +359,7 @@ export const homeSlice = createSlice({
 export const {
   initState,
   setBoard,
+  removeBoard,
   setTitleBoard,
   setTitleCard,
   addCard,
