@@ -12,6 +12,7 @@ export const Draggable = ({
   const dispatch = useDispatch();
   // const { isPhontomGroupCreated } = useSelector((state) => state.main);
   const [mouseDownElement, setMouseDownElement] = useState(null);
+  const [phantomElement, setPhantomElement] = useState(null);
   const [mouseDownElementId, setMouseDownElementId] = useState(null);
   const [mouseDownElementOrder, setMouseDownElementOrder] = useState(null);
 
@@ -68,6 +69,9 @@ export const Draggable = ({
     }
   };
 
+
+
+
   const restoreStyles = () => {
     const phantomElement = document.getElementById('phantomElement');
     // const phantomX = phantomElement.offsetLeft;
@@ -93,8 +97,10 @@ export const Draggable = ({
     }, wait * 3);
   };
 
+
+
+
   const mouseDown = (e) => {
-    // console.log('mouseDown:', e);
     // console.log('e.target.id:', e.target.id);
 
     if (e.target.id !== "board-to-drag" && e.target.id !== "card-to-drag") {
@@ -123,6 +129,7 @@ export const Draggable = ({
     });
 
     const phantomElement = element.cloneNode(false);
+    setPhantomElement(phantomElement);
     const width = element.clientWidth + "px";
     element.style.width = width;
     element.style.transitionProperty = "none";
@@ -130,16 +137,13 @@ export const Draggable = ({
     element.style.zIndex = "20";
     element.style.position = 'absolute';
 
-    phantomElement.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+    phantomElement.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
     phantomElement.style.zIndex = "0";
     phantomElement.style.left = e.offsetLeft + 'px';
     phantomElement.style.top = e.offsetTop + 'px';
     phantomElement.setAttribute ('id', 'phantomElement');
     const parent = element.parentNode;
     parent.append(phantomElement);
-    // setTimeout(() => {
-    //   phantomElement.style.position = 'relative';
-    // }, 0);
   };
 
   const createPhontomBoard = () => {
@@ -203,6 +207,9 @@ export const Draggable = ({
     return null;
   };
 
+
+
+
   const mouseMove = (e) => {
     if (mouseDownElement !== null) {
       setMoveStyles();
@@ -231,10 +238,15 @@ export const Draggable = ({
       // let nodeRight;
 
       if (isUp) {
-        // swapUp();
+        swapUp();
       } else if (isDown) {
-        // swapDown();
-      } else if (isLeft) {
+        swapDown();
+      } else {
+        restorePhantomPosition();
+      }
+      
+      
+      if (isLeft) {
         // nodeRight = mouseDownElement;
         // nodeLeft = findNodeDown(nodeRight);
         // swap(nodeLeft, nodeRight);
@@ -262,9 +274,12 @@ export const Draggable = ({
 
   const findNodeDown = (nodeUp) => {
     const parent = nodeUp.parentNode;
+    console.log("parent:", parent);
     const nextElement = parent.nextElementSibling;
+    console.log("nextElement:", nextElement);
     if (nextElement !== null) {
       const child = nextElement.firstChild;
+      console.log("child:", child);
       // console.log("findNodeDown id:", child.dataset.id);
       // if (child.dataset.id) return child;
       return child;
@@ -274,58 +289,54 @@ export const Draggable = ({
 
   // let isPhantomAdded = false;
 
+  let nodeLeft = 0;
+  let nodeTop = 0;
+
   const swapUp = () => {
-    const nodeDown = mouseDownElement;
+    const nodeDown = phantomElement;
     const nodeUp = findNodeUp(nodeDown);
 
+    // console.log('nodeUp.offsetLeft 1:', nodeUp.offsetLeft);
+    // console.log('nodeUp.offsetTop 1:', nodeUp.offsetTop);
+    
     if (nodeUp !== null && nodeDown !== null) {
-      const parentUp = nodeUp.parentNode;
-      const parentDown = nodeDown.parentNode;
-      // const top = nodeUp.top;
-      const nodeDownCopy = nodeDown;
-      // const nodeDownPhantom = nodeDown.cloneNode(false);
-      // nodeDownPhantom.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
-      // nodeDownPhantom.style.left = localCoords.x;
-      // nodeDownPhantom.style.top = localCoords.y;
-      // parentDown.append(nodeDownPhantom);
-      // isPhantomAdded = true;
+      setIsUp(false);
+      nodeLeft = nodeUp.offsetLeft;
+      nodeTop = nodeUp.offsetTop;
+      
+      const parent = nodeDown.parentNode;
+      const nodeDownCopy = nodeUp;
+      nodeUp.replaceWith(nodeDown);
+      parent.append(nodeDownCopy);
 
-      // nodeDown.replaceWith(nodeUp);
-
-
-      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
-      // nodeDownCopy.style.top = 50 + 'px';
-
-      // parent.append(nodeDownPhantom);
-      // parent.append(nodeUp);
-
-      // console.log('nodeDown:', nodeDown);
-      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+      // setWindowCoords({
+      //   x: nodeLeft,
+      //   y: nodeTop
+      // });
     }
   }
 
   const swapDown = () => {
-    const nodeUp = mouseDownElement;
+    const nodeUp = phantomElement;
     const nodeDown = findNodeDown(nodeUp);
-
+    
     if (nodeUp !== null && nodeDown !== null) {
+      setWindowCoords({
+        x: nodeDown.offsetLeft,
+        y: nodeDown.offsetTop
+      });
+  
+      setIsDown(false);
+
       const parent = nodeUp.parentNode;
-      // const top = nodeUp.top;
       const nodeDownCopy = nodeDown;
-      const nodeDownPhantom = nodeUp.cloneNode(false);
-      nodeDownPhantom.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
       nodeDown.replaceWith(nodeUp);
-
-
-      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
-      // nodeDownCopy.style.top = 50 + 'px';
-
-      parent.append(nodeDownPhantom);
-      parent.append(nodeUp);
-
-      // console.log('nodeDown:', nodeDown);
-      console.log('nodeDownCopy top:', nodeDownCopy.style.top);
+      parent.append(nodeDownCopy);
     }
+  }
+
+  const restorePhantomPosition = () => {
+
   }
 
   const moveElement = (e) => {
@@ -369,13 +380,16 @@ export const Draggable = ({
     if (Math.abs(distanceY) > step) {
       console.log("Элемент над другим элементом по Y");
       if (distanceY >= 0) {
+        console.log("Элемент идет ВНИЗ");
         setIsDown(true)
         setIsUp(false);
       } else {
+        console.log("Элемент идет ВВЕРХ");
         setIsDown(false);
         setIsUp(true);
       }
     } else {
+      console.log("Элемент на своем месте");
       setIsUp(false);
       setIsDown(false);
     }
@@ -401,9 +415,6 @@ export const Draggable = ({
       restoreStyles();
 
       // dispatch(removePhontomBoard());
-      // setIsPhontomCreated(false);
-      // parkingNode.remove();
-      // setParkingNode(null);
     }
   };
 
