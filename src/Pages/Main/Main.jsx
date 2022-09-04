@@ -17,8 +17,6 @@ export const Main = () => {
   const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
   const [groupTitle, setGroupTitle] = useState('');
   
-  // console.log("boards", boards);
-
   useEffect(() => {
     if (groupTitle) {
       titleGroupRef.current.focus();
@@ -53,7 +51,6 @@ export const Main = () => {
   useEffect(() => {
     const initialization = () => {
       const boards = getLSData(LOCAL_STORAGE_KEYS.boards);
-      // console.log("initialization boards:", boards);
 
       if (typeof boards === "object" && boards !== null) {
         dispatch(initState([ ...boards ]));
