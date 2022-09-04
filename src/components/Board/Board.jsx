@@ -87,7 +87,7 @@ export const Board = ({ board, deleteBoard }) => {
           // boardElementRef={boardElementRef}
         >
           <div
-            className='w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center -border hover:cursor-move transition-all duration-1000'
+            className={`--BOARD #${board.order} w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center -border hover:cursor-move transition-all duration-1000`}
             data-order={board.order}
             data-id={board.id}
             data-type={'board'}

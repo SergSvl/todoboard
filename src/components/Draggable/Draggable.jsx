@@ -74,11 +74,18 @@ export const Draggable = ({
 
   const restoreStyles = () => {
     const phantomElement = document.getElementById('phantomElement');
-    // const phantomX = phantomElement.offsetLeft;
-    // const phantomY = phantomElement.offsetTop;
+    const phantomX = phantomElement.offsetLeft;
+    const phantomY = phantomElement.offsetTop;
+
+    setWindowCoords({
+      x: phantomX,
+      y: phantomY
+    });
     
-    mouseDownElement.style.left = windowCoords.x + 'px';
-    mouseDownElement.style.top = windowCoords.y + 'px';
+    mouseDownElement.style.left = phantomX + 'px';
+    mouseDownElement.style.top = phantomY + 'px';
+    // mouseDownElement.style.left = windowCoords.x + 'px';
+    // mouseDownElement.style.top = windowCoords.y + 'px';
     mouseDownElement.style.transitionProperty = "left, top, box-shadow";
     mouseDownElement.style.transitionTimingFunction = "linear";
     mouseDownElement.style.transitionDuration = wait + "ms";
@@ -208,20 +215,19 @@ export const Draggable = ({
   };
 
 
-
+  let isSwapUpStart = false;
 
   const mouseMove = (e) => {
     if (mouseDownElement !== null) {
-      setMoveStyles();
+      // setMoveStyles();
 
-      console.log("------------------");
+      // console.log("------------------");
       // console.log("elemFromPoint:", elemFromPoint);
       // console.log("elemFromPoint:", elemFromPoint.dataset.id);
 
       // console.log("mouseDownElement:", mouseDownElement);
-      console.log("mouseDownElementId:", mouseDownElementId);
-      console.log("isUp, isDown, isLeft, isRight:", { isUp, isDown, isLeft, isRight });
-      // console.log("mouseDownElementOrder:", mouseDownElementOrder);
+      // console.log("mouseDownElementId:", mouseDownElementId);
+      // console.log("isUp, isDown, isLeft, isRight:", { isUp, isDown, isLeft, isRight });
 
       // const mouseOverElement = e.target;
       // const mouseOverElementId = e.target.dataset.id;
@@ -230,7 +236,7 @@ export const Draggable = ({
       // console.log("e.target.dataset.order:", mouseOverElementOrder);
       // console.log("e.target.dataset.id:", mouseOverElementId);
       // console.log("e.target.dataset.type:", e.target.dataset.type);
-      console.log("------------------");
+      // console.log("------------------");
 
       // let nodeUp;
       // let nodeDown;
@@ -238,7 +244,7 @@ export const Draggable = ({
       // let nodeRight;
 
       if (isUp) {
-        swapUp();
+        if (!isSwapUpStart) swapUp(e);
       } else if (isDown) {
         swapDown();
       } else {
@@ -263,8 +269,14 @@ export const Draggable = ({
   const findNodeUp = (nodeDown) => {
     const parent = nodeDown.parentNode;
     const prevElement = parent.previousElementSibling;
+    
+    // console.log('findNodeUp nodeDown:', nodeDown);
+    // console.log('findNodeUp parent:', parent);
+    // console.log('findNodeUp prevElement:', prevElement);
+
     if (prevElement !== null) {
-      const child = prevElement.firstChild;
+      const child = prevElement.firstElementChild;
+      // console.log('findNodeUp child:', child);
       // console.log("findNodeUp id:", child.dataset.id);
       // if (child.dataset.id) 
       return child;
@@ -274,12 +286,14 @@ export const Draggable = ({
 
   const findNodeDown = (nodeUp) => {
     const parent = nodeUp.parentNode;
-    console.log("parent:", parent);
     const nextElement = parent.nextElementSibling;
-    console.log("nextElement:", nextElement);
+
+    // console.log("parent:", parent);
+    // console.log("nextElement:", nextElement);
+
     if (nextElement !== null) {
-      const child = nextElement.firstChild;
-      console.log("child:", child);
+      const child = nextElement.firstElementChild;
+      // console.log("child:", child);
       // console.log("findNodeDown id:", child.dataset.id);
       // if (child.dataset.id) return child;
       return child;
@@ -287,32 +301,84 @@ export const Draggable = ({
     return null;
   }
 
-  // let isPhantomAdded = false;
-
   let nodeLeft = 0;
   let nodeTop = 0;
 
-  const swapUp = () => {
+  const swapUp = (e) => {
+    isSwapUpStart = true;
     const nodeDown = phantomElement;
     const nodeUp = findNodeUp(nodeDown);
+    
+    // родителя получить по ID
+    // const parentUp = document.getElementById(nodeUp.dataset.id);
 
     // console.log('nodeUp.offsetLeft 1:', nodeUp.offsetLeft);
     // console.log('nodeUp.offsetTop 1:', nodeUp.offsetTop);
     
     if (nodeUp !== null && nodeDown !== null) {
-      setIsUp(false);
+      setGlobalCoords({
+        x: e.screenX,
+        y: e.screenY
+      });
+      // setIsUp(false);
+
       nodeLeft = nodeUp.offsetLeft;
       nodeTop = nodeUp.offsetTop;
-      
-      const parent = nodeDown.parentNode;
-      const nodeDownCopy = nodeUp;
-      nodeUp.replaceWith(nodeDown);
-      parent.append(nodeDownCopy);
 
-      // setWindowCoords({
-      //   x: nodeLeft,
-      //   y: nodeTop
-      // });
+      setWindowCoords({
+        x: nodeLeft,
+        y: nodeTop
+      });
+
+      const nodeDownCopy = nodeDown.cloneNode(true);
+      const parentDown = nodeDown.parentNode;
+      const parentUp = nodeUp.parentNode;
+      
+      console.log('swapUp nodeDown:', nodeDown);
+      console.log('nodeUp parentDown 1:', parentDown);
+      console.log('swapUp nodeUp:', nodeUp);
+      console.log('nodeUp parentUp !!!!:', parentUp);
+      
+      // console.log('nodeUp.nodeLeft 1:', nodeLeft);
+      // console.log('nodeUp.nodeTop 1:', nodeTop);
+      const nodeUpCopy = nodeUp;
+      
+      parentUp.style.border = '1px solid red';
+      
+      // parentUp.replaceChildren(nodeDown);
+      // parentUp.firstChild.remove();
+      // nodeUp.appendChild(nodeDown);
+
+      // переносим фантом к верхней доске
+      parentUp.appendChild(nodeDownCopy);
+      
+      // // перенести верхнюю доску к нижней
+      parentDown.appendChild(nodeUpCopy);
+
+      // !! Нельзя ничего удалять из узлов, пока идет перетаскивание, иначе оно останавливается, вместо удаления нужно манипулировать св-вами а удалять в конце, после отпускания мыши
+      
+      // теперь нужно скрыть фантом в нижней доске, но не удалять пока!
+      parentDown.lastElementChild.style.display = 'none';
+      // parentDown.lastElementChild.style.border = '4px solid white';
+
+      // удалить фантом
+      // parentDown.ferstElementChild.remove();
+
+      // показать доску
+      parentDown.lastElementChild.style.display = 'block';
+
+      // // переносим нижний эл-т в верхний родитель
+      // parentUp.appendChild(mouseDownElement);
+
+      // mouseDownElement
+
+      // parentUp.appendChild(nodeDown);
+      parentUp.firstElementChild.style.border = '3px solid yellow';
+      console.log('====================');
+      // return;
+
+      
+      
     }
   }
 
@@ -321,17 +387,19 @@ export const Draggable = ({
     const nodeDown = findNodeDown(nodeUp);
     
     if (nodeUp !== null && nodeDown !== null) {
-      setWindowCoords({
-        x: nodeDown.offsetLeft,
-        y: nodeDown.offsetTop
-      });
-  
       setIsDown(false);
-
-      const parent = nodeUp.parentNode;
+      
+      const parentUp = nodeUp.parentNode;
+      const parentDown = nodeDown.parentNode;
       const nodeDownCopy = nodeDown;
-      nodeDown.replaceWith(nodeUp);
-      parent.append(nodeDownCopy);
+      // nodeDown.replaceWith(nodeUp);
+      parentDown.replaceChildren(parentUp);
+      parentUp.append(nodeDownCopy);
+
+      // setWindowCoords({
+      //   x: nodeDown.offsetLeft,
+      //   y: nodeDown.offsetTop
+      // });
     }
   }
 
@@ -345,19 +413,8 @@ export const Draggable = ({
 
     // console.log('mouseDownElement:', mouseDownElement);
     // console.log('windowCoords:', windowCoords);
-    // console.log('Mouse Shift:', { mouseShiftX, mouseShiftY });
-
     // console.log('windowCoords X + mouseShiftX:', windowCoords.x + mouseShiftX);
     // console.log('windowCoords Y + mouseShiftY:', windowCoords.y + mouseShiftY);
-
-    // mouseDownElement.style.left = windowCoords.x + mouseShiftX + 'px';
-    // mouseDownElement.style.top = windowCoords.y + mouseShiftY + 'px';
-
-    // newParkingNode.style.position = "absolute";
-    // newParkingNode.style.zIndex = "20";
-    // newParkingNode.style.border = "1px solid red";
-
-    
 
     mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
     mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
@@ -385,6 +442,7 @@ export const Draggable = ({
         setIsUp(false);
       } else {
         console.log("Элемент идет ВВЕРХ");
+        isSwapUpStart = false;
         setIsDown(false);
         setIsUp(true);
       }
@@ -439,7 +497,8 @@ export const Draggable = ({
 
   return (
     <div
-      className='w-full -[flex-basis:content] -border border-red-400'
+      id={boardId}
+      className={`!!PARENT #${order} w-full -[flex-basis:content] -border border-red-400 my-4 min-h-[20px] text-white`}
       onMouseDown={mouseDown}
       onMouseUp={mouseUp}
       onMouseMove={mouseMove}
