@@ -3,5 +3,5 @@ html {
   background: url('assets/img/bg.jpg') no-repeat;
   background-size: cover;
   background-color: black;
-  height: 100vh;
+  min-height: 100vh;
 }
