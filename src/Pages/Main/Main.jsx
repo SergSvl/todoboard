@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { initState, setBoard } from "@/store/main/mainSlice";
+import { initState, setBoard, removeBoard } from "@/store/main/mainSlice";
 import Board from '@/components/Board';
 import Confirm from '@/components/Confirm';
 import CreateCardsGroup from '@/components/CreateCardsGroup';
@@ -47,14 +47,7 @@ export const Main = () => {
   }
 
   const deleteBoard = (boardId) => {
-    const filteredBoard = boards.filter((board) => board.id !== boardId ? true : false);
-    let counter = 1;
-    const orderedBoard = filteredBoard.map((board) => {
-      const newBoard = {...board};
-      newBoard.order = ''+counter++;
-      return newBoard;
-    });
-    dispatch(initState([...orderedBoard]));
+    dispatch(removeBoard({ boardId }));
   }
 
   useEffect(() => {

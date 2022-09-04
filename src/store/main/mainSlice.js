@@ -32,6 +32,18 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
     },
 
+    removeBoard(state, action) {
+      const { boardId } = action.payload;
+      const filteredBoard = state.boards.filter((board) => board.id !== boardId ? true : false);
+      let counter = 1;
+      const orderedBoards = filteredBoard.map((board) => {
+        board.order = ''+counter++;
+        return board;
+      });
+      state.boards = orderedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, orderedBoards);
+    },
+
     setTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
       const updatedBoards = state.boards.map((board) => {
@@ -281,7 +293,7 @@ export const homeSlice = createSlice({
 
     removeTag(state, action) {
       const { boardId, cardId, tagId } = action.payload;
-      console.log("removeTag:", { boardId, cardId, tagId });
+      // console.log("removeTag:", { boardId, cardId, tagId });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const newCards = board.cards.map((card) => {
@@ -305,6 +317,7 @@ export const homeSlice = createSlice({
 export const {
   initState,
   setBoard,
+  removeBoard,
   setTitleBoard,
   setTitleCard,
   addCard,
