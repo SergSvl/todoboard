@@ -20,7 +20,6 @@ export const Detailed = ({
   card,
   boardId,
   setIsCardOpenned,
-  setIsDraggableBoard
 }) => {
   const dispatch = useDispatch();
   const titleCardRef = useRef();
@@ -42,9 +41,6 @@ export const Detailed = ({
   useEffect(() => {
     setCardTitle(card.title);
     setNewDescription(card.description);
-    setIsDraggableBoard(false);
-
-    return () => setIsDraggableBoard(true);
   }, []);
 
   useEffect(() => {

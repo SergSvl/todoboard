@@ -114,6 +114,33 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
   return updatedBoards;
 }
 
+export const addPhantom = (boards, order) => {
+  const newBoard = {
+    id: 'group#phontom',
+    order: parseInt(order) + 1,
+    // height,
+    // height: `h-[${height}px]`,
+    title: order,
+    cards: [],
+  }
+  const newBoards = [...boards, newBoard];
+  return newBoards.sort(sortElements);
+}
+
+export const swapElements = ({ elements, boardId, boardOrder, phantomId, phantomOrder }) => {
+  const changedElements = elements.map((current) => {
+    if (current.id === phantomId) {
+      return { ...current, order: boardOrder };
+    }
+    if (current.id === boardId) {
+      return { ...current, order: phantomOrder };
+    }
+    return current;
+  });
+
+  return changedElements.sort(sortElements);
+}
+
 export const sortElements = (a, b) => {
   if (a.order > b.order) {
     return 1;

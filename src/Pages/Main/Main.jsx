@@ -17,7 +17,10 @@ export const Main = () => {
   const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
   const [groupTitle, setGroupTitle] = useState('');
   
-  console.log("boards", boards);
+  
+  useEffect(() => {
+    console.log("boards", boards);
+  }, [boards]);
 
   useEffect(() => {
     if (groupTitle) {
@@ -53,7 +56,7 @@ export const Main = () => {
   useEffect(() => {
     const initialization = () => {
       const boards = getLSData(LOCAL_STORAGE_KEYS.boards);
-      console.log("initialization boards:", boards);
+      // console.log("initialization boards:", boards);
 
       if (typeof boards === "object" && boards !== null) {
         dispatch(initState([ ...boards ]));
@@ -91,7 +94,7 @@ export const Main = () => {
         />
       )}
 
-      <div className='container flex flex-wrap mx-auto mt-24 -border transition-all duration-500'>
+      <div id='boardsParent' className='container flex flex-wrap mx-auto mt-24 -border transition-all duration-500'>
         {boards && (
           boards.map((board) => {
             return <Board 
@@ -102,7 +105,6 @@ export const Main = () => {
           })
         )}
       </div>
-      {/* <div id='parking' className='container mx-auto'></div> */}
     </>
   );
 };

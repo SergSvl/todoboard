@@ -14,7 +14,8 @@ export const Board = ({ board, deleteBoard }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [newTitle, setNewTitle] = useState("");
-  const [isDraggable, setIsDraggable] = useState(true);
+  // const [phantomBoardHeight, setPhantomBoardHeight] = useState(null);
+  // const [phantomBoardStyles, setPhantomBoardStyles] = useState('');
   const { boards } = useSelector((state) => state.main);
   const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } = useDraggable();
   const dispatch = useDispatch();
@@ -55,11 +56,10 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     if (isEditTitle) {
-      setIsDraggable(false);
       titleInputRef.current.focus();
     }
   }, [isEditTitle]);
-
+  
   useEffect(() => {
     setNewTitle(board.title);
   }, []);
@@ -79,21 +79,19 @@ export const Board = ({ board, deleteBoard }) => {
         />
       )}
 
-      {board && (
-        <Draggable 
+      {board && board.id !== 'group#phontom' ? (
+        <Draggable
+          boards={boards}
           order={board.order}
           boardId={board.id}
-          // elementParkingRef={elementParkingRef}
-          // boardElementRef={boardElementRef}
         >
           <div
-            className={`--BOARD #${board.order} w-full h-fit text-slate-700 bg-gray-200 mb-6 min-h-[12rem] relative text-center -border hover:cursor-move transition-all duration-1000`}
-            data-order={board.order}
-            data-id={board.id}
-            data-type={'board'}
             id='board-to-drag'
+            data-id={board.id}
+            data-order={board.order}
+            data-type={'board'}
+            className='w-full h-fit text-slate-700 bg-gray-200 my-4 min-h-[12rem] relative text-center -border-2 border-red-300 hover:cursor-move transition-all duration-1000'
             onClick={(e) => clickOutHandler(e)}
-            // draggable={isDraggable}
             onDragStart={(e) => onDragStart(e, board)}
             onDragLeave={(e) => onDragLeave(e)}
             onDragOver={(e) => onDragOver(e)}
@@ -136,7 +134,6 @@ export const Board = ({ board, deleteBoard }) => {
                         cards={board.cards}
                         boardId={board.id}
                         deleteCard={deleteCard}
-                        setIsDraggableBoard={setIsDraggable}
                       />
                     );
                   })
@@ -183,6 +180,13 @@ export const Board = ({ board, deleteBoard }) => {
             </div>
           </div>
         </Draggable>
+      ) : (
+        <div
+          className='w-full bg-gray-200/30 my-4 min-h-[12rem] relative transition-all duration-1000'
+          data-id={board.id}
+          data-order={board.order}
+          data-type={'board'}
+        ></div>
       )}
     </>
   );

@@ -15,7 +15,6 @@ export const Card = ({
   cards,
   boardId,
   deleteCard,
-  setIsDraggableBoard
 }) => {
   const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
     useDraggable();
@@ -50,7 +49,6 @@ export const Card = ({
   const onDeleteHandler = (e) => {
     e.stopPropagation();
     setIsDraggable(false);
-    setIsDraggableBoard(false);
     setIsConfirmOpenned(true);
   };
 
@@ -59,7 +57,6 @@ export const Card = ({
     setIsConfirmOpenned(false);
     setIsEditTitleOut(false);
     setIsDraggable(true);
-    setIsDraggableBoard(true);
 
     if (newTitle !== card.title) {
       dispatch(setTitleCard({ cardId: card.id, boardId, cardTitle: newTitle }));
@@ -69,7 +66,6 @@ export const Card = ({
   const openCardHandler = (e) => {
     e.stopPropagation();
     setIsDraggable(false);
-    setIsDraggableBoard(false);
     setIsCardOpenned(true);
   };
 
@@ -77,7 +73,6 @@ export const Card = ({
     deleteCard(boardId, cardProps);
     setIsConfirmOpenned(false);
     setIsDraggable(true);
-    setIsDraggableBoard(true);
   };
 
   const deleteTagHandler = (tagId) => {
@@ -99,7 +94,6 @@ export const Card = ({
           card={card}
           boardId={boardId}
           setIsCardOpenned={setIsCardOpenned}
-          setIsDraggableBoard={setIsDraggableBoard}
         />
       )}
 
