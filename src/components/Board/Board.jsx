@@ -90,7 +90,7 @@ export const Board = ({ board, deleteBoard }) => {
             data-id={board.id}
             data-order={board.order}
             data-type={'board'}
-            className='w-full h-fit text-slate-700 bg-gray-200 my-4 min-h-[12rem] relative text-center -border-2 border-red-300 hover:cursor-move transition-all duration-1000'
+            className='w-full h-fit text-slate-700 bg-gray-200 my-4 min-h-[12rem] relative text-center -border-2 border-red-300 hover:cursor-move transition-all duration-700'
             onClick={(e) => clickOutHandler(e)}
             onDragStart={(e) => onDragStart(e, board)}
             onDragLeave={(e) => onDragLeave(e)}
@@ -182,7 +182,7 @@ export const Board = ({ board, deleteBoard }) => {
         </Draggable>
       ) : (
         <div
-          className='w-full bg-gray-200/30 my-4 min-h-[12rem] relative transition-all duration-1000'
+          className='w-full bg-gray-200/30 my-4 min-h-[12rem] relative transition-all duration-700'
           data-id={board.id}
           data-order={board.order}
           data-type={'board'}

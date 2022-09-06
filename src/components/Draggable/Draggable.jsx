@@ -11,7 +11,8 @@ export const Draggable = ({
   const dispatch = useDispatch();
   const [mouseDownElement, setMouseDownElement] = useState(null);
   const [phantomData, setPhantomData] = useState(null);
-  const [findElementId, setFindElementId] = useState('');
+  const [findElement, setFindElement] = useState(null);
+  const [marginTopElement, setMarginTopElement] = useState(16);
   const [mouseDownElementId, setMouseDownElementId] = useState(null);
   const [mouseDownElementOrder, setMouseDownElementOrder] = useState(null);
   const [globalCoords, setGlobalCoords] = useState({ x: 0, y: 0 });
@@ -32,16 +33,28 @@ export const Draggable = ({
     const margins = parseInt(getComputedStyle(element).marginTop) + parseInt(getComputedStyle(element).marginBottom);
     // console.log("margins:", margins);
     // console.log("boardsParent:", elements);
+    // console.log("mouseDownElement:", mouseDownElement);
+
     const elementBorders = [];
     const phantomId = 'phantom';
+    const defaultBoardHeight = 192;
+    const resultBoardHeight = mouseDownElement !== null ? mouseDownElement.clientHeight : defaultBoardHeight;
 
     for (let i = 0; i < elements.length; i++) {
-      const height = elements[i].offsetHeight - margins;
+      const height = elements[i].offsetHeight === 0 ? resultBoardHeight : elements[i].offsetHeight - margins;
+      const resultTop = elements[i].id === '' ? elements[i].offsetTop - marginTopElement : elements[i].offsetTop;
+      const resultBottom = elements[i].id === '' ? elements[i].offsetTop + height + marginTopElement : elements[i].offsetTop + height;
+
+      // console.log("last elementBorders:", elementBorders[elementBorders.length-1]);
+      // console.log("last height:", height);
+      // console.log("last elements["+i+"].id:", elements[i].id);
+
       elementBorders.push({
         id: elements[i].id ? elements[i].id : phantomId,
         order: elements[i].dataset.order,
-        top: elements[i].offsetTop,
-        bottom: elements[i].offsetTop + height
+        top: resultTop,
+        left: elements[i].offsetLeft,
+        bottom: resultBottom
       });
       
       if (!elements[i].id) {
@@ -57,7 +70,7 @@ export const Draggable = ({
   }, []); 
 
   useEffect(() => {
-    console.log("domElements:", domElements);
+    // console.log("domElements:", domElements);
   }, [domElements]); 
 
 
@@ -81,14 +94,21 @@ export const Draggable = ({
     element.style.boxShadow = "2px 2px 12px rgba(85, 85, 85, 1)";
     element.style.zIndex = "20";
     
-    if (!element.style.top && !element.style.left) {
-      element.style.position = 'absolute';
-    } else {
-      element.style.left = element.offsetLeft + 'px';
-      element.style.top = element.offsetTop + 'px';
-      element.style.marginTop = "0px";
-      element.style.position = 'absolute';
-    }
+    // if (!element.style.top && !element.style.left) {
+    //   element.style.left = element.offsetLeft + 'px';
+    //   element.style.top = element.offsetTop + 'px';
+    //   element.style.marginTop = "0px";
+    //   element.style.position = 'absolute';
+    // } else {
+    //   element.style.left = element.offsetLeft + 'px';
+    //   element.style.top = element.offsetTop + 'px';
+    //   element.style.marginTop = "0px";
+    //   element.style.position = 'absolute';
+    // }
+    element.style.left = element.offsetLeft + 'px';
+    element.style.top = element.offsetTop + 'px';
+    element.style.marginTop = "0px";
+    element.style.position = 'absolute';
     
     // const top = parseInt(getComputedStyle(element).top);
     // const left = parseInt(getComputedStyle(element).left);
@@ -105,26 +125,34 @@ export const Draggable = ({
   const setMouseUpStyles = () => {
     // console.log("globalCoords.x, globalCoords.y:", { x: globalCoords.x, y: globalCoords.y });
     // console.log("offsetLeft.x, offsetLeft.y:", { x: windowCoords.x, y: windowCoords.y });
+    // console.log("findElement:", findElement);
+    
+    if (findElement !== null) {
+      mouseDownElement.style.left = findElement.left + 'px';
+      mouseDownElement.style.top = findElement.top + marginTopElement + 'px'; // margin-top compensation
+    } else {
+      mouseDownElement.style.left = windowCoords.x + 'px';
+      mouseDownElement.style.top = windowCoords.y + 'px';
+    }
 
-    mouseDownElement.style.marginTop = "0px";
-    mouseDownElement.style.left = windowCoords.x + 'px';
-    mouseDownElement.style.top = windowCoords.y + 'px';
     mouseDownElement.style.transitionProperty = "left, top, box-shadow";
-    mouseDownElement.style.transitionTimingFunction = "linear";
+    // mouseDownElement.style.marginTop = "0px";
     mouseDownElement.style.transitionDuration = effectWait + "ms";
-    mouseDownElement.style.boxShadow = "0px 0px 0px gray";
+    mouseDownElement.style.transitionTimingFunction = "linear";
     
     setTimeout(() => {
+      mouseDownElement.style.boxShadow = "0px 0px 0px gray";
       mouseDownElement.style.transitionProperty = "none";
       mouseDownElement.style.left = "0px";
       mouseDownElement.style.top = "0px";
       mouseDownElement.style.marginTop = "16px";
+      mouseDownElement.style.width = '';
       mouseDownElement.style.position = "";
     }, effectWait);
     
     setTimeout(() => {
       mouseDownElement.style.zIndex = "";
-    }, effectWait * 3);
+    }, effectWait * 2);
   };
 
   //-------------------------------------------------------
@@ -133,7 +161,7 @@ export const Draggable = ({
     if (e.target.id !== "board-to-drag" && e.target.id !== "card-to-drag") {
       return;
     }
-
+    
     const element = e.target;
     setMouseDownElement(element);
     setMouseDownElementId(element.dataset.id);
@@ -150,6 +178,12 @@ export const Draggable = ({
       x: element.offsetLeft,
       y: element.offsetTop
     });
+
+    // console.log("element {}:", { id: element.dataset.id, order: element.dataset.order });
+
+    if (element) {
+      setPhantomData({ id: element.dataset.id, order: element.dataset.order });
+    }
 
     setMouseDownStyles(e, element);
 
@@ -204,25 +238,24 @@ export const Draggable = ({
 
     mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
     mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
-    // mouseDownElement.style.left = mouseShiftX + "px";
-    // mouseDownElement.style.top = mouseShiftY + "px";
 
-    const findElement = domElements.filter((elem) => elem.top <= e.clientY && e.clientY <= elem.bottom ? true : false)[0];
+    const findEnterElement = domElements.filter((elem) => elem.top <= e.clientY && e.clientY <= elem.bottom ? true : false)[0];
     
-    // console.log('findElement:', findElement !== undefined && findElement);
+    // console.log('findEnterElement:', findEnterElement !== undefined && findEnterElement);
     
-    if (findElement !== undefined && findElement.id !== phantomData.id) {
-      setFindElementId(findElement.id);
+    if (findEnterElement !== undefined && findEnterElement.id !== phantomData.id) {
+      setFindElement(findEnterElement);
       
-      // console.log('findElement:', findElement);
+      // console.log('findEnterElement:', findEnterElement);
       // console.log("domElements:", domElements);
       // console.log('e.clientY:', e.clientY);
 
       const order = mouseShiftY > 0 
-        ? findElement.order
-        : findElement.order > 1
-          ? findElement.order - 1
-          : findElement.order;
+        ? findEnterElement.order
+        : findEnterElement.order > 1
+          ? findEnterElement.order
+          // ? findEnterElement.order - 1
+          : findEnterElement.order;
       dispatch(swapBoards({ destinationOrder: order }));
     }
   };
@@ -232,10 +265,18 @@ export const Draggable = ({
       setMouseDownElement(null);
       setMouseUpStyles();
       // console.log("phantomData:", phantomData);
-      // console.log("findElementId:", findElementId);
+      // console.log("mouseDownElement:", mouseDownElement);
+      // console.log("mouseDownElement:", { ...mouseDownElement });
+      // console.log("findElement:", findElement);
       setTimeout(() => {
-        dispatch(removePhontomBoard({ boardId: mouseDownElement.dataset.id, boardOrder: parseInt(mouseDownElement.dataset.order), phantomId: findElementId, phantomOrder: phantomData.order }));
+        dispatch(removePhontomBoard({ 
+          boardId: mouseDownElement.dataset.id,
+          boardOrder: phantomData.order <= 1 ? 1 : parseInt(mouseDownElement.dataset.order),
+          phantomId: findElement !== null ? findElement.id : '',
+          phantomOrder: phantomData.order <= 1 ? 1 : phantomData.order - 1
+        }));
       }, effectWait);
+      setFindElement(null);
     }
   };
 

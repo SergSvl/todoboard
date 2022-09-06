@@ -122,7 +122,7 @@ export const addPhantom = (boards, order) => {
     // order: isDestElemIsFirst ? parseInt(order) : parseInt(order) + 1,
     // height,
     // height: `h-[${height}px]`,
-    title: order,
+    title: '',
     cards: [],
   }
   let newBoards = [];
