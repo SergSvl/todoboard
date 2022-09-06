@@ -1,6 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { setLSData } from "@/utils/helpers/local-storage-helpers";
-import { addPhantom, swapElements } from "@/utils/helpers/card-board-helpers";
+import { addPhantom, swapElements, reorder } from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from "@/utils/helpers/card-board-helpers";
 import lang from "@/locales/ru/common.json";
@@ -49,11 +49,11 @@ export const homeSlice = createSlice({
     },
 
     swapBoards(state, action) {
-      const { boardId1, boardId2: phantom, order } = action.payload;
-      // console.log("swapBoards:", { boardId1, phantom, order });
+      const { destinationOrder } = action.payload;
+      console.log("swapBoards:", { destinationOrder });
       const filteredBoard = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
       state.boards = filteredBoard;
-      const sortedBoards = addPhantom(state.boards, order);
+      const sortedBoards = addPhantom(state.boards, destinationOrder);
       state.boards = sortedBoards;
     },
 
@@ -74,8 +74,9 @@ export const homeSlice = createSlice({
       const newBoards = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
       const swappedBoards = swapElements({ elements: newBoards, boardId, boardOrder, phantomId, phantomOrder });
       // console.log("swappedBoards:", swappedBoards);
-      state.boards = swappedBoards;
-      setLSData(LOCAL_STORAGE_KEYS.boards, swappedBoards);
+      const reorderedBoards = reorder(swappedBoards);
+      state.boards = reorderedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, reorderedBoards);
       state.isPhontomGroupCreated = false;
     },
 

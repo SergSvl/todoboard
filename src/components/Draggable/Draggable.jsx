@@ -21,10 +21,16 @@ export const Draggable = ({
 
   useEffect(() => {
     const elements = document.getElementById('boardsParent').childNodes;
-    const margins = parseInt(getComputedStyle(elements[0].firstElementChild).marginTop) + parseInt(getComputedStyle(elements[0].firstElementChild).marginBottom);
+    let element = '';
+
+    if (elements[0].firstElementChild === null) {
+      element = elements[0];
+    } else {
+      element = elements[0].firstElementChild;
+    }
+
+    const margins = parseInt(getComputedStyle(element).marginTop) + parseInt(getComputedStyle(element).marginBottom);
     // console.log("margins:", margins);
-    // console.log("elements[0]:", elements[0]);
-    // console.log("elements[0].firstElementChild:", elements[0].firstElementChild);
     // console.log("boardsParent:", elements);
     const elementBorders = [];
     const phantomId = 'phantom';
@@ -201,24 +207,23 @@ export const Draggable = ({
     // mouseDownElement.style.left = mouseShiftX + "px";
     // mouseDownElement.style.top = mouseShiftY + "px";
 
-    const findElement = domElements.filter((elem) => elem.top <= e.clientY && e.clientY <= elem.bottom ? true : false);
+    const findElement = domElements.filter((elem) => elem.top <= e.clientY && e.clientY <= elem.bottom ? true : false)[0];
     
-    // console.log('findElement:', findElement);
-    console.log('findElement[0]:', findElement[0] !== undefined && findElement[0]);
-
-    if (findElement[0] !== undefined && findElement[0].id !== phantomData.id) {
-      setFindElementId(findElement[0].id);
-
-      console.log("domElements:", domElements);
-      console.log('e.clientY:', e.clientY);
+    // console.log('findElement:', findElement !== undefined && findElement);
+    
+    if (findElement !== undefined && findElement.id !== phantomData.id) {
+      setFindElementId(findElement.id);
+      
+      // console.log('findElement:', findElement);
+      // console.log("domElements:", domElements);
+      // console.log('e.clientY:', e.clientY);
 
       const order = mouseShiftY > 0 
-        ? findElement[0].order
-        : findElement[0].order > 1
-          ? findElement[0].order - 1
-          : findElement[0].order;
-      dispatch(swapBoards({ boardId1: findElement[0].id, boardId2: phantomData.id, order }));
-
+        ? findElement.order
+        : findElement.order > 1
+          ? findElement.order - 1
+          : findElement.order;
+      dispatch(swapBoards({ destinationOrder: order }));
     }
   };
 
@@ -226,10 +231,10 @@ export const Draggable = ({
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
       setMouseUpStyles();
-      console.log("phantomData:", phantomData);
-      console.log("findElementId:", findElementId);
+      // console.log("phantomData:", phantomData);
+      // console.log("findElementId:", findElementId);
       setTimeout(() => {
-        dispatch(removePhontomBoard({ boardId: mouseDownElement.dataset.id, boardOrder: parseInt(mouseDownElement.dataset.order), phantomId: findElementId, phantomOrder: phantomData.order - 1 }));
+        dispatch(removePhontomBoard({ boardId: mouseDownElement.dataset.id, boardOrder: parseInt(mouseDownElement.dataset.order), phantomId: findElementId, phantomOrder: phantomData.order }));
       }, effectWait);
     }
   };

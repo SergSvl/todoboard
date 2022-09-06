@@ -115,30 +115,50 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
 }
 
 export const addPhantom = (boards, order) => {
+  const isDestElemIsFirst = parseInt(order) === 1 && boards.length > 1;
   const newBoard = {
     id: 'group#phontom',
     order: parseInt(order) + 1,
+    // order: isDestElemIsFirst ? parseInt(order) : parseInt(order) + 1,
     // height,
     // height: `h-[${height}px]`,
     title: order,
     cards: [],
   }
-  const newBoards = [...boards, newBoard];
-  return newBoards.sort(sortElements);
+  let newBoards = [];
+
+  if (isDestElemIsFirst) {
+    const newBoards = [newBoard, ...boards];
+    return reorder(newBoards);
+  } else {
+    newBoards = [...boards, newBoard];
+    return newBoards.sort(sortElements);
+  }
 }
 
 export const swapElements = ({ elements, boardId, boardOrder, phantomId, phantomOrder }) => {
-  const changedElements = elements.map((current) => {
-    if (current.id === phantomId) {
-      return { ...current, order: boardOrder };
-    }
-    if (current.id === boardId) {
-      return { ...current, order: phantomOrder };
-    }
-    return current;
-  });
+  if (!isNaN(boardOrder) && !isNaN(phantomOrder)) {
+    const changedElements = elements.map((current) => {
+      if (current.id === phantomId) {
+        return { ...current, order: boardOrder };
+      }
+      if (current.id === boardId) {
+        return { ...current, order: phantomOrder };
+      }
+      return current;
+    });
+    return changedElements.sort(sortElements);
+  }
+  return elements;
+}
 
-  return changedElements.sort(sortElements);
+export const reorder = (elements) => {
+  let index = 1;
+  const reorderedElements = elements.map((element) => {
+    element.order = index++;
+    return element;
+  });
+  return reorderedElements;
 }
 
 export const sortElements = (a, b) => {

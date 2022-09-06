@@ -110,7 +110,7 @@ export const Board = ({ board, deleteBoard }) => {
                 <div
                   data-id={board.id}
                   data-type={'board'}
-                  className='h-8 pt-1 pl-2 font-semibold hover:cursor-pointer hover:transition-all duration-200 -text-slate-700 -border border-red-600'
+                  className='h-8 pt-1 pl-2 font-semibold hover:cursor-pointer hover:transition-all duration-200 -text-slate-700 -border border-red-600 select-none'
                   title={lang.editTitle}
                   onClick={(e) => onEditTitleHandler(e)}
                 >
