@@ -22,10 +22,12 @@ export const homeSlice = createSlice({
 
     setBoard(state, action) {
       const { groupTitle } = action.payload;
+      const boardId = `group#${Date.now()}`;
+      const order = parseInt(state.boards.length+1);
       const newBoard = {
-        id: `group#${Date.now()}`,
-        order: parseInt(state.boards.length+1),
-        title: groupTitle,
+        id: boardId,
+        order: order,
+        title: `${groupTitle} - ${boardId} (order: ${order})`,
         cards: [],
       }
       const boards = [...state.boards, newBoard];

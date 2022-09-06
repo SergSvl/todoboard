@@ -10,7 +10,7 @@ export const Draggable = ({
 }) => {
   const dispatch = useDispatch();
   const [mouseDownElement, setMouseDownElement] = useState(null);
-  const [phantomData, setPhantomData] = useState({});
+  const [phantomData, setPhantomData] = useState(null);
   const [findElementId, setFindElementId] = useState('');
   const [mouseDownElementId, setMouseDownElementId] = useState(null);
   const [mouseDownElementOrder, setMouseDownElementOrder] = useState(null);
@@ -68,14 +68,28 @@ export const Draggable = ({
   // const parent = element.parentNode;
   // parent.append(phantomElement);
 
-  const setMouseDownStyles = (element) => {
+  const setMouseDownStyles = (e, element) => {
     const width = element.clientWidth + "px";
     element.style.width = width;
     element.style.transitionProperty = "none";
     element.style.boxShadow = "2px 2px 12px rgba(85, 85, 85, 1)";
-    element.style.marginBottom = "0px";
     element.style.zIndex = "20";
-    element.style.position = 'absolute';
+    
+    if (!element.style.top && !element.style.left) {
+      element.style.position = 'absolute';
+    } else {
+      element.style.left = element.offsetLeft + 'px';
+      element.style.top = element.offsetTop + 'px';
+      element.style.marginTop = "0px";
+      element.style.position = 'absolute';
+    }
+    
+    // const top = parseInt(getComputedStyle(element).top);
+    // const left = parseInt(getComputedStyle(element).left);
+    // console.log("top, left:", { top, left });
+    // console.log("element.style:", { top: element.style.top, left: element.style.left });
+    // console.log("globalCoords.x, globalCoords.y:", { x: e.screenX, y: e.screenY });
+    // console.log("element.offsetLeft, element.offsetTop:", { x: element.offsetLeft, y: element.offsetTop });
   }
 
   const setMouseMoveStyles = () => {
@@ -83,9 +97,10 @@ export const Draggable = ({
   }
 
   const setMouseUpStyles = () => {
-    // mouseDownElement.style.left = phantomX + 'px';
-    // mouseDownElement.style.top = phantomY + 'px';
+    // console.log("globalCoords.x, globalCoords.y:", { x: globalCoords.x, y: globalCoords.y });
+    // console.log("offsetLeft.x, offsetLeft.y:", { x: windowCoords.x, y: windowCoords.y });
 
+    mouseDownElement.style.marginTop = "0px";
     mouseDownElement.style.left = windowCoords.x + 'px';
     mouseDownElement.style.top = windowCoords.y + 'px';
     mouseDownElement.style.transitionProperty = "left, top, box-shadow";
@@ -97,6 +112,7 @@ export const Draggable = ({
       mouseDownElement.style.transitionProperty = "none";
       mouseDownElement.style.left = "0px";
       mouseDownElement.style.top = "0px";
+      mouseDownElement.style.marginTop = "16px";
       mouseDownElement.style.position = "";
     }, effectWait);
     
@@ -129,7 +145,7 @@ export const Draggable = ({
       y: element.offsetTop
     });
 
-    setMouseDownStyles(element);
+    setMouseDownStyles(e, element);
 
     const boardId = element.dataset.id;
     const order = element.dataset.order;
@@ -210,7 +226,11 @@ export const Draggable = ({
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
       setMouseUpStyles();
-      dispatch(removePhontomBoard({ boardId: mouseDownElement.dataset.id, boardOrder: parseInt(mouseDownElement.dataset.order), phantomId: findElementId, phantomOrder: phantomData.order - 1 }));
+      console.log("phantomData:", phantomData);
+      console.log("findElementId:", findElementId);
+      setTimeout(() => {
+        dispatch(removePhontomBoard({ boardId: mouseDownElement.dataset.id, boardOrder: parseInt(mouseDownElement.dataset.order), phantomId: findElementId, phantomOrder: phantomData.order - 1 }));
+      }, effectWait);
     }
   };
 
