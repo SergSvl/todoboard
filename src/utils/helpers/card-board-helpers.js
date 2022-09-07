@@ -114,36 +114,31 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
   return updatedBoards;
 }
 
-export const addPhantom = (boards, order) => {
-  const isDestElemIsFirst = parseInt(order) === 1 && boards.length > 1;
+export const addPhantom = (boards, destinationOrder, sourceOrder = null) => {
+  /*
+    Для эл-та с position = absolute фантом может располагаться на любом месте в массиве досок и он всегда будет занимать место поднятого мышкой эл-та,
+    Но для других эл-тов это не работает, т.к. положение фантома имеет значение на порядок его отображения на странице, т.е. с эл-там с position = relative он должен идти следующим номером за тем эл-том, место которого он долэен занять на странице
+  */
   const newBoard = {
     id: 'group#phontom',
-    order: parseInt(order) + 1,
-    // order: isDestElemIsFirst ? parseInt(order) : parseInt(order) + 1,
+    // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
+    order: sourceOrder < destinationOrder ? parseInt(destinationOrder) + 0.5 : parseInt(destinationOrder) - 0.5,
     // height,
     // height: `h-[${height}px]`,
     title: '',
     cards: [],
   }
-  let newBoards = [];
-
-  if (isDestElemIsFirst) {
-    const newBoards = [newBoard, ...boards];
-    return reorder(newBoards);
-  } else {
-    newBoards = [...boards, newBoard];
-    return newBoards.sort(sortElements);
-  }
+  return [...boards, newBoard].sort(sortElements);
 }
 
-export const swapElements = ({ elements, boardId, boardOrder, phantomId, phantomOrder }) => {
-  if (!isNaN(boardOrder) && !isNaN(phantomOrder)) {
+export const swapElements = ({ elements, fromBoardId, fromBoardOrder, toBoardId, toBoardOrder }) => {
+  if (!isNaN(fromBoardOrder) && !isNaN(toBoardOrder)) {
     const changedElements = elements.map((current) => {
-      if (current.id === phantomId) {
-        return { ...current, order: boardOrder };
+      if (current.id === toBoardId) {
+        return { ...current, order: fromBoardOrder };
       }
-      if (current.id === boardId) {
-        return { ...current, order: phantomOrder };
+      if (current.id === fromBoardId) {
+        return { ...current, order: toBoardOrder };
       }
       return current;
     });
@@ -162,9 +157,5 @@ export const reorder = (elements) => {
 }
 
 export const sortElements = (a, b) => {
-  if (a.order > b.order) {
-    return 1;
-  } else {
-    return -1;
-  }
+  return a.order > b.order ? 1 : -1;
 };

@@ -49,11 +49,11 @@ export const homeSlice = createSlice({
     },
 
     swapBoards(state, action) {
-      const { destinationOrder } = action.payload;
-      console.log("swapBoards:", { destinationOrder });
+      const { sourceOrder, destinationOrder } = action.payload;
+      // console.log("swapBoards:", { sourceOrder, destinationOrder });
       const filteredBoard = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
       state.boards = filteredBoard;
-      const sortedBoards = addPhantom(state.boards, destinationOrder);
+      const sortedBoards = addPhantom(state.boards, destinationOrder, sourceOrder);
       state.boards = sortedBoards;
     },
 
@@ -68,11 +68,10 @@ export const homeSlice = createSlice({
     },
 
     removePhontomBoard(state, action) {
-      const { boardId, boardOrder, phantomId, phantomOrder } = action.payload;
-      console.log("removePhontomBoard:", { boardId, boardOrder, phantomId, phantomOrder });
-
+      const { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder } = action.payload;
+      console.log("removePhontomBoard:", { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder });
       const newBoards = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
-      const swappedBoards = swapElements({ elements: newBoards, boardId, boardOrder, phantomId, phantomOrder });
+      const swappedBoards = swapElements({ elements: newBoards, fromBoardId, fromBoardOrder, toBoardId, toBoardOrder });
       // console.log("swappedBoards:", swappedBoards);
       const reorderedBoards = reorder(swappedBoards);
       state.boards = reorderedBoards;
