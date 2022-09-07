@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import {
-  setTitleCard,
-  setDescriptionCard,
+  addTitleCard,
+  addDescriptionCard,
   addTask,
   addTag,
   updateTag,
@@ -16,11 +16,7 @@ import lang from "@/locales/ru/common.json";
 import Tags from "@/components/Card/Tags";
 import { Colors } from "@/components/Card/Tags/Colors";
 
-export const Detailed = ({
-  card,
-  boardId,
-  setIsCardOpenned,
-}) => {
+export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   const dispatch = useDispatch();
   const titleCardRef = useRef();
   const titleTaskRef = useRef();
@@ -61,7 +57,7 @@ export const Detailed = ({
 
   const saveDescriptionHandler = () => {
     setIsEditDescription(false);
-    dispatch(setDescriptionCard({ cardId: card.id, boardId, newDescription }));
+    dispatch(addDescriptionCard({ cardId: card.id, boardId, newDescription }));
   };
 
   const onEditTitleHandler = (e) => {
@@ -78,7 +74,7 @@ export const Detailed = ({
     setIsEditTitleCard(false);
 
     if (cardTitle !== card.title) {
-      dispatch(setTitleCard({ cardId: card.id, boardId, cardTitle }));
+      dispatch(addTitleCard({ cardId: card.id, boardId, cardTitle }));
     }
   };
 

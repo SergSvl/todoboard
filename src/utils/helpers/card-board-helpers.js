@@ -114,21 +114,41 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
   return updatedBoards;
 }
 
-export const addPhantom = (boards, destinationOrder, sourceOrder = null) => {
+export const addPhantom = (type, elements, destinationOrder, sourceOrder = null) => {
   /*
     Для эл-та с position = absolute фантом может располагаться на любом месте в массиве досок и он всегда будет занимать место поднятого мышкой эл-та,
     Но для других эл-тов это не работает, т.к. положение фантома имеет значение на порядок его отображения на странице, т.е. с эл-там с position = relative он должен идти следующим номером за тем эл-том, место которого он долэен занять на странице
   */
-  const newBoard = {
-    id: 'group#phontom',
-    // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
-    order: sourceOrder < destinationOrder ? parseInt(destinationOrder) + 0.5 : parseInt(destinationOrder) - 0.5,
-    // height,
-    // height: `h-[${height}px]`,
-    title: '',
-    cards: [],
-  }
-  return [...boards, newBoard].sort(sortElements);
+  let phantom = {};
+  // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
+  const order = sourceOrder < destinationOrder ? parseInt(destinationOrder) + 0.5 : parseInt(destinationOrder) - 0.5;
+
+  switch(type) {
+    case 'board':
+      phantom = {
+        id: 'group#phontom',
+        order,
+        // height,
+        // height: `h-[${height}px]`,
+        title: '',
+        cards: [],
+      }
+      break;
+    case 'card':
+      phantom = {
+        id: 'card#phontom',
+        order,
+        // height,
+        // height: `h-[${height}px]`,
+        title: '',
+        description: '',
+        tasks: [],
+        tags: []
+      }
+      break;
+    default:
+  }  
+  return [...elements, phantom].sort(sortElements);
 }
 
 export const swapElements = ({ elements, fromBoardId, fromBoardOrder, toBoardId, toBoardOrder }) => {

@@ -1,6 +1,10 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { setLSData } from "@/utils/helpers/local-storage-helpers";
-import { addPhantom, swapElements, reorder } from "@/utils/helpers/card-board-helpers";
+import {
+  addPhantom,
+  swapElements,
+  reorder
+} from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from "@/utils/helpers/card-board-helpers";
 import lang from "@/locales/ru/common.json";
@@ -20,16 +24,16 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
     },
 
-    setBoard(state, action) {
+    addBoard(state, action) {
       const { groupTitle } = action.payload;
       const boardId = `group#${Date.now()}`;
-      const order = parseInt(state.boards.length+1);
+      const order = parseInt(state.boards.length + 1);
       const newBoard = {
         id: boardId,
         order: order,
-        title: `${groupTitle} - ${boardId} (order: ${order})`,
-        cards: [],
-      }
+        title: `${groupTitle} - ${boardId}`,
+        cards: []
+      };
       const boards = [...state.boards, newBoard];
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
@@ -38,10 +42,12 @@ export const homeSlice = createSlice({
     removeBoard(state, action) {
       const { boardId } = action.payload;
       console.log("removeBoard:", { boardId });
-      const filteredBoard = state.boards.filter((board) => board.id !== boardId ? true : false);
+      const filteredBoard = state.boards.filter((board) =>
+        board.id !== boardId ? true : false
+      );
       let counter = 1;
       const orderedBoards = filteredBoard.map((board) => {
-        board.order = ''+counter++;
+        board.order = "" + counter++;
         return board;
       });
       state.boards = orderedBoards;
@@ -51,27 +57,48 @@ export const homeSlice = createSlice({
     swapBoards(state, action) {
       const { sourceOrder, destinationOrder } = action.payload;
       // console.log("swapBoards:", { sourceOrder, destinationOrder });
-      const filteredBoard = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
+      const filteredBoard = state.boards.filter((board) =>
+        board.id !== "group#phontom" ? true : false
+      );
       state.boards = filteredBoard;
-      const sortedBoards = addPhantom(state.boards, destinationOrder, sourceOrder);
+      const sortedBoards = addPhantom(
+        'board',
+        state.boards,
+        destinationOrder,
+        sourceOrder
+      );
       state.boards = sortedBoards;
     },
 
-    setPhontomBoard(state, action) {
+    addPhontomBoard(state, action) {
       if (!state.isPhontomGroupCreated) {
-        const { order, height = ''} = action.payload;
-        // console.log("setPhontomBoard:", { order });
-        const sortedBoards = addPhantom(state.boards, order);
+        const { order, height = "" } = action.payload;
+        // console.log("addPhontomBoard:", { order });
+        const sortedBoards = addPhantom('board', state.boards, order);
         state.boards = sortedBoards;
         state.isPhontomGroupCreated = true;
       }
     },
 
     removePhontomBoard(state, action) {
-      const { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder } = action.payload;
-      console.log("removePhontomBoard:", { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder });
-      const newBoards = state.boards.filter((board) => board.id !== 'group#phontom' ? true : false);
-      const swappedBoards = swapElements({ elements: newBoards, fromBoardId, fromBoardOrder, toBoardId, toBoardOrder });
+      const { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder } =
+        action.payload;
+      console.log("removePhontomBoard:", {
+        fromBoardId,
+        fromBoardOrder,
+        toBoardId,
+        toBoardOrder
+      });
+      const newBoards = state.boards.filter((board) =>
+        board.id !== "group#phontom" ? true : false
+      );
+      const swappedBoards = swapElements({
+        elements: newBoards,
+        fromBoardId,
+        fromBoardOrder,
+        toBoardId,
+        toBoardOrder
+      });
       // console.log("swappedBoards:", swappedBoards);
       const reorderedBoards = reorder(swappedBoards);
       state.boards = reorderedBoards;
@@ -79,7 +106,41 @@ export const homeSlice = createSlice({
       state.isPhontomGroupCreated = false;
     },
 
-    setTitleBoard(state, action) {
+    addPhontomCard(state, action) {
+      if (!state.isPhontomGroupCreated) {
+        const { boardId, order, height = "" } = action.payload;
+        console.log("addPhontomCard:", { boardId, order, height });
+
+        const newBoards = state.boards.map((board) => {
+          if (board.id === boardId) {
+            board.cards = addPhantom('card', board.cards, order);
+          }
+          return board;
+        });
+
+        state.boards = newBoards;
+        state.isPhontomGroupCreated = true;
+      }
+    },
+
+    swapCards(state, action) {
+      const { boardId, sourceOrder, destinationOrder } = action.payload;
+      console.log("swapCards:", { boardId, sourceOrder, destinationOrder });
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phontom" ? true : false
+          );
+          board.cards = addPhantom('card', filteredCards, destinationOrder, sourceOrder);
+        }
+        return board;
+      });
+
+      state.boards = newBoards;
+    },
+
+
+    addTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
       const updatedBoards = state.boards.map((board) => {
         if (board.id === id) {
@@ -91,7 +152,7 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
-    setTitleCard(state, action) {
+    addTitleCard(state, action) {
       const { cardId, boardId, cardTitle } = action.payload;
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         cardTitle
@@ -100,7 +161,7 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
-    setDescriptionCard(state, action) {
+    addDescriptionCard(state, action) {
       const { cardId, boardId, newDescription } = action.payload;
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         description: newDescription
@@ -197,9 +258,10 @@ export const homeSlice = createSlice({
       } else {
         newBoards = state.boards.map((board) => {
           if (board.id === id) {
-            card.id = `card#${Date.now()}`;
+            const cardId = `card#${Date.now()}`;
+            card.id = cardId;
             card.order = `${board.cards.length + 1}`;
-            card.title = `${lang.newCard} ${board.cards.length + 1}`;
+            card.title = `${lang.newCard} ${board.cards.length + 1} ${cardId}`;
             board.cards = [...board.cards, card];
           }
           return board;
@@ -211,7 +273,6 @@ export const homeSlice = createSlice({
 
     addDivider(state, action) {
       const { boardId, cardOrder } = action.payload;
-
       let divider = {
         id: `divider#${Date.now()}`,
         order: 0,
@@ -249,7 +310,6 @@ export const homeSlice = createSlice({
 
           let index = 1;
           const newCards = board.cards.map((card) => {
-
             if (parseInt(card.order) === cardOrder - 1) {
               card.divided = false;
             }
@@ -360,16 +420,18 @@ export const homeSlice = createSlice({
 
 export const {
   initState,
-  setBoard,
+  addBoard,
   removeBoard,
   swapBoards,
-  setTitleBoard,
-  setTitleCard,
+  addTitleBoard,
+  addTitleCard,
   addCard,
-  setPhontomBoard,
+  swapCards,
+  addPhontomCard,
+  addPhontomBoard,
   removePhontomBoard,
   setSortedCards,
-  setDescriptionCard,
+  addDescriptionCard,
   addTask,
   removeTaskList,
   updateTask,
