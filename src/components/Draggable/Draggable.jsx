@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addPhontomBoard,
-  addPhontomCard,
-  removePhontomBoard,
+  addPhantomBoard,
+  addPhantomCard,
+  removePhantomBoard,
+  removePhantomCard,
   swapBoards,
-  swapCards,
+  swapCards
 } from "@/store/main/mainSlice";
 
 export const Draggable = ({ boards, order, boardId, children }) => {
   const dispatch = useDispatch();
   const [mouseDownElement, setMouseDownElement] = useState(null);
+  const [nextDivider, setNextDivider] = useState(null);
   const [phantomData, setPhantomData] = useState(null);
   const [findElement, setFindElement] = useState(null);
   const [marginTopElement, setMarginTopElement] = useState(16);
@@ -20,12 +22,92 @@ export const Draggable = ({ boards, order, boardId, children }) => {
   const [windowCoords, setWindowCoords] = useState({ x: 0, y: 0 });
   const [domElements, setDomElements] = useState([]);
   const [effectWait, setEffectWait] = useState([]);
+  const [phantomId, setPhantomId] = useState("phantom");
+  const [nextFind, setNextFind] = useState(false);
   // const [lastScreenY, setLastScreenY] = useState(null);
   // const [lastScreenX, setLastScreenX] = useState(null);
 
   useEffect(() => {
-    const elements = document.getElementById("boardsParent").childNodes;
+    const getCardElements = (boardId) => {
+      // console.log("boardId:", boardId);
+
+      const elementBorders = [];
+      const cardsNode = document.getElementById(`cardsParent#${boardId}`);
+      // console.log("cardsNode:", cardsNode);
+      if (cardsNode) {
+        const elements = cardsNode.childNodes;
+
+        for (let i = 0; i < elements.length; i++) {
+          const defaultCardWidth = 300;
+          const defaultCardHeight = 80;
+          const resultCardWidth =
+            mouseDownElement !== null
+              ? mouseDownElement.clientWidth
+              : defaultCardWidth;
+          const resultCardHeight =
+            mouseDownElement !== null
+              ? mouseDownElement.clientHeight
+              : defaultCardHeight;
+          const height =
+            elements[i].offsetHeight === 0
+              ? resultCardHeight
+              : elements[i].offsetHeight;
+          const resultLeft = elements[i].offsetLeft;
+          const resultRight = elements[i].offsetLeft + resultCardWidth;
+
+          // console.log("last elementBorders:", elementBorders[elementBorders.length-1]);
+
+          // console.log("elements["+i+"]:", elements[i]);
+          // console.log("elements["+i+"].id:", elements[i].id);
+          // console.log("elements[i].offsetTop:", elements[i].offsetTop);
+          // console.log("resultLeft:", resultLeft);
+          // console.log("height:", height);
+          // console.log("resultRight:", resultRight);
+
+          // console.log("mouseDownElement:", mouseDownElement);
+          // console.log("elements[" + i + "].id:", elements[i].id);
+          // console.log(
+          //   "elements[" + i + "].dataset.id:",
+          //   elements[i].dataset.id
+          // );
+          // console.log(
+          //   "mouseDownElement.dataset.id:",
+          //   mouseDownElement.dataset.id
+          // );
+
+          if (
+            mouseDownElement !== null &&
+            elements[i].dataset.id !== undefined &&
+            elements[i].dataset.id !== mouseDownElement.dataset.id
+          ) {
+            elementBorders.push({
+              id: elements[i].dataset.id ? elements[i].dataset.id : phantomId,
+              order: parseInt(elements[i].dataset.order),
+              top: elements[i].offsetTop,
+              left: resultLeft,
+              right: resultRight
+            });
+          }
+
+          if (!elements[i].id) {
+            // console.log("card elements["+i+"].id:", elements[i].id);
+            // console.log("card elements["+i+"].dataset.order:", elements[i].dataset.order);
+
+            if (elements[i].dataset.order !== undefined) {
+              setPhantomData({
+                boardId,
+                id: phantomId,
+                order: elements[i].dataset.order
+              });
+            }
+          }
+        }
+      }
+      return elementBorders;
+    };
+
     let element = "";
+    const elements = document.getElementById("boardsParent").childNodes;
 
     if (elements[0].firstElementChild === null) {
       element = elements[0];
@@ -41,14 +123,11 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     // console.log("mouseDownElement:", mouseDownElement);
 
     const elementBorders = [];
-    const phantomId = "phantom";
     const defaultBoardHeight = 192;
     const resultBoardHeight =
       mouseDownElement !== null
         ? mouseDownElement.clientHeight
         : defaultBoardHeight;
-
-    // console.log("-----------");
 
     for (let i = 0; i < elements.length; i++) {
       const height =
@@ -80,20 +159,25 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       ) {
         elementBorders.push({
           id: elements[i].id ? elements[i].id : phantomId,
-          order: elements[i].dataset.order,
+          order: parseInt(elements[i].dataset.order),
           top: resultTop,
           left: elements[i].offsetLeft,
-          bottom: resultBottom
+          bottom: resultBottom,
+          cards: getCardElements(elements[i].id)
         });
       }
 
       if (!elements[i].id) {
-        setPhantomData({ id: phantomId, order: elements[i].dataset.order });
+          // console.log("board elements["+i+"].id:", elements[i].id);
+          // console.log("board elements["+i+"].dataset.order:", elements[i].dataset.order);
+          if (elements[i].dataset.order !== undefined) {
+            setPhantomData({ id: phantomId, order: elements[i].dataset.order });
+          }
       }
     }
-    // console.log("elementBorders:", elementBorders);
+    console.log("setDomElements:", elementBorders);
     setDomElements(elementBorders);
-  }, [boards, mouseDownElement, marginTopElement]);
+  }, [boards, mouseDownElement, marginTopElement, phantomId]);
 
   useEffect(() => {
     setEffectWait(300);
@@ -103,37 +187,12 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     // console.log("domElements:", domElements);
   }, [domElements]);
 
-  //-------------------------------------------------------
-  // const width = mouseDownElement.clientWidth + "px";
-  // mouseDownElement.style.width = width;
-  // const phantomElement = element.cloneNode(false);
-  // setPhantomElement(phantomElement);
-  // phantomElement.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-  // phantomElement.style.zIndex = "0";
-  // phantomElement.style.left = e.offsetLeft + 'px';
-  // phantomElement.style.top = e.offsetTop + 'px';
-  // phantomElement.setAttribute ('id', 'phantomElement');
-  // const parent = element.parentNode;
-  // parent.append(phantomElement);
-
-  const setMouseDownStyles = (e, element) => {
+  const setMouseDownBoardStyles = (e, element) => {
     const width = element.clientWidth + "px";
     element.style.width = width;
     element.style.transitionProperty = "none";
     element.style.boxShadow = "2px 2px 12px rgba(85, 85, 85, 1)";
     element.style.zIndex = "20";
-
-    // if (!element.style.top && !element.style.left) {
-    //   element.style.left = element.offsetLeft + 'px';
-    //   element.style.top = element.offsetTop + 'px';
-    //   element.style.marginTop = "0px";
-    //   element.style.position = 'absolute';
-    // } else {
-    //   element.style.left = element.offsetLeft + 'px';
-    //   element.style.top = element.offsetTop + 'px';
-    //   element.style.marginTop = "0px";
-    //   element.style.position = 'absolute';
-    // }
     element.style.left = element.offsetLeft + "px";
     element.style.top = element.offsetTop + "px";
     element.style.marginTop = "0px";
@@ -147,11 +206,31 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     // console.log("element.offsetLeft, element.offsetTop:", { x: element.offsetLeft, y: element.offsetTop });
   };
 
+  const setMouseDownCardStyles = (e, element) => {
+    const nextDivider = element.nextElementSibling;
+    console.log("nextDivider.dataset.divider:", nextDivider.dataset.divider);
+
+    if (nextDivider.dataset.divider === undefined) {
+      nextDivider.style.position = "absolute";
+      setNextDivider(nextDivider);
+    }
+    const height = element.clientHeight + "px";
+    element.style.height = height;
+    element.style.transitionProperty = "none";
+    element.style.boxShadow = "2px 2px 10px rgba(85, 85, 85, 1)";
+    element.style.zIndex = "20";
+    element.style.left = element.offsetLeft + "px";
+    element.style.top = element.offsetTop + "px";
+    element.style.marginTop = "0px";
+    element.style.marginLeft = "0px";
+    element.style.position = "absolute";
+  };
+
   const setMouseMoveStyles = () => {
     mouseDownElement.style.marginTop = "0px";
   };
 
-  const setMouseUpStyles = () => {
+  const setMouseUpBoardStyles = () => {
     // console.log("globalCoords.x, globalCoords.y:", { x: globalCoords.x, y: globalCoords.y });
     // console.log("offsetLeft.x, offsetLeft.y:", { x: windowCoords.x, y: windowCoords.y });
     // console.log("findElement:", findElement);
@@ -184,6 +263,43 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     }, effectWait * 2);
   };
 
+  const setMouseUpCardStyles = () => {
+    // console.log("globalCoords.x, globalCoords.y:", { x: globalCoords.x, y: globalCoords.y });
+    // console.log("offsetLeft.x, offsetLeft.y:", { x: windowCoords.x, y: windowCoords.y });
+    // console.log("findElement:", findElement);
+
+    if (findElement !== null) {
+      mouseDownElement.style.left = findElement.left + "px";
+      mouseDownElement.style.top = findElement.top + "px";
+    } else {
+      mouseDownElement.style.left = windowCoords.x + "px";
+      mouseDownElement.style.top = windowCoords.y + "px";
+    }
+
+    mouseDownElement.style.transitionProperty = "left, top, box-shadow";
+    mouseDownElement.style.transitionDuration = effectWait + "ms";
+    mouseDownElement.style.transitionTimingFunction = "linear";
+
+    // console.log("nextDivider:", nextDivider);
+
+    setTimeout(() => {
+      mouseDownElement.style.boxShadow = "0 1px 3px 0 rgb(0, 0, 0, 0.1), 0 1px 2px -1px rgb(0, 0, 0, 0.1)";
+      mouseDownElement.style.transitionProperty = "none";
+      mouseDownElement.style.left = "0px";
+      mouseDownElement.style.top = "0px";
+      mouseDownElement.style.marginTop = "4px";
+      mouseDownElement.style.height = "";
+      mouseDownElement.style.position = "";
+      if (nextDivider !== null) {
+        nextDivider.style.position = "";
+      }
+    }, effectWait);
+
+    setTimeout(() => {
+      mouseDownElement.style.zIndex = "";
+    }, effectWait * 2);
+  };
+
   //-------------------------------------------------------
 
   const mouseDown = (e) => {
@@ -199,7 +315,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     console.log("mouseDownElement:", {
       id: element.dataset.id,
       order: element.dataset.order,
-      type: element.dataset.type,
+      type: element.dataset.type
     });
 
     // e.clientX - координата указателя мыши по оси X относительно окна
@@ -209,7 +325,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       y: e.screenY
     });
     // e.target.offsetLeft - координата смещения окна по X относительно родительского окна
-    // e.target.offsetTop - координата смещения окна по Y относительно родительского окна 
+    // e.target.offsetTop - координата смещения окна по Y относительно родительского окна
     setWindowCoords({
       x: element.offsetLeft,
       y: element.offsetTop
@@ -219,19 +335,19 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       setPhantomData({ id: element.dataset.id, order: element.dataset.order });
     }
 
-    switch(element.id) {
-      case 'board-to-drag':
+    switch (element.id) {
+      case "board-to-drag":
         boardToDrag(e, element);
         break;
-      case 'card-to-drag':
+      case "card-to-drag":
         cardToDrag(e, element);
-        break;    
+        break;
       default:
     }
   };
 
   const boardToDrag = (e, element) => {
-    setMouseDownStyles(e, element);
+    setMouseDownBoardStyles(e, element);
 
     const boardId = element.dataset.id;
     const order = element.dataset.order;
@@ -249,15 +365,18 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     // console.log("height:", height);
 
-    dispatch(addPhontomBoard({ order, height }));
-  }
+    dispatch(addPhantomBoard({ order, height }));
+  };
 
   const cardToDrag = (e, element) => {
+    setMouseDownCardStyles(e, element);
+
     const height = 0;
     const boardId = element.dataset.boardId;
+    const divided = element.dataset.divided;
     const order = element.dataset.order;
-    dispatch(addPhontomCard({ boardId, order, height }));
-  }
+    dispatch(addPhantomCard({ boardId, order, divided, height }));
+  };
 
   const mouseMove = (e) => {
     if (mouseDownElement !== null) {
@@ -281,6 +400,9 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     const mouseShiftX = e.screenX - globalCoords.x;
     const mouseShiftY = e.screenY - globalCoords.y;
 
+    mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
+    mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
+
     // directionY > 0 - down, < 0 - up
     // directionX > 0 - right, < 0 - left
     // let directionY = e.screenY - lastScreenY;
@@ -292,53 +414,133 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     // console.log('e.screenY:', e.screenY);
     // console.log('lastScreenY:', lastScreenY);
     // console.log('directionY:', directionY);
+    // console.log("mouseDownElement.id:", mouseDownElement.id);
     // console.log('=============');
 
-    mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
-    mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
+    switch (mouseDownElement.id) {
+      case "board-to-drag":
+        moveBoard(e, mouseDownElement);
+        break;
+      case "card-to-drag":
+        moveCard(e, mouseDownElement);
+        break;
+      default:
+    }
+  };
 
-    const findEnterElement = domElements.filter((elem) =>
-      elem.top <= e.clientY && e.clientY <= elem.bottom ? true : false
-    )[0];
+  const moveBoard = (e) => {
+    const findEnterElement = domElements.filter((elem) => {
+      if (elem.top <= e.clientY && e.clientY <= elem.bottom) {
+        setNextFind(true);
+        return true;
+      } else {
+        return false;
+      }
+    })[0];
 
     if (
+      nextFind &&
       findEnterElement !== undefined &&
       findEnterElement.id !== phantomData.id
     ) {
       setFindElement(findEnterElement);
-      console.log("domElements:", domElements);
-      // dispatch(
-      //   swapBoards({
-      //     sourceOrder: phantomData.order,
-      //     destinationOrder: findEnterElement.order
-      //   })
-      // );
+      // console.log("domElements:", domElements);
+      dispatch(
+        swapBoards({
+          sourceOrder: phantomData.order,
+          destinationOrder: findEnterElement.order
+        })
+      );
+      setNextFind(false);
+    }
+  };
+
+  const moveCard = (e) => {
+    let findEnterElement = [];
+
+    domElements.map((board) => {
+      if (board.id === phantomData.boardId) {
+        findEnterElement = board.cards.filter((card) => {
+          if (card.left <= e.clientX && e.clientX <= card.right) {
+            setNextFind(true);
+            return true;
+          } else {
+            return false;
+          }
+        })[0];
+      }
+      return board;
+    });
+
+    // console.log("findEnterElement:", findEnterElement);
+    // console.log("phantomData.id:", phantomData.id);
+
+    if (
+      nextFind &&
+      findEnterElement !== undefined &&
+      findEnterElement.id !== `card#${phantomData.id}`
+    ) {
+      console.log("findEnterElement.id:", findEnterElement.id);
+      setFindElement(findEnterElement);
+
+      dispatch(
+        swapCards({
+          boardId: phantomData.boardId,
+          sourceOrder: phantomData.order,
+          destinationOrder: findEnterElement.order
+        })
+      );
+      setNextFind(false);
     }
   };
 
   const mouseUp = (e) => {
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
-      setMouseUpStyles();
-      // console.log("phantomData:", phantomData);
-      // console.log("mouseDownElement:", mouseDownElement);
+      console.log("phantomData:", phantomData);
+      console.log("mouseDownElement:", mouseDownElement);
       // console.log("mouseDownElement:", { ...mouseDownElement });
       // console.log("findElement:", findElement);
-      setTimeout(() => {
-        dispatch(
-          removePhontomBoard({
-            fromBoardId: mouseDownElement.dataset.id,
-            fromBoardOrder:
-              phantomData.order <= 1
-                ? 1
-                : parseInt(mouseDownElement.dataset.order),
-            toBoardId: findElement !== null ? findElement.id : "",
-            toBoardOrder: phantomData.order <= 1 ? 1 : phantomData.order - 1
-          })
-        );
-      }, effectWait);
+
+      switch (mouseDownElement.id) {
+        case "board-to-drag":
+          pantomBoard(e);
+          break;
+        case "card-to-drag":
+          pantomCard(e);
+          break;
+        default:
+      }
       setFindElement(null);
     }
+  };
+
+  const pantomBoard = (e) => {
+    setMouseUpBoardStyles();
+    setTimeout(() => {
+      dispatch(
+        removePhantomBoard({
+          fromBoardId: mouseDownElement.dataset.id,
+          toBoardOrder: phantomData.order
+        })
+      );
+    }, effectWait);
+  };
+
+  const pantomCard = (e) => {
+    setMouseUpCardStyles();
+    
+    console.log("phantomData:", phantomData);
+
+    setTimeout(() => {
+      dispatch(
+        removePhantomCard({
+          boardId: phantomData.boardId,
+          fromCardId: mouseDownElement.dataset.id,
+          toCardOrder: phantomData.order
+        })
+      );
+    }, effectWait);
   };
 
   return (

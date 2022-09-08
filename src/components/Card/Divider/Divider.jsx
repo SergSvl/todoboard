@@ -23,6 +23,7 @@ export const Divider = ({ divider, cardOrder, boardId }) => {
 
   return (
       <div className={resultStyles}
+        data-divider={divider}
         draggable={false}
         onDrop={(e) => onDrop(e, divider !== undefined ? 'divider' : 'dropZone', null, boardId, cardOrder)}
         onDoubleClick={divider === undefined ? null : onDeleteHandler}

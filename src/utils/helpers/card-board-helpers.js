@@ -1,8 +1,14 @@
-export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDivided }) => {
+export const deleteCardFromBoard = (
+  boards,
+  boardId,
+  { cardId, cardOrder, cardDivided }
+) => {
   const filteredBoards = boards.map((board) => {
     if (board.id === boardId) {
-      const newBoard = {...board};
-      const newCards = newBoard.cards.filter((card) => card.id !== cardId ? true : false);
+      const newBoard = { ...board };
+      const newCards = newBoard.cards.filter((card) =>
+        card.id !== cardId ? true : false
+      );
       newBoard.cards = newCards;
       let counter = 1;
       let prevCardOrder = 0;
@@ -13,12 +19,12 @@ export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDi
       }
 
       const orderedCards = newBoard.cards.map((card) => {
-        const newCard = {...card};
-        
+        const newCard = { ...card };
+
         if (newCard.order === prevCardOrder) {
           newCard.divided = true;
         }
-        newCard.order = ''+counter++;
+        newCard.order = "" + counter++;
         return newCard;
       });
       newBoard.cards = orderedCards;
@@ -28,18 +34,51 @@ export const deleteCardFromBoard = (boards, boardId, { cardId, cardOrder, cardDi
     }
   });
   return filteredBoards;
-}
+};
 
-export const updateCard = (boards, boardId, cardId, { cardTitle, description, task, taskId, listId, checked, newTaskListText, taskTitle, removeTaskId, taskListElemText, removeListId }) => {
-  console.log("updateCard:", { cardTitle, description, task, taskId, listId, checked, newTaskListText, removeTaskId, taskListElemText, removeListId });
+export const updateCard = (
+  boards,
+  boardId,
+  cardId,
+  {
+    cardTitle,
+    description,
+    task,
+    taskId,
+    listId,
+    checked,
+    newTaskListText,
+    taskTitle,
+    removeTaskId,
+    taskListElemText,
+    removeListId
+  }
+) => {
+  console.log("updateCard:", {
+    cardTitle,
+    description,
+    task,
+    taskId,
+    listId,
+    checked,
+    newTaskListText,
+    removeTaskId,
+    taskListElemText,
+    removeListId
+  });
   const updatedBoards = boards.map((board) => {
-
     if (board.id === boardId) {
       const newBoard = board.cards.map((card) => {
         if (card.id === cardId) {
-          if (cardTitle !== undefined) { card.title = cardTitle }
-          if (description !== undefined) { card.description = description }
-          if (task !== undefined) { card.tasks.push(task) }
+          if (cardTitle !== undefined) {
+            card.title = cardTitle;
+          }
+          if (description !== undefined) {
+            card.description = description;
+          }
+          if (task !== undefined) {
+            card.tasks.push(task);
+          }
           if (checked !== undefined) {
             const newTasks = card.tasks.map((task) => {
               if (task.id === taskId) {
@@ -59,7 +98,7 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
             const newTasks = card.tasks.map((task) => {
               if (task.id === taskId) {
                 task.list.push({
-                  id: `${task.list.length+1}`,
+                  id: `${task.list.length + 1}`,
                   text: newTaskListText,
                   checked: false
                 });
@@ -78,7 +117,9 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
             card.tasks = newTasks;
           }
           if (removeTaskId !== undefined) {
-            card.tasks = card.tasks.filter((task) => task.id !== removeTaskId ? true : false);
+            card.tasks = card.tasks.filter((task) =>
+              task.id !== removeTaskId ? true : false
+            );
           }
           if (taskListElemText !== undefined) {
             const newTasks = card.tasks.map((task) => {
@@ -98,7 +139,9 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
           if (removeListId !== undefined) {
             const newTasks = card.tasks.map((task) => {
               if (task.id === taskId) {
-                task.list = task.list.filter((listElem) => listElem.id !== removeListId ? true : false);
+                task.list = task.list.filter((listElem) =>
+                  listElem.id !== removeListId ? true : false
+                );
               }
               return task;
             });
@@ -112,60 +155,70 @@ export const updateCard = (boards, boardId, cardId, { cardTitle, description, ta
     return board;
   });
   return updatedBoards;
-}
+};
 
-export const addPhantom = (type, elements, destinationOrder, sourceOrder = null) => {
+export const addPhantom = (
+  type,
+  elements, {
+    sourceOrder = null,
+    destinationOrder,
+    divided
+  }
+) => {
   /*
     Для эл-та с position = absolute фантом может располагаться на любом месте в массиве досок и он всегда будет занимать место поднятого мышкой эл-та,
     Но для других эл-тов это не работает, т.к. положение фантома имеет значение на порядок его отображения на странице, т.е. с эл-там с position = relative он должен идти следующим номером за тем эл-том, место которого он долэен занять на странице
   */
   let phantom = {};
   // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
-  const order = sourceOrder < destinationOrder ? parseInt(destinationOrder) + 0.5 : parseInt(destinationOrder) - 0.5;
+  const order =
+    sourceOrder < destinationOrder
+      ? parseInt(destinationOrder) + 0.5
+      : parseInt(destinationOrder) - 0.5;
 
-  switch(type) {
-    case 'board':
+  switch (type) {
+    case "board":
       phantom = {
-        id: 'group#phontom',
+        id: "group#phantom",
         order,
         // height,
         // height: `h-[${height}px]`,
-        title: '',
-        cards: [],
-      }
+        title: "",
+        cards: []
+      };
       break;
-    case 'card':
+    case "card":
       phantom = {
-        id: 'card#phontom',
+        id: "card#phantom",
         order,
         // height,
         // height: `h-[${height}px]`,
-        title: '',
-        description: '',
+        title: "",
+        description: "",
+        divided: divided,
         tasks: [],
         tags: []
-      }
+      };
       break;
     default:
-  }  
+  }
   return [...elements, phantom].sort(sortElements);
-}
+};
 
-export const swapElements = ({ elements, fromBoardId, fromBoardOrder, toBoardId, toBoardOrder }) => {
-  if (!isNaN(fromBoardOrder) && !isNaN(toBoardOrder)) {
+export const moveElement = ({ elements, elementId, newElementOrder }) => {
+  console.log("isNaN(newElementOrder):", isNaN(newElementOrder));
+  console.log("moveElement:", { elementId, newElementOrder });
+  if (!isNaN(newElementOrder)) {
     const changedElements = elements.map((current) => {
-      if (current.id === toBoardId) {
-        return { ...current, order: fromBoardOrder };
-      }
-      if (current.id === fromBoardId) {
-        return { ...current, order: toBoardOrder };
+      if (current.id === elementId) {
+        return { ...current, order: newElementOrder };
       }
       return current;
     });
     return changedElements.sort(sortElements);
   }
   return elements;
-}
+};
 
 export const reorder = (elements) => {
   let index = 1;
@@ -174,7 +227,7 @@ export const reorder = (elements) => {
     return element;
   });
   return reorderedElements;
-}
+};
 
 export const sortElements = (a, b) => {
   return a.order > b.order ? 1 : -1;

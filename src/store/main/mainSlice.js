@@ -2,7 +2,7 @@ import { createSlice, current } from "@reduxjs/toolkit";
 import { setLSData } from "@/utils/helpers/local-storage-helpers";
 import {
   addPhantom,
-  swapElements,
+  moveElement,
   reorder
 } from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
@@ -31,7 +31,8 @@ export const homeSlice = createSlice({
       const newBoard = {
         id: boardId,
         order: order,
-        title: `${groupTitle} - ${boardId}`,
+        title: groupTitle,
+        // title: `${groupTitle} - ${boardId}`,
         cards: []
       };
       const boards = [...state.boards, newBoard];
@@ -58,69 +59,45 @@ export const homeSlice = createSlice({
       const { sourceOrder, destinationOrder } = action.payload;
       // console.log("swapBoards:", { sourceOrder, destinationOrder });
       const filteredBoard = state.boards.filter((board) =>
-        board.id !== "group#phontom" ? true : false
+        board.id !== "group#phantom" ? true : false
       );
       state.boards = filteredBoard;
       const sortedBoards = addPhantom(
-        'board',
+        "board",
         state.boards,
-        destinationOrder,
-        sourceOrder
+        { sourceOrder, destinationOrder, divided: false }
       );
       state.boards = sortedBoards;
     },
 
-    addPhontomBoard(state, action) {
-      if (!state.isPhontomGroupCreated) {
+    addPhantomBoard(state, action) {
+      if (!state.isPhantomGroupCreated) {
         const { order, height = "" } = action.payload;
-        // console.log("addPhontomBoard:", { order });
-        const sortedBoards = addPhantom('board', state.boards, order);
+        // console.log("addPhantomBoard:", { order });
+        const sortedBoards = addPhantom("board", state.boards, { sourceOrder: null, destinationOrder: order, divided: false });
         state.boards = sortedBoards;
-        state.isPhontomGroupCreated = true;
+        state.isPhantomGroupCreated = true;
       }
     },
 
-    removePhontomBoard(state, action) {
-      const { fromBoardId, fromBoardOrder, toBoardId, toBoardOrder } =
-        action.payload;
-      console.log("removePhontomBoard:", {
+    removePhantomBoard(state, action) {
+      const { fromBoardId, toBoardOrder } = action.payload;
+      console.log("removePhantomBoard:", {
         fromBoardId,
-        fromBoardOrder,
-        toBoardId,
         toBoardOrder
       });
       const newBoards = state.boards.filter((board) =>
-        board.id !== "group#phontom" ? true : false
+        board.id !== "group#phantom" ? true : false
       );
-      const swappedBoards = swapElements({
+      const swappedBoards = moveElement({
         elements: newBoards,
-        fromBoardId,
-        fromBoardOrder,
-        toBoardId,
-        toBoardOrder
+        elementId: fromBoardId,
+        newElementOrder: toBoardOrder
       });
-      // console.log("swappedBoards:", swappedBoards);
       const reorderedBoards = reorder(swappedBoards);
       state.boards = reorderedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, reorderedBoards);
-      state.isPhontomGroupCreated = false;
-    },
-
-    addPhontomCard(state, action) {
-      if (!state.isPhontomGroupCreated) {
-        const { boardId, order, height = "" } = action.payload;
-        console.log("addPhontomCard:", { boardId, order, height });
-
-        const newBoards = state.boards.map((board) => {
-          if (board.id === boardId) {
-            board.cards = addPhantom('card', board.cards, order);
-          }
-          return board;
-        });
-
-        state.boards = newBoards;
-        state.isPhontomGroupCreated = true;
-      }
+      state.isPhantomGroupCreated = false;
     },
 
     swapCards(state, action) {
@@ -129,9 +106,13 @@ export const homeSlice = createSlice({
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const filteredCards = board.cards.filter((card) =>
-            card.id !== "card#phontom" ? true : false
+            card.id !== "card#phantom" ? true : false
           );
-          board.cards = addPhantom('card', filteredCards, destinationOrder, sourceOrder);
+          board.cards = addPhantom(
+            "card",
+            filteredCards,
+            { sourceOrder, destinationOrder, divided: false }
+          );
         }
         return board;
       });
@@ -139,6 +120,48 @@ export const homeSlice = createSlice({
       state.boards = newBoards;
     },
 
+    addPhantomCard(state, action) {
+      if (!state.isPhantomGroupCreated) {
+        const { boardId, order, divided, height = "" } = action.payload;
+        console.log("addPhantomCard:", { boardId, order, divided, height });
+        const newBoards = state.boards.map((board) => {
+          if (board.id === boardId) {
+            board.cards = addPhantom("card", board.cards, { sourceOrder: null, destinationOrder: order, divided });
+          }
+          return board;
+        });
+        state.boards = newBoards;
+        state.isPhantomGroupCreated = true;
+      }
+    },
+
+    removePhantomCard(state, action) {
+      const { boardId, fromCardId, toCardOrder } = action.payload;
+
+      console.log("removePhantomCard:", {
+        boardId,
+        fromCardId,
+        toCardOrder
+      });
+
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phantom" ? true : false
+          );
+          const swappedCards = moveElement({
+            elements: filteredCards,
+            elementId: fromCardId,
+            newElementOrder: toCardOrder
+          });
+          board.cards = reorder(swappedCards);
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+      state.isPhantomGroupCreated = false;
+    },
 
     addTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
@@ -427,9 +450,10 @@ export const {
   addTitleCard,
   addCard,
   swapCards,
-  addPhontomCard,
-  addPhontomBoard,
-  removePhontomBoard,
+  addPhantomCard,
+  addPhantomBoard,
+  removePhantomBoard,
+  removePhantomCard,
   setSortedCards,
   addDescriptionCard,
   addTask,

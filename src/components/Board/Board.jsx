@@ -17,7 +17,8 @@ export const Board = ({ board, deleteBoard }) => {
   // const [phantomBoardHeight, setPhantomBoardHeight] = useState(null);
   // const [phantomBoardStyles, setPhantomBoardStyles] = useState('');
   const { boards } = useSelector((state) => state.main);
-  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } = useDraggable();
+  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
+    useDraggable();
   const dispatch = useDispatch();
   const titleInputRef = useRef();
   const scrollRef = useHorizontalScroll();
@@ -27,7 +28,6 @@ export const Board = ({ board, deleteBoard }) => {
       console.log("cards", board.cards);
     }
   }, [board]);
-  
 
   const clickOutHandler = () => {
     setIsConfirmOpenned(false);
@@ -86,7 +86,7 @@ export const Board = ({ board, deleteBoard }) => {
         />
       )}
 
-      {board && board.id !== "group#phontom" ? (
+      {board && board.id !== "group#phantom" ? (
         <Draggable boards={boards} order={board.order} boardId={board.id}>
           <div
             id='board-to-drag'
@@ -128,6 +128,7 @@ export const Board = ({ board, deleteBoard }) => {
 
             <div
               ref={scrollRef}
+              id={`cardsParent#${board.id}`}
               data-id={board.id}
               data-type={"board"}
               className='flex overflow-hidden -border border-red-600 hover:cursor-default'
@@ -138,7 +139,6 @@ export const Board = ({ board, deleteBoard }) => {
                       <Card
                         key={card.id}
                         card={card}
-                        cards={board.cards}
                         boardId={board.id}
                         deleteCard={deleteCard}
                       />
