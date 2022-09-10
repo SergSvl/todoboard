@@ -102,7 +102,7 @@ export const Card = ({
         card && card.id !== "card#phantom" ? (
           <>
             <div
-              className='w-[300px] min-h-[80px] px-2 pt-3 mb-8 flex flex-wrap items-stretch shrink-0 grow-0 items-end relative border rounded my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
+              className='w-[300px] min-h-[80px] px-2 pt-3 mb-8 flex flex-wrap items-stretch shrink-0 grow-0 items-end relative rounded my-1 bg-white hover:bg-gray-50 shadow hover:transition-all duration-200'
               id='card-to-drag'
               data-board-id={boardId}
               data-id={card.id}

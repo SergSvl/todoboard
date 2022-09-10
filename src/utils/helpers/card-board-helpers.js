@@ -163,12 +163,8 @@ export const addPhantom = (
     sourceOrder = null,
     destinationOrder,
     divided
-  }
+  },
 ) => {
-  /*
-    Для эл-та с position = absolute фантом может располагаться на любом месте в массиве досок и он всегда будет занимать место поднятого мышкой эл-та,
-    Но для других эл-тов это не работает, т.к. положение фантома имеет значение на порядок его отображения на странице, т.е. с эл-там с position = relative он должен идти следующим номером за тем эл-том, место которого он долэен занять на странице
-  */
   let phantom = {};
   // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
   const order =
@@ -206,12 +202,12 @@ export const addPhantom = (
 };
 
 export const moveElement = ({ elements, elementId, newElementOrder }) => {
-  console.log("isNaN(newElementOrder):", isNaN(newElementOrder));
+  // console.log("isNaN(newElementOrder):", isNaN(newElementOrder));
   console.log("moveElement:", { elementId, newElementOrder });
   if (!isNaN(newElementOrder)) {
     const changedElements = elements.map((current) => {
       if (current.id === elementId) {
-        return { ...current, order: newElementOrder };
+        return { ...current, order: parseInt(newElementOrder) };
       }
       return current;
     });

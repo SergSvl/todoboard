@@ -25,7 +25,7 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     if (board.cards.length) {
-      console.log("cards", board.cards);
+      // console.log("cards", board.cards);
     }
   }, [board]);
 

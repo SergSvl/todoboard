@@ -18,7 +18,7 @@ export const Tags = ({ tags, openModalHandler, deleteTagHandler = null }) => {
       {tags && tags.map((tag) => {
         return (
           <div key={tag.id} className={`flex items-center border rounded-xl mr-1 mb-1 h-6 px-2 text-slate-700 hover:bg-cyan-500 hover:text-cyan-100 hover:transition-all duration-200 ${openModalHandler !== null ? 'hover:cursor-pointer' : ''} ${tag.color}`}>
-            <div className='max-w-[5.5rem] whitespace-nowrap overflow-hidden text-ellipsis' onClick={onOpenModalHandler}>#{tag.text}</div>
+            <div className='max-w-[5.5rem] whitespace-nowrap overflow-hidden text-ellipsis select-none' onClick={() => onOpenModalHandler(tag)}>#{tag.text}</div>
             <Button text={''} clickHandler={(e) => clickHandler(e, tag.id)} type={'tagDel'} />
           </div>
         )

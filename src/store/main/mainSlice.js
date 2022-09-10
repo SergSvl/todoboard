@@ -11,6 +11,8 @@ import lang from "@/locales/ru/common.json";
 
 const initialState = {
   boards: [],
+  isPhantomCreated: false,
+  isPhantomCreatedOnce: false,
   error: ""
 };
 
@@ -65,18 +67,30 @@ export const homeSlice = createSlice({
       const sortedBoards = addPhantom(
         "board",
         state.boards,
-        { sourceOrder, destinationOrder, divided: false }
+        {
+          sourceOrder,
+          destinationOrder,
+          divided: false
+        }
       );
       state.boards = sortedBoards;
     },
 
     addPhantomBoard(state, action) {
-      if (!state.isPhantomGroupCreated) {
+      if (!state.isPhantomCreated) {
         const { order, height = "" } = action.payload;
         // console.log("addPhantomBoard:", { order });
-        const sortedBoards = addPhantom("board", state.boards, { sourceOrder: null, destinationOrder: order, divided: false });
+        const sortedBoards = addPhantom(
+          "board",
+          state.boards,
+          {
+            sourceOrder: null,
+            destinationOrder: order,
+            divided: false
+          }
+        );
         state.boards = sortedBoards;
-        state.isPhantomGroupCreated = true;
+        state.isPhantomCreated = true;
       }
     },
 
@@ -97,7 +111,7 @@ export const homeSlice = createSlice({
       const reorderedBoards = reorder(swappedBoards);
       state.boards = reorderedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, reorderedBoards);
-      state.isPhantomGroupCreated = false;
+      state.isPhantomCreated = false;
     },
 
     swapCards(state, action) {
@@ -111,27 +125,86 @@ export const homeSlice = createSlice({
           board.cards = addPhantom(
             "card",
             filteredCards,
-            { sourceOrder, destinationOrder, divided: false }
+            {
+              sourceOrder,
+              destinationOrder,
+              divided: false
+            }
           );
         }
         return board;
       });
-
       state.boards = newBoards;
     },
 
     addPhantomCard(state, action) {
-      if (!state.isPhantomGroupCreated) {
-        const { boardId, order, divided, height = "" } = action.payload;
-        console.log("addPhantomCard:", { boardId, order, divided, height });
+      const {
+        boardId,
+        order,
+        divided,
+        height = "",
+      } = action.payload;
+      if (!state.isPhantomCreated ) {
+        console.log("addPhantomCard:", {
+          boardId,
+          order,
+          divided,
+          height
+        });
         const newBoards = state.boards.map((board) => {
           if (board.id === boardId) {
-            board.cards = addPhantom("card", board.cards, { sourceOrder: null, destinationOrder: order, divided });
+            board.cards = addPhantom(
+              "card",
+              board.cards,
+              {
+                sourceOrder: null,
+                destinationOrder: order,
+                divided
+              }
+            );
           }
           return board;
         });
         state.boards = newBoards;
-        state.isPhantomGroupCreated = true;
+        state.isPhantomCreated = true;
+      }
+    },
+
+    resetFlagIsPhantomCreatedOnce(state, action) {
+      console.log("resetFlagIsPhantomCreatedOnce:", state.isPhantomCreatedOnce);
+      state.isPhantomCreatedOnce = false;
+    },
+
+    addPhantomCardOnce(state, action) {
+    const {
+        boardId,
+        order,
+        divided,
+        height = "",
+      } = action.payload;
+      if (!state.isPhantomCreatedOnce ) {
+        console.log("addPhantomCardOnce:", {
+          boardId,
+          order,
+          divided,
+          height
+        });
+        const newBoards = state.boards.map((board) => {
+          if (board.id === boardId) {
+            board.cards = addPhantom(
+              "card",
+              board.cards,
+              {
+                sourceOrder: null,
+                destinationOrder: order,
+                divided
+              }
+            );
+          }
+          return board;
+        });
+        state.boards = newBoards;
+        state.isPhantomCreatedOnce = true;
       }
     },
 
@@ -160,7 +233,50 @@ export const homeSlice = createSlice({
       });
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
-      state.isPhantomGroupCreated = false;
+      state.isPhantomCreated = false;
+    },
+
+    removePhantomCardAndReplaceCardToOtherBoard(state, action) {
+      const { fromBoardId, toBoardId, cardId, toCardOrder } = action.payload;
+      let card = null;
+
+      console.log("removePhantomCardAndReplaceCardToOtherBoard:", {
+        fromBoardId,
+        toBoardId,
+        cardId,
+        toCardOrder
+      });
+
+      const reductedBoards = state.boards.map((board) => {
+        if (board.id === fromBoardId) {
+          card = board.cards.filter((card) =>
+            card.id === cardId ? true : false
+          );
+          const newCards = board.cards.filter((card) =>
+            card.id !== cardId ? true : false
+          );
+          board.cards = newCards;
+        }
+        return board;
+      });
+
+      state.boards = reductedBoards;
+
+      const newBoards = state.boards.map((board) => {
+        if (board.id === toBoardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phantom" ? true : false
+          );
+          const newCards = [ ...filteredCards, ...card ];
+          board.cards = reorder(newCards);
+        }
+        return board;
+      });
+
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+      state.isPhantomCreated = false;
+
     },
 
     addTitleBoard(state, action) {
@@ -451,6 +567,9 @@ export const {
   addCard,
   swapCards,
   addPhantomCard,
+  addPhantomCardOnce,
+  resetFlagIsPhantomCreatedOnce,
+  removePhantomCardAndReplaceCardToOtherBoard,
   addPhantomBoard,
   removePhantomBoard,
   removePhantomCard,
