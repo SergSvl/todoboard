@@ -32,12 +32,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
   useEffect(() => {
     const getCardElements = (boardId) => {
-      // console.log("boardId:", boardId);
-
       const elementBorders = [];
       const parentBoards = document.getElementById("boardsParent");
       const cardsNode = document.getElementById(`cardsParent#${boardId}`);
-      // console.log("cardsNode:", cardsNode);
+
       if (cardsNode) {
         const elements = cardsNode.childNodes;
         const boardMarginLeft = parentBoards.offsetLeft;
@@ -53,7 +51,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
             elements[i].offsetLeft + boardMarginLeft + resultCardWidth;
 
           // console.log("elements["+i+"]:", elements[i]);
-          // console.log("elements["+i+"].id:", elements[i].id);
+          console.log("elements["+i+"].id:", elements[i].id);
           // console.log("elements[i].offsetTop:", elements[i].offsetTop);
           // console.log("resultLeft:", resultLeft);
           // console.log("height:", height);
@@ -77,7 +75,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
           ) {
             elementBorders.push({
               id: elements[i].dataset.id ? elements[i].dataset.id : phantomId,
-              order: parseInt(elements[i].dataset.order),
+              order: parseFloat(elements[i].dataset.order),
               top: elements[i].offsetTop,
               left: resultLeft,
               right: resultRight
@@ -92,7 +90,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
               setPhantomData({
                 boardId,
                 id: phantomId,
-                order: parseInt(elements[i].dataset.order)
+                order: parseFloat(elements[i].dataset.order)
               });
             }
           }
@@ -102,77 +100,83 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       return elementBorders;
     };
 
-    let element = "";
-    const elements = document.getElementById("boardsParent").childNodes;
+    const getBoardElements = () => {
+      let element = "";
+      const elements = document.getElementById("boardsParent").childNodes;
 
-    if (elements[0].firstElementChild === null) {
-      element = elements[0];
-    } else {
-      element = elements[0].firstElementChild;
-    }
-
-    const margins =
-      parseInt(getComputedStyle(element).marginTop) +
-      parseInt(getComputedStyle(element).marginBottom);
-    // console.log("margins:", margins);
-    // console.log("boardsParent:", elements);
-    // console.log("mouseDownElement:", mouseDownElement);
-
-    const elementBorders = [];
-    const defaultBoardHeight = 192;
-    const resultBoardHeight =
-      mouseDownElement !== null
-        ? mouseDownElement.clientHeight
-        : defaultBoardHeight;
-
-    for (let i = 0; i < elements.length; i++) {
-      const height =
-        elements[i].offsetHeight === 0
-          ? resultBoardHeight
-          : elements[i].offsetHeight - margins;
-      const resultTop =
-        elements[i].id === ""
-          ? elements[i].offsetTop - marginTopElement
-          : elements[i].offsetTop;
-      const resultBottom =
-        elements[i].id === ""
-          ? elements[i].offsetTop + height + marginTopElement
-          : elements[i].offsetTop + height;
-
-      // console.log("last elementBorders:", elementBorders[elementBorders.length-1]);
-      // console.log("last height:", height);
-      // console.log("last elements["+i+"].id:", elements[i].id);
-
-      // console.log("elements["+i+"]:", elements[i]);
-      // console.log("elements["+i+"].id:", elements[i].id);
-      // console.log("resultTop:", resultTop);
-      // console.log("height:", height);
-      // console.log("resultBottom:", resultBottom);
-
-      if (
-        mouseDownElement !== null &&
-        elements[i].id !== mouseDownElement.dataset.id
-      ) {
-        elementBorders.push({
-          id: elements[i].id ? elements[i].id : phantomId,
-          order: parseInt(elements[i].dataset.order),
-          top: resultTop,
-          left: elements[i].offsetLeft,
-          bottom: resultBottom,
-          cards: getCardElements(elements[i].id)
-        });
+      if (elements[0].firstElementChild === null) {
+        element = elements[0];
+      } else {
+        element = elements[0].firstElementChild;
       }
 
-      if (!elements[i].id) {
-        // console.log("board elements["+i+"].id:", elements[i].id);
-        // console.log("board elements["+i+"].dataset.order:", elements[i].dataset.order);
-        if (elements[i].dataset.order !== undefined) {
-          setPhantomData({ id: phantomId, order: parseInt(elements[i].dataset.order) });
+      const margins =
+        parseFloat(getComputedStyle(element).marginTop) +
+        parseFloat(getComputedStyle(element).marginBottom);
+      // console.log("margins:", margins);
+      // console.log("boardsParent:", elements);
+      // console.log("mouseDownElement:", mouseDownElement);
+
+      const elementBorders = [];
+      const defaultBoardHeight = 192;
+      const resultBoardHeight =
+        mouseDownElement !== null
+          ? mouseDownElement.clientHeight
+          : defaultBoardHeight;
+
+      for (let i = 0; i < elements.length; i++) {
+        const height =
+          elements[i].offsetHeight === 0
+            ? resultBoardHeight
+            : elements[i].offsetHeight - margins;
+        const resultTop =
+          elements[i].id === ""
+            ? elements[i].offsetTop - marginTopElement
+            : elements[i].offsetTop;
+        const resultBottom =
+          elements[i].id === ""
+            ? elements[i].offsetTop + height + marginTopElement
+            : elements[i].offsetTop + height;
+
+        // console.log("last elementBorders:", elementBorders[elementBorders.length-1]);
+        // console.log("last height:", height);
+        // console.log("last elements["+i+"].id:", elements[i].id);
+
+        // console.log("elements["+i+"]:", elements[i]);
+        // console.log("elements["+i+"].id:", elements[i].id);
+        // console.log("resultTop:", resultTop);
+        // console.log("height:", height);
+        // console.log("resultBottom:", resultBottom);
+
+        if (
+          mouseDownElement !== null &&
+          elements[i].id !== mouseDownElement.dataset.id
+        ) {
+          elementBorders.push({
+            id: elements[i].id ? elements[i].id : phantomId,
+            order: parseFloat(elements[i].dataset.order),
+            top: resultTop,
+            left: elements[i].offsetLeft,
+            bottom: resultBottom,
+            cards: getCardElements(elements[i].id)
+          });
+        }
+
+        if (!elements[i].id) {
+          // console.log("board elements["+i+"].id:", elements[i].id);
+          // console.log("board elements["+i+"].dataset.order:", elements[i].dataset.order);
+          if (elements[i].dataset.order !== undefined) {
+            setPhantomData({
+              id: phantomId,
+              order: parseFloat(elements[i].dataset.order)
+            });
+          }
         }
       }
+      console.log("setDomElements:", elementBorders);
+      setDomElements(elementBorders);
     }
-    console.log("setDomElements:", elementBorders);
-    setDomElements(elementBorders);
+    getBoardElements();
   }, [boards, mouseDownElement, marginTopElement, phantomId]);
 
   useEffect(() => {
@@ -198,8 +202,8 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     element.style.marginTop = "0px";
     element.style.position = "absolute";
 
-    // const top = parseInt(getComputedStyle(element).top);
-    // const left = parseInt(getComputedStyle(element).left);
+    // const top = parseFloat(getComputedStyle(element).top);
+    // const left = parseFloat(getComputedStyle(element).left);
     // console.log("top, left:", { top, left });
     // console.log("element.style:", { top: element.style.top, left: element.style.left });
     // console.log("globalCoords.x, globalCoords.y:", { x: e.screenX, y: e.screenY });
@@ -294,7 +298,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       if (nextDivider !== null) {
         nextDivider.style.position = "";
       }
-    }, effectWait*3);
+    }, effectWait * 3);
 
     setTimeout(() => {
       mouseDownElement.style.zIndex = "";
@@ -315,7 +319,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     console.log("mouseDownElement:", {
       id: element.dataset.id,
-      order: parseInt(element.dataset.order),
+      order: parseFloat(element.dataset.order),
       type: element.dataset.type
     });
     // e.target.offsetLeft - координата смещения окна по X относительно окна экрана
@@ -332,7 +336,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     });
 
     if (element) {
-      setPhantomData({ id: element.dataset.id, order: parseInt(element.dataset.order) });
+      setPhantomData({
+        id: element.dataset.id,
+        order: parseFloat(element.dataset.order)
+      });
     }
 
     switch (element.id) {
@@ -354,11 +361,11 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     const height = domElements.reduce((acc, elem) => {
       if (elem.id === boardId) {
-        acc = parseInt(elem.bottom) - parseInt(elem.top);
+        acc = parseFloat(elem.bottom) - parseFloat(elem.top);
         // console.log("elem.id:", elem.id);
-        // console.log("parseInt(elem.top):", parseInt(elem.top));
-        // console.log("parseInt(elem.bottom):", parseInt(elem.bottom));
-        // console.log("height:", parseInt(elem.bottom) - parseInt(elem.top));
+        // console.log("parseFloat(elem.top):", parseFloat(elem.top));
+        // console.log("parseFloat(elem.bottom):", parseFloatat(elem.bottom));
+        // console.log("height:", parseFloat(elem.bottom) - parseFloat(elem.top));
       }
       return acc;
     }, 0);
@@ -463,7 +470,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
   };
 
   const moveCard = (e) => {
-    // moveCardOnTheBoard(e);
+    moveCardOnTheBoard(e);
     moveCardBetweenBoards(e);
   };
 
@@ -475,16 +482,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
         findEnterCardElement = board.cards.filter((card) => {
           // e.clientX - координата указателя мыши по оси X относительно окна
           // e.clientY - координата указателя мыши по оси Y относительно окна
-
           if (card.left <= e.clientX && e.clientX <= card.right) {
-            // console.log("card.left:", card.left);
-            // console.log("e.clientY:", e.clientY);
-            // console.log("card.right:", card.right);
-            // console.log("-----------");
-            // console.log("card.left:", card.left);
-            // console.log("e.clientX:", e.clientX);
-            // console.log("card.right:", card.right);
-            // console.log("-----------");
             setNextFind(true);
             return true;
           } else {
@@ -499,7 +497,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       findEnterCardElement !== undefined &&
       findEnterCardElement.id !== `card#${phantomData.id}`
     ) {
-      console.log("findEnterCardElement.id:", findEnterCardElement.id);
+      // console.log("findEnterCardElement.id:", findEnterCardElement.id);
       setFindElement(findEnterCardElement);
 
       dispatch(
@@ -512,13 +510,12 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       );
       setNextFind(false);
     }
-  }
+  };
 
   const moveCardBetweenBoards = (e) => {
     // Нахождение доски, на которую наехал курсор
     const findEnterBoardElement = domElements.filter((elem) => {
       if (elem.top <= e.clientY && e.clientY <= elem.bottom) {
-        // setNextFind(true);
         return true;
       } else {
         return false;
@@ -529,7 +526,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       findEnterBoardElement !== undefined &&
       findEnterBoardElement.id !== phantomData.boardId
     ) {
-      console.log("++ findEnterBoardElement:", findEnterBoardElement);
+      // console.log("++ findEnterBoardElement:", findEnterBoardElement);
 
       // удаление фантома с доски, с которой поднята карточка
       dispatch(
@@ -562,40 +559,37 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
       // здесь нужно в domElements найти фантом с доски, на которую я перетащил карточку и получить его координаты top и left для последнего дейсвтия с карточкой - восстановления стилей  нового положения, куда ей нужно лететь
 
-      // Нахождение фантома на другой доске, чтобы получить его стили для перелета карточки в новые коодинаты 
+      // Нахождение фантома на другой доске, чтобы получить его стили для перелета карточки в новые коодинаты
       domElements.map((board) => {
         if (board.id === findEnterBoardElement.id) {
-          setFindElement(board.cards.filter((card) => card.id === 'card#phantom'));
+          setFindElement(
+            board.cards.filter((card) => card.id === "card#phantom")
+          );
           // phantomElement = board.cards.filter((card) => card.id === 'card#phantom');
         }
       });
 
       // console.log("__ findEnterBoardElement:", findEnterBoardElement);
       // console.log("__ findEnterBoardElement !== undefined && findEnterBoardElement.id !== sourceBoardId && !isPhantomCreatedOnce:", findEnterBoardElement !== undefined && findEnterBoardElement.id !== sourceBoardId && !isPhantomCreatedOnce);
-      
+
       // console.log("card mouseDownElement.dataset.id:", mouseDownElement.dataset.id);
-      
+
       // console.log("card phantomData:", phantomData);
       // console.log("card domElements:", domElements);
     } else {
       dispatch(resetFlagIsPhantomCreatedOnce());
     }
-  }
+  };
 
   const mouseUp = (e) => {
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
-      // console.log("phantomData:", phantomData);
-      // console.log("mouseDownElement:", mouseDownElement);
-      // console.log("mouseDownElement:", { ...mouseDownElement });
-      // console.log("findElement:", findElement);
-
       switch (mouseDownElement.id) {
         case "board-to-drag":
-          pantomBoard(e);
+          phantomBoard(e);
           break;
         case "card-to-drag":
-          pantomCard(e);
+          phantomCard(e);
           break;
         default:
       }
@@ -603,7 +597,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     }
   };
 
-  const pantomBoard = (e) => {
+  const phantomBoard = (e) => {
     setMouseUpBoardStyles();
     setTimeout(() => {
       dispatch(
@@ -615,14 +609,14 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     }, effectWait);
   };
 
-  const pantomCard = (e) => {
+  const phantomCard = (e) => {
     setMouseUpCardStyles();
 
-    console.log("phantomData:", phantomData);
-    console.log("mouseDownElement.dataset.boardId:", mouseDownElement.dataset.boardId);
+    // console.log("phantomData:", phantomData);
+    // console.log("mouseDownElement.dataset.boardId:", mouseDownElement.dataset.boardId);
     // здесь нужно определять, что доска сменилась при перетаскивании карточки и след-но вызывать другой метод removePhantomCardAndReplaceCardToOtherBoard(),
     // который будет доставать карточку из старой доски и помещать в новую
-
+    
     setTimeout(() => {
       if (mouseDownElement.dataset.boardId === phantomData.boardId) {
         dispatch(

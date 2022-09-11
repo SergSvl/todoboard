@@ -3,7 +3,8 @@ import { setLSData } from "@/utils/helpers/local-storage-helpers";
 import {
   addPhantom,
   moveElement,
-  reorder
+  reorder,
+  sortElements
 } from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from "@/utils/helpers/card-board-helpers";
@@ -29,7 +30,7 @@ export const homeSlice = createSlice({
     addBoard(state, action) {
       const { groupTitle } = action.payload;
       const boardId = `group#${Date.now()}`;
-      const order = parseInt(state.boards.length + 1);
+      const order = parseFloat(state.boards.length + 1);
       const newBoard = {
         id: boardId,
         order: order,
@@ -211,11 +212,11 @@ export const homeSlice = createSlice({
     removePhantomCard(state, action) {
       const { boardId, fromCardId, toCardOrder } = action.payload;
 
-      console.log("removePhantomCard:", {
-        boardId,
-        fromCardId,
-        toCardOrder
-      });
+      // console.log("removePhantomCard:", {
+      //   boardId,
+      //   fromCardId,
+      //   toCardOrder
+      // });
 
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
@@ -240,22 +241,22 @@ export const homeSlice = createSlice({
       const { fromBoardId, toBoardId, cardId, toCardOrder } = action.payload;
       let card = null;
 
-      console.log("removePhantomCardAndReplaceCardToOtherBoard:", {
-        fromBoardId,
-        toBoardId,
-        cardId,
-        toCardOrder
-      });
+      // console.log("removePhantomCardAndReplaceCardToOtherBoard:", {
+      //   fromBoardId,
+      //   toBoardId,
+      //   cardId,
+      //   toCardOrder
+      // });
 
       const reductedBoards = state.boards.map((board) => {
         if (board.id === fromBoardId) {
           card = board.cards.filter((card) =>
             card.id === cardId ? true : false
-          );
+          )[0];
           const newCards = board.cards.filter((card) =>
             card.id !== cardId ? true : false
           );
-          board.cards = newCards;
+          board.cards = reorder(newCards);
         }
         return board;
       });
@@ -267,7 +268,8 @@ export const homeSlice = createSlice({
           const filteredCards = board.cards.filter((card) =>
             card.id !== "card#phantom" ? true : false
           );
-          const newCards = [ ...filteredCards, ...card ];
+          card.order = toCardOrder;
+          const newCards = [ ...filteredCards, card ].sort(sortElements);
           board.cards = reorder(newCards);
         }
         return board;
@@ -276,7 +278,6 @@ export const homeSlice = createSlice({
       state.boards = newBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
       state.isPhantomCreated = false;
-
     },
 
     addTitleBoard(state, action) {
@@ -449,7 +450,7 @@ export const homeSlice = createSlice({
 
           let index = 1;
           const newCards = board.cards.map((card) => {
-            if (parseInt(card.order) === cardOrder - 1) {
+            if (parseFloat(card.order) === cardOrder - 1) {
               card.divided = false;
             }
             card.order = index++;

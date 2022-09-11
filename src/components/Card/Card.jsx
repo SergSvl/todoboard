@@ -170,7 +170,7 @@ export const Card = ({
         ) : (
           <>
             <div
-              className='w-[300px] min-h-[80px] pt-3 mb-8 _mx-0 relative bg-gray-400/30 border rounded my-1 shadow transition-all duration-700'
+              className='min-w-[300px] min-h-[80px] pt-3 mb-8 _mx-0 relative bg-gray-400/30 border rounded my-1 shadow transition-all duration-700'
               data-board-id={boardId}
               data-id={card.id}
               data-order={card.order}

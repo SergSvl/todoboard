@@ -159,18 +159,15 @@ export const updateCard = (
 
 export const addPhantom = (
   type,
-  elements, {
-    sourceOrder = null,
-    destinationOrder,
-    divided
-  },
+  elements,
+  { sourceOrder = null, destinationOrder, divided }
 ) => {
   let phantom = {};
   // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
   const order =
     sourceOrder < destinationOrder
-      ? parseInt(destinationOrder) + 0.5
-      : parseInt(destinationOrder) - 0.5;
+      ? parseFloat(destinationOrder) + 0.5
+      : parseFloat(destinationOrder) - 0.5;
 
   switch (type) {
     case "board":
@@ -207,7 +204,7 @@ export const moveElement = ({ elements, elementId, newElementOrder }) => {
   if (!isNaN(newElementOrder)) {
     const changedElements = elements.map((current) => {
       if (current.id === elementId) {
-        return { ...current, order: parseInt(newElementOrder) };
+        return { ...current, order: parseFloat(newElementOrder) };
       }
       return current;
     });
