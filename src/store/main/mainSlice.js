@@ -45,7 +45,7 @@ export const homeSlice = createSlice({
 
     removeBoard(state, action) {
       const { boardId } = action.payload;
-      console.log("removeBoard:", { boardId });
+      // console.log("removeBoard:", { boardId });
       const filteredBoard = state.boards.filter((board) =>
         board.id !== boardId ? true : false
       );
@@ -97,10 +97,10 @@ export const homeSlice = createSlice({
 
     removePhantomBoard(state, action) {
       const { fromBoardId, toBoardOrder } = action.payload;
-      console.log("removePhantomBoard:", {
-        fromBoardId,
-        toBoardOrder
-      });
+      // console.log("removePhantomBoard:", {
+      //   fromBoardId,
+      //   toBoardOrder
+      // });
       const newBoards = state.boards.filter((board) =>
         board.id !== "group#phantom" ? true : false
       );
@@ -117,7 +117,7 @@ export const homeSlice = createSlice({
 
     swapCards(state, action) {
       const { boardId, sourceOrder, destinationOrder } = action.payload;
-      console.log("swapCards:", { boardId, sourceOrder, destinationOrder });
+      // console.log("swapCards:", { boardId, sourceOrder, destinationOrder });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const filteredCards = board.cards.filter((card) =>
@@ -146,12 +146,12 @@ export const homeSlice = createSlice({
         height = "",
       } = action.payload;
       if (!state.isPhantomCreated ) {
-        console.log("addPhantomCard:", {
-          boardId,
-          order,
-          divided,
-          height
-        });
+        // console.log("addPhantomCard:", {
+        //   boardId,
+        //   order,
+        //   divided,
+        //   height
+        // });
         const newBoards = state.boards.map((board) => {
           if (board.id === boardId) {
             board.cards = addPhantom(
@@ -172,7 +172,7 @@ export const homeSlice = createSlice({
     },
 
     resetFlagIsPhantomCreatedOnce(state, action) {
-      console.log("resetFlagIsPhantomCreatedOnce:", state.isPhantomCreatedOnce);
+      // console.log("resetFlagIsPhantomCreatedOnce:", state.isPhantomCreatedOnce);
       state.isPhantomCreatedOnce = false;
     },
 
@@ -184,12 +184,12 @@ export const homeSlice = createSlice({
         height = "",
       } = action.payload;
       if (!state.isPhantomCreatedOnce ) {
-        console.log("addPhantomCardOnce:", {
-          boardId,
-          order,
-          divided,
-          height
-        });
+        // console.log("addPhantomCardOnce:", {
+        //   boardId,
+        //   order,
+        //   divided,
+        //   height
+        // });
         const newBoards = state.boards.map((board) => {
           if (board.id === boardId) {
             board.cards = addPhantom(

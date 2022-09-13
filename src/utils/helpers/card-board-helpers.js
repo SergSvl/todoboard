@@ -200,7 +200,7 @@ export const addPhantom = (
 
 export const moveElement = ({ elements, elementId, newElementOrder }) => {
   // console.log("isNaN(newElementOrder):", isNaN(newElementOrder));
-  console.log("moveElement:", { elementId, newElementOrder });
+  // console.log("moveElement:", { elementId, newElementOrder });
   if (!isNaN(newElementOrder)) {
     const changedElements = elements.map((current) => {
       if (current.id === elementId) {
