@@ -172,7 +172,7 @@ export const Board = ({ board, deleteBoard }) => {
                 onDragLeave={(e) => onDragLeave(e)}
                 onDragOver={(e) => onDragOver(e)}
               >
-                <div className='w-[2rem] pb-1 -border border-red-400 text-2xl hover:font-bold hover:transition-all duration-200 select-none'>
+                <div className='w-[2rem] pb-1 border border-dashed border-gray-400 text-xl leading-6 hover:shadow-xl hover:bg-slate-100 hover:font-bold hover:transition-all duration-200 select-none rounded-full'>
                   |
                 </div>
               </div>

@@ -116,8 +116,8 @@ export const homeSlice = createSlice({
     },
 
     swapCards(state, action) {
-      const { boardId, sourceOrder, destinationOrder, divided } = action.payload;
-      console.log("swapCards:", { boardId, sourceOrder, destinationOrder, divided });
+      const { boardId, sourceOrder, destinationOrder, divided, dividedMyself, dividedOnTheLeft } = action.payload;
+      // console.log("swapCards:", { boardId, sourceOrder, destinationOrder, divided, dividedMyself, dividedOnTheLeft });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const filteredCards = board.cards.filter((card) =>
@@ -129,7 +129,9 @@ export const homeSlice = createSlice({
             {
               sourceOrder,
               destinationOrder,
-              divided
+              divided,
+              dividedMyself,
+              dividedOnTheLeft
             }
           );
         }
@@ -353,15 +355,15 @@ export const homeSlice = createSlice({
         taskTitle,
         taskListElemText
       } = action.payload;
-      console.log("updateTask:", {
-        boardId,
-        cardId,
-        taskId,
-        listId,
-        checked,
-        taskTitle,
-        taskListElemText
-      });
+      // console.log("updateTask:", {
+      //   boardId,
+      //   cardId,
+      //   taskId,
+      //   listId,
+      //   checked,
+      //   taskTitle,
+      //   taskListElemText
+      // });
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         taskId,
         listId,
@@ -537,7 +539,7 @@ export const homeSlice = createSlice({
 
     removeTag(state, action) {
       const { boardId, cardId, tagId } = action.payload;
-      console.log("removeTag:", { boardId, cardId, tagId });
+      // console.log("removeTag:", { boardId, cardId, tagId });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const newCards = board.cards.map((card) => {

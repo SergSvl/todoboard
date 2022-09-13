@@ -13,7 +13,6 @@ export const deleteCardFromBoard = (
       let counter = 1;
       let prevCardOrder = 0;
 
-      // if (cardDivided && cardOrder > 1) {
       if (cardDivided) {
         prevCardOrder = cardOrder - 1;
       }
@@ -54,18 +53,18 @@ export const updateCard = (
     removeListId
   }
 ) => {
-  console.log("updateCard:", {
-    cardTitle,
-    description,
-    task,
-    taskId,
-    listId,
-    checked,
-    newTaskListText,
-    removeTaskId,
-    taskListElemText,
-    removeListId
-  });
+  // console.log("updateCard:", {
+  //   cardTitle,
+  //   description,
+  //   task,
+  //   taskId,
+  //   listId,
+  //   checked,
+  //   newTaskListText,
+  //   removeTaskId,
+  //   taskListElemText,
+  //   removeListId
+  // });
   const updatedBoards = boards.map((board) => {
     if (board.id === boardId) {
       const newBoard = board.cards.map((card) => {
@@ -160,14 +159,16 @@ export const updateCard = (
 export const addPhantom = (
   type,
   elements,
-  { sourceOrder = null, destinationOrder, divided }
+  { sourceOrder = null, destinationOrder, divided, dividedMyself = false, dividedOnTheLeft = false }
 ) => {
   let phantom = {};
   // up = sourceOrder > destinationOrder, down - sourceOrder < destinationOrder
   const order =
     sourceOrder < destinationOrder
-      ? parseFloat(destinationOrder) + 0.5
-      : divided
+      ? dividedOnTheLeft
+        ? parseFloat(destinationOrder) + 1.5
+        : parseFloat(destinationOrder) + 0.5
+      : dividedMyself
         ? parseFloat(destinationOrder) - 1.5
         : parseFloat(destinationOrder) - 0.5;
 
@@ -190,7 +191,7 @@ export const addPhantom = (
         // height: `h-[${height}px]`,
         title: "",
         description: "",
-        divided: divided,
+        divided,
         tasks: [],
         tags: []
       };
