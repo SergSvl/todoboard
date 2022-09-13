@@ -77,7 +77,8 @@ export const Draggable = ({ boards, order, boardId, children }) => {
               left: elements[i].offsetLeft,
               // top: elements[i].getBoundingClientRect().top,
               // left: elements[i].getBoundingClientRect().left,
-              right: resultRight
+              right: resultRight,
+              divided: elements[i].dataset.divided
             });
           }
 
@@ -207,9 +208,9 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     }
 
     console.log("Изменены domElements:", domElements);
-    console.log("Изменена phantomData:", phantomData);
-    console.log("Изменены mouseDownElement:", mouseDownElement);
-    console.log(":: resultTop:", resultTop);
+    // console.log("Изменена phantomData:", phantomData);
+    // console.log("Изменены mouseDownElement:", mouseDownElement);
+    // console.log(":: resultTop:", resultTop);
     // console.log(":: foundElement:", foundElement);
     console.log("==> resultFoundElement:", resultFoundElement);
 
@@ -437,7 +438,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
         order,
         divided,
         height,
-        isPhantomAddOnce: false
       })
     );
   };
@@ -533,7 +533,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
           boardId: phantomData.boardId,
           sourceOrder: phantomData.order,
           destinationOrder: findEnterCardElement.order,
-          isPhantomAddOnce: false
+          divided: mouseDownElement.dataset.divided,
         })
       );
     }

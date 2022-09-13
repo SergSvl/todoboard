@@ -167,7 +167,9 @@ export const addPhantom = (
   const order =
     sourceOrder < destinationOrder
       ? parseFloat(destinationOrder) + 0.5
-      : parseFloat(destinationOrder) - 0.5;
+      : divided
+        ? parseFloat(destinationOrder) - 1.5
+        : parseFloat(destinationOrder) - 0.5;
 
   switch (type) {
     case "board":

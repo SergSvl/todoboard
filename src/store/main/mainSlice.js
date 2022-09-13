@@ -116,8 +116,8 @@ export const homeSlice = createSlice({
     },
 
     swapCards(state, action) {
-      const { boardId, sourceOrder, destinationOrder } = action.payload;
-      // console.log("swapCards:", { boardId, sourceOrder, destinationOrder });
+      const { boardId, sourceOrder, destinationOrder, divided } = action.payload;
+      console.log("swapCards:", { boardId, sourceOrder, destinationOrder, divided });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const filteredCards = board.cards.filter((card) =>
@@ -129,7 +129,7 @@ export const homeSlice = createSlice({
             {
               sourceOrder,
               destinationOrder,
-              divided: false
+              divided
             }
           );
         }
