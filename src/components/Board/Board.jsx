@@ -61,7 +61,7 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     setNewTitle(board.title);
-  }, []);
+  }, [board.title]);
 
   const deleteCard = (boardId, cardProps) => {
     const filteredBoards = deleteCardFromBoard(boards, boardId, cardProps);
@@ -141,7 +141,7 @@ export const Board = ({ board, deleteBoard }) => {
             <div
               data-id={board.id}
               data-type={"board"}
-              className='w-full h-8 -border border-red-400 absolute bottom-0 flex justify-between hover:cursor-default'
+              className='bottom-button-panel w-full h-8 -border border-red-400 absolute bottom-0 flex justify-between hover:cursor-default'
             >
               <div
                 className='-border border-blue-400 flex flex-nowrap items-center hover:text-gray-500 hover:cursor-pointer text-gray-400 px-1'

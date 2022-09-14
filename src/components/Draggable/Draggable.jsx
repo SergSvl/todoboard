@@ -26,6 +26,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
   const [effectWait, setEffectWait] = useState(0);
   const [phantomId, setPhantomId] = useState("phantom");
   const [nextFind, setNextFind] = useState(false);
+  const [stepOfCheck, setStepOfCheck] = useState(10);
+  const [isMovingStarted, setIsMovingStarted] = useState(false);
+
+  let step = 0;
 
   useEffect(() => {
     const getCardElements = (boardId) => {
@@ -77,7 +81,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     const getBoardElements = () => {
       let element = "";
+      const elementBorders = [];
       const elements = document.getElementById("boardsParent").childNodes;
+      const bottomButtonPanel = document.querySelector('.bottom-button-panel');
+      const bottomButtonPanelHeight = parseFloat(getComputedStyle(bottomButtonPanel).height);
 
       if (elements[0].firstElementChild === null) {
         element = elements[0];
@@ -85,20 +92,15 @@ export const Draggable = ({ boards, order, boardId, children }) => {
         element = elements[0].firstElementChild;
       }
 
+      const boardHeight = parseFloat(getComputedStyle(element).height);
       const margins =
         parseFloat(getComputedStyle(element).marginTop) +
         parseFloat(getComputedStyle(element).marginBottom);
-      const elementBorders = [];
-      const defaultBoardHeight = 192;
-      const resultBoardHeight =
-        mouseDownElement !== null
-          ? mouseDownElement.clientHeight
-          : defaultBoardHeight;
 
       for (let i = 0; i < elements.length; i++) {
         const height =
           elements[i].offsetHeight === 0
-            ? resultBoardHeight
+            ? boardHeight
             : elements[i].offsetHeight - margins;
         const resultTop =
           elements[i].id === ""
@@ -118,7 +120,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
             order: parseFloat(elements[i].dataset.order),
             top: resultTop,
             left: elements[i].offsetLeft,
-            bottom: resultBottom,
+            bottom: resultBottom - bottomButtonPanelHeight,
             cards: getCardElements(elements[i].id)
           });
         }
@@ -364,7 +366,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
   const mouseMove = (e) => {
     if (mouseDownElement !== null) {
-      setMouseMoveStyles();
+      if (!isMovingStarted) {
+        setMouseMoveStyles();
+        setIsMovingStarted(true);
+      }
       moveElement(e);
     }
   };
@@ -461,6 +466,12 @@ export const Draggable = ({ boards, order, boardId, children }) => {
   };
 
   const moveCardBetweenBoards = (e) => {
+
+    if (step < stepOfCheck) {
+      step++;
+      return;
+    }
+
     // there are finding the board that cursor was moved on
     const findEnterBoardElement = domElements.filter((elem) => {
       if (elem.top <= e.clientY && e.clientY <= elem.bottom) {
@@ -497,9 +508,12 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     } else {
       dispatch(resetFlagIsPhantomCreatedOnce());
     }
+    step = 0;
   };
 
   const mouseUp = (e) => {
+    setIsMovingStarted(false);
+
     if (mouseDownElement !== null) {
       setMouseDownElement(null);
       switch (mouseDownElement.id) {
