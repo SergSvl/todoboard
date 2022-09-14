@@ -27,8 +27,6 @@ export const TaskList = ({ boardId, cardId, tasks }) => {
   const [taskListElemText, setTaskListElemText] = useState("");
   const [elemId, setElemId] = useState("");
 
-  console.log("tasks:", tasks);
-
   useEffect(() => {
     if (isAddTaskListElement) {
       taskListElementRef.current.focus();

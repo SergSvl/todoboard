@@ -14,10 +14,8 @@ export const Board = ({ board, deleteBoard }) => {
   const [isConfirmOpenned, setIsConfirmOpenned] = useState(false);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [newTitle, setNewTitle] = useState("");
-  // const [phantomBoardHeight, setPhantomBoardHeight] = useState(null);
-  // const [phantomBoardStyles, setPhantomBoardStyles] = useState('');
   const { boards } = useSelector((state) => state.main);
-  const { onDragStart, onDragOver, onDragLeave, onDragEnd, onDrop } =
+  const { onDragStart, onDragOver, onDragLeave, onDrop } =
     useDraggable();
   const dispatch = useDispatch();
   const titleInputRef = useRef();
@@ -25,7 +23,6 @@ export const Board = ({ board, deleteBoard }) => {
 
   useEffect(() => {
     if (board.cards.length) {
-      // console.log("cards", board.cards);
     }
   }, [board]);
 
@@ -98,7 +95,6 @@ export const Board = ({ board, deleteBoard }) => {
             onDragStart={(e) => onDragStart(e, board)}
             onDragLeave={(e) => onDragLeave(e)}
             onDragOver={(e) => onDragOver(e)}
-            onDragEnd={(e) => onDragEnd(e)}
             onDrop={(e) => onDrop(e, board, boards)}
           >
             <div

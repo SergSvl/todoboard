@@ -17,11 +17,11 @@ export const Main = () => {
   const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
   const [groupTitle, setGroupTitle] = useState("");
 
-  useEffect(() => {
-    if (boards.length) {
-      console.log("boards", boards);
-    }
-  }, [boards]);
+  // useEffect(() => {
+  //   if (boards.length) {
+  //     console.log("boards", boards);
+  //   }
+  // }, [boards]);
 
   useEffect(() => {
     if (groupTitle) {
@@ -57,7 +57,6 @@ export const Main = () => {
   useEffect(() => {
     const initialization = () => {
       const boards = getLSData(LOCAL_STORAGE_KEYS.boards);
-      // console.log("initialization boards:", boards);
 
       if (typeof boards === "object" && boards !== null) {
         dispatch(initState([...boards]));

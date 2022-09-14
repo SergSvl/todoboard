@@ -37,7 +37,7 @@ export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   useEffect(() => {
     setCardTitle(card.title);
     setNewDescription(card.description);
-  }, []);
+  }, [card.title, card.description]);
 
   useEffect(() => {
     if (isEditTitleCard) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   addPhantomBoard,
   addPhantomCard,
@@ -14,19 +14,16 @@ import {
 
 export const Draggable = ({ boards, order, boardId, children }) => {
   const dispatch = useDispatch();
-  // const { isPhantomCreatedOnce } = useSelector((state) => state.main);
   const [mouseDownElement, setMouseDownElement] = useState(null);
   const [nextDivider, setNextDivider] = useState(null);
   const [phantomData, setPhantomData] = useState(null);
   const [foundElement, setFoundElement] = useState(null);
   const [marginTopElement, setMarginTopElement] = useState(16);
   const [defaultCardWidth, setDefaultCardWidth] = useState(300);
-  const [mouseDownElementId, setMouseDownElementId] = useState(null);
-  const [mouseDownElementOrder, setMouseDownElementOrder] = useState(null);
   const [globalCoords, setGlobalCoords] = useState({ x: 0, y: 0 });
   const [windowCoords, setWindowCoords] = useState({ x: 0, y: 0 });
   const [domElements, setDomElements] = useState([]);
-  const [effectWait, setEffectWait] = useState([]);
+  const [effectWait, setEffectWait] = useState(0);
   const [phantomId, setPhantomId] = useState("phantom");
   const [nextFind, setNextFind] = useState(false);
 
@@ -156,14 +153,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       left: phantomData !== null ? phantomData.left : 0,
     }
 
-    // console.log("Изменены domElements:", domElements);
-    // console.log("Изменена phantomData:", phantomData);
-    // console.log("Изменены mouseDownElement:", mouseDownElement);
-    // console.log(":: resultTop:", resultTop);
-    // console.log(":: foundElement:", foundElement);
-    // console.log("=> resultFoundElement:", resultFoundElement);
-    // console.log("=> phantomData:", phantomData);
-
     if (resultTop !== null && phantomData.type !== 'board') {
       setFoundElement({
         ...resultFoundElement,
@@ -194,11 +183,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
         } else if (start > finishTop) {
           resultTop = -shiftParent + finishMarginTop;
         }
-
-        console.log("<<>> start top:", start);
-        console.log("<<>> finish top:", finishTop);
-        // console.log("<<>> finishMarginTop:", finishMarginTop);
-        console.log("<<>> shiftParent:", shiftParent);
       }
 
       return resultTop;
@@ -243,7 +227,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
   const setMouseUpBoardStyles = () => {
     if (foundElement !== null) {
-      // console.log("Восстановление стилей доски:", foundElement);
       mouseDownElement.style.left = foundElement.left + "px";
       mouseDownElement.style.top = foundElement.top + marginTopElement + "px"; // margin-top compensation
     } else {
@@ -272,8 +255,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
   const setMouseUpCardStyles = () => {
     if (foundElement !== null) {
-      // console.log("Восстановление стилей карточки:", foundElement);
-
       mouseDownElement.style.left = foundElement.left + "px";
       mouseDownElement.style.top = foundElement.top + "px";
     } else {
@@ -284,8 +265,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     mouseDownElement.style.transitionProperty = "left, top, box-shadow";
     mouseDownElement.style.transitionDuration = effectWait + "ms";
     mouseDownElement.style.transitionTimingFunction = "linear";
-
-    // return;
 
     setTimeout(() => {
       mouseDownElement.style.boxShadow =
@@ -313,9 +292,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     const element = e.target;
     setMouseDownElement(element);
-    setMouseDownElementId(element.dataset.id);
-    setMouseDownElementOrder(element.dataset.order);
-
     // e.target.offsetLeft - координата смещения окна по X относительно окна экрана
     // e.target.offsetTop - координата смещения окна по Y относительно окна экрана
     setGlobalCoords({
@@ -375,6 +351,7 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     const boardId = element.dataset.boardId;
     const divided = element.dataset.divided;
     const order = element.dataset.order;
+
     dispatch(
       addPhantomCard({
         boardId,
@@ -398,9 +375,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     mouseDownElement.style.left = windowCoords.x + mouseShiftX + "px";
     mouseDownElement.style.top = windowCoords.y + mouseShiftY + "px";
-
-    // directionY > 0 - down, < 0 - up
-    // directionX > 0 - right, < 0 - left
 
     switch (mouseDownElement.id) {
       case "board-to-drag":
@@ -428,8 +402,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
       findEnterElement !== undefined &&
       findEnterElement.id !== phantomData.id
     ) {
-
-      console.log("moveBoard:", findEnterElement);
       // it is calculation an absolute position of board here, only here
       setFoundElement({
         ...findEnterElement,
@@ -557,7 +529,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
   const phantomCard = (e) => {
     setMouseUpCardStyles();
-    // return;
     
     setTimeout(() => {
       if (mouseDownElement.dataset.boardId === phantomData.boardId) {

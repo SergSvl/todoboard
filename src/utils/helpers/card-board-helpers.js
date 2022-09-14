@@ -53,18 +53,6 @@ export const updateCard = (
     removeListId
   }
 ) => {
-  // console.log("updateCard:", {
-  //   cardTitle,
-  //   description,
-  //   task,
-  //   taskId,
-  //   listId,
-  //   checked,
-  //   newTaskListText,
-  //   removeTaskId,
-  //   taskListElemText,
-  //   removeListId
-  // });
   const updatedBoards = boards.map((board) => {
     if (board.id === boardId) {
       const newBoard = board.cards.map((card) => {
@@ -178,7 +166,6 @@ export const addPhantom = (
         id: "group#phantom",
         order,
         // height,
-        // height: `h-[${height}px]`,
         title: "",
         cards: []
       };
@@ -188,7 +175,6 @@ export const addPhantom = (
         id: "card#phantom",
         order,
         // height,
-        // height: `h-[${height}px]`,
         title: "",
         description: "",
         divided,
@@ -202,8 +188,6 @@ export const addPhantom = (
 };
 
 export const moveElement = ({ elements, elementId, newElementOrder }) => {
-  // console.log("isNaN(newElementOrder):", isNaN(newElementOrder));
-  // console.log("moveElement:", { elementId, newElementOrder });
   if (!isNaN(newElementOrder)) {
     const changedElements = elements.map((current) => {
       if (current.id === elementId) {
