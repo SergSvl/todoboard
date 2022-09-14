@@ -1,9 +1,14 @@
 import React from "react";
 
-export const Input = ({ value, onChangeHandler, onBlurHandler = undefined, inputRef, type = '' }) => {
-  const baseClasses = 'w-full border rounded-md h-8 px-2 mb-4';
+export const Input = ({ value, onChangeHandler, onBlurHandler = undefined, inputRef, type = '', classProp = '' }) => {
+  const baseClasses = 'w-full border rounded-md h-8 px-2';
   const taskElemStyles = 'w-full border rounded-md h-6 px-2';
   let resultClasses = baseClasses;
+
+  if (classProp) {
+    resultClasses = `${baseClasses} ${classProp}`;
+  }
+  
 
   if (type === 'taskList') {
     resultClasses = taskElemStyles;

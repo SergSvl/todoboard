@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import {
-  setTitleCard,
-  setDescriptionCard,
+  addTitleCard,
+  addDescriptionCard,
   addTask,
   addTag,
   updateTag,
@@ -16,12 +16,7 @@ import lang from "@/locales/ru/common.json";
 import Tags from "@/components/Card/Tags";
 import { Colors } from "@/components/Card/Tags/Colors";
 
-export const Detailed = ({
-  card,
-  boardId,
-  setIsCardOpenned,
-  setIsDraggableBoard
-}) => {
+export const Detailed = ({ card, boardId, setIsCardOpenned }) => {
   const dispatch = useDispatch();
   const titleCardRef = useRef();
   const titleTaskRef = useRef();
@@ -42,10 +37,7 @@ export const Detailed = ({
   useEffect(() => {
     setCardTitle(card.title);
     setNewDescription(card.description);
-    setIsDraggableBoard(false);
-
-    return () => setIsDraggableBoard(true);
-  }, []);
+  }, [card.title, card.description]);
 
   useEffect(() => {
     if (isEditTitleCard) {
@@ -65,7 +57,7 @@ export const Detailed = ({
 
   const saveDescriptionHandler = () => {
     setIsEditDescription(false);
-    dispatch(setDescriptionCard({ cardId: card.id, boardId, newDescription }));
+    dispatch(addDescriptionCard({ cardId: card.id, boardId, newDescription }));
   };
 
   const onEditTitleHandler = (e) => {
@@ -82,7 +74,7 @@ export const Detailed = ({
     setIsEditTitleCard(false);
 
     if (cardTitle !== card.title) {
-      dispatch(setTitleCard({ cardId: card.id, boardId, cardTitle }));
+      dispatch(addTitleCard({ cardId: card.id, boardId, cardTitle }));
     }
   };
 
@@ -154,6 +146,7 @@ export const Detailed = ({
     <Popover clickOut={() => setIsCardOpenned(false)}>
       {isEditTitleCard ? (
         <Input
+          classProp='mb-4'
           inputRef={titleCardRef}
           value={cardTitle}
           onChangeHandler={onChangeTitleCardHandler}
@@ -215,6 +208,7 @@ export const Detailed = ({
               {lang.listTitle}:
             </div>
             <Input
+              classProp='mb-4'
               inputRef={titleTaskRef}
               value={newTaskTitle}
               onChangeHandler={onChangeTitleTaskHandler}
@@ -258,6 +252,7 @@ export const Detailed = ({
             <div className='flex items-center'>
               <div className='w-[50%]'>
                 <Input
+                  classProp='mb-4'
                   inputRef={tagTextRef}
                   value={newTagText}
                   onChangeHandler={onChangeTagTextHandler}

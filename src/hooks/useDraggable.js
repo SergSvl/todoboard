@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initState, setSortedCards, addCard, addDivider } from "@/store/main/mainSlice";
 import { deleteCardFromBoard, sortElements } from "@/utils/helpers/card-board-helpers";
@@ -38,15 +37,13 @@ const useDraggable = () => {
     event.target.style.background = "";
   };
 
-  const onDragEnd = (event) => {};
-
   const onDrop = (event, dropElement, allElements, boardId = undefined, cardOrder = undefined) => {
     event.stopPropagation();
     event.target.style.background = "";
 
     const dragElementType = event.dataTransfer.getData("dragElementType");
     const parentBoardId = event.dataTransfer.getData("parentBoardId");
-
+    
     if (cardOrder !== undefined && dragElementType !== "group" && dragElementType !== "card" && dropElement === 'dropZone') {
       dispatch(addDivider({ boardId, cardOrder }));
     } else {
@@ -111,7 +108,6 @@ const useDraggable = () => {
     onDragStart,
     onDragOver,
     onDragLeave,
-    onDragEnd,
     onDrop
   };
 };

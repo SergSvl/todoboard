@@ -1,11 +1,19 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { setLSData } from "@/utils/helpers/local-storage-helpers";
+import {
+  addPhantom,
+  moveElement,
+  reorder,
+  sortElements
+} from "@/utils/helpers/card-board-helpers";
 import { LOCAL_STORAGE_KEYS } from "@/utils/local-storage-keys";
 import { updateCard } from "@/utils/helpers/card-board-helpers";
 import lang from "@/locales/ru/common.json";
 
 const initialState = {
   boards: [],
+  isPhantomCreated: false,
+  isPhantomCreatedOnce: false,
   error: ""
 };
 
@@ -19,14 +27,16 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, action.payload);
     },
 
-    setBoard(state, action) {
+    addBoard(state, action) {
       const { groupTitle } = action.payload;
+      const boardId = `group#${Date.now()}`;
+      const order = parseFloat(state.boards.length + 1);
       const newBoard = {
-        id: `group#${Date.now()}`,
-        order: `${state.boards.length+1}`,
+        id: boardId,
+        order: order,
         title: groupTitle,
-        cards: [],
-      }
+        cards: []
+      };
       const boards = [...state.boards, newBoard];
       state.boards = boards;
       setLSData(LOCAL_STORAGE_KEYS.boards, boards);
@@ -34,17 +44,207 @@ export const homeSlice = createSlice({
 
     removeBoard(state, action) {
       const { boardId } = action.payload;
-      const filteredBoard = state.boards.filter((board) => board.id !== boardId ? true : false);
+      const filteredBoard = state.boards.filter((board) =>
+        board.id !== boardId ? true : false
+      );
       let counter = 1;
       const orderedBoards = filteredBoard.map((board) => {
-        board.order = ''+counter++;
+        board.order = "" + counter++;
         return board;
       });
       state.boards = orderedBoards;
       setLSData(LOCAL_STORAGE_KEYS.boards, orderedBoards);
     },
 
-    setTitleBoard(state, action) {
+    swapBoards(state, action) {
+      const { sourceOrder, destinationOrder } = action.payload;
+      const filteredBoard = state.boards.filter((board) =>
+        board.id !== "group#phantom" ? true : false
+      );
+      state.boards = filteredBoard;
+      const sortedBoards = addPhantom(
+        "board",
+        state.boards,
+        {
+          sourceOrder,
+          destinationOrder,
+          divided: false
+        }
+      );
+      state.boards = sortedBoards;
+    },
+
+    addPhantomBoard(state, action) {
+      if (!state.isPhantomCreated) {
+        const { order, height = "" } = action.payload;
+        const sortedBoards = addPhantom(
+          "board",
+          state.boards,
+          {
+            sourceOrder: null,
+            destinationOrder: order,
+            divided: false
+          }
+        );
+        state.boards = sortedBoards;
+        state.isPhantomCreated = true;
+      }
+    },
+
+    removePhantomBoard(state, action) {
+      const { fromBoardId, toBoardOrder } = action.payload;
+      const newBoards = state.boards.filter((board) =>
+        board.id !== "group#phantom" ? true : false
+      );
+      const swappedBoards = moveElement({
+        elements: newBoards,
+        elementId: fromBoardId,
+        newElementOrder: toBoardOrder
+      });
+      const reorderedBoards = reorder(swappedBoards);
+      state.boards = reorderedBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, reorderedBoards);
+      state.isPhantomCreated = false;
+    },
+
+    swapCards(state, action) {
+      const { boardId, sourceOrder, destinationOrder, divided, dividedMyself, dividedOnTheLeft } = action.payload;
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phantom" ? true : false
+          );
+          board.cards = addPhantom(
+            "card",
+            filteredCards,
+            {
+              sourceOrder,
+              destinationOrder,
+              divided,
+              dividedMyself,
+              dividedOnTheLeft
+            }
+          );
+        }
+        return board;
+      });
+      state.boards = newBoards;
+    },
+
+    addPhantomCard(state, action) {
+      const {
+        boardId,
+        order,
+        divided,
+        height = "",
+      } = action.payload;
+      if (!state.isPhantomCreated ) {
+        const newBoards = state.boards.map((board) => {
+          if (board.id === boardId) {
+            board.cards = addPhantom(
+              "card",
+              board.cards,
+              {
+                sourceOrder: null,
+                destinationOrder: order,
+                divided
+              }
+            );
+          }
+          return board;
+        });
+        state.boards = newBoards;
+        state.isPhantomCreated = true;
+      }
+    },
+
+    resetFlagIsPhantomCreatedOnce(state, action) {
+      state.isPhantomCreatedOnce = false;
+    },
+
+    addPhantomCardOnce(state, action) {
+    const {
+        boardId,
+        order,
+        divided,
+        height = "",
+      } = action.payload;
+      if (!state.isPhantomCreatedOnce ) {
+        const newBoards = state.boards.map((board) => {
+          if (board.id === boardId) {
+            board.cards = addPhantom(
+              "card",
+              board.cards,
+              {
+                sourceOrder: null,
+                destinationOrder: order,
+                divided
+              }
+            );
+          }
+          return board;
+        });
+        state.boards = newBoards;
+        state.isPhantomCreatedOnce = true;
+      }
+    },
+
+    removePhantomCard(state, action) {
+      const { boardId, fromCardId, toCardOrder } = action.payload;
+      const newBoards = state.boards.map((board) => {
+        if (board.id === boardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phantom" ? true : false
+          );
+          const swappedCards = moveElement({
+            elements: filteredCards,
+            elementId: fromCardId,
+            newElementOrder: toCardOrder
+          });
+          board.cards = reorder(swappedCards);
+        }
+        return board;
+      });
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+      state.isPhantomCreated = false;
+    },
+
+    removePhantomCardAndReplaceCardToOtherBoard(state, action) {
+      const { fromBoardId, toBoardId, cardId, toCardOrder } = action.payload;
+      let card = null;
+      const reductedBoards = state.boards.map((board) => {
+        if (board.id === fromBoardId) {
+          card = board.cards.filter((card) =>
+            card.id === cardId ? true : false
+          )[0];
+          const newCards = board.cards.filter((card) =>
+            card.id !== cardId ? true : false
+          );
+          board.cards = reorder(newCards);
+        }
+        return board;
+      });
+      state.boards = reductedBoards;
+
+      const newBoards = state.boards.map((board) => {
+        if (board.id === toBoardId) {
+          const filteredCards = board.cards.filter((card) =>
+            card.id !== "card#phantom" ? true : false
+          );
+          card.order = toCardOrder;
+          const newCards = [ ...filteredCards, card ].sort(sortElements);
+          board.cards = reorder(newCards);
+        }
+        return board;
+      });
+
+      state.boards = newBoards;
+      setLSData(LOCAL_STORAGE_KEYS.boards, newBoards);
+      state.isPhantomCreated = false;
+    },
+
+    addTitleBoard(state, action) {
       const { id, newTitle } = action.payload;
       const updatedBoards = state.boards.map((board) => {
         if (board.id === id) {
@@ -56,7 +256,7 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
-    setTitleCard(state, action) {
+    addTitleCard(state, action) {
       const { cardId, boardId, cardTitle } = action.payload;
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         cardTitle
@@ -65,7 +265,7 @@ export const homeSlice = createSlice({
       setLSData(LOCAL_STORAGE_KEYS.boards, updatedBoards);
     },
 
-    setDescriptionCard(state, action) {
+    addDescriptionCard(state, action) {
       const { cardId, boardId, newDescription } = action.payload;
       const updatedBoards = updateCard(state.boards, boardId, cardId, {
         description: newDescription
@@ -132,7 +332,7 @@ export const homeSlice = createSlice({
       const id = action.payload.id;
       let card = {
         id: "",
-        order: "",
+        order: 0,
         title: "",
         description: "",
         tasks: [],
@@ -153,7 +353,8 @@ export const homeSlice = createSlice({
       } else {
         newBoards = state.boards.map((board) => {
           if (board.id === id) {
-            card.id = `card#${Date.now()}`;
+            const cardId = `card#${Date.now()}`;
+            card.id = cardId;
             card.order = `${board.cards.length + 1}`;
             card.title = `${lang.newCard} ${board.cards.length + 1}`;
             board.cards = [...board.cards, card];
@@ -169,13 +370,12 @@ export const homeSlice = createSlice({
       const { boardId, cardOrder } = action.payload;
       let divider = {
         id: `divider#${Date.now()}`,
-        order: "",
+        order: 0,
         divider: true
       };
       let newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           board.cards.splice(cardOrder, 0, divider);
-
           let index = 1;
           const newCards = board.cards.map((card) => {
             if (card.order === cardOrder) {
@@ -205,8 +405,7 @@ export const homeSlice = createSlice({
 
           let index = 1;
           const newCards = board.cards.map((card) => {
-
-            if (parseInt(card.order) === cardOrder - 1) {
+            if (parseFloat(card.order) === cardOrder - 1) {
               card.divided = false;
             }
             card.order = index++;
@@ -293,7 +492,6 @@ export const homeSlice = createSlice({
 
     removeTag(state, action) {
       const { boardId, cardId, tagId } = action.payload;
-      // console.log("removeTag:", { boardId, cardId, tagId });
       const newBoards = state.boards.map((board) => {
         if (board.id === boardId) {
           const newCards = board.cards.map((card) => {
@@ -316,13 +514,22 @@ export const homeSlice = createSlice({
 
 export const {
   initState,
-  setBoard,
+  addBoard,
   removeBoard,
-  setTitleBoard,
-  setTitleCard,
+  swapBoards,
+  addTitleBoard,
+  addTitleCard,
   addCard,
+  swapCards,
+  addPhantomCard,
+  addPhantomCardOnce,
+  resetFlagIsPhantomCreatedOnce,
+  removePhantomCardAndReplaceCardToOtherBoard,
+  addPhantomBoard,
+  removePhantomBoard,
+  removePhantomCard,
   setSortedCards,
-  setDescriptionCard,
+  addDescriptionCard,
   addTask,
   removeTaskList,
   updateTask,

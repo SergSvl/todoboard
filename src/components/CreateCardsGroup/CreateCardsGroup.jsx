@@ -11,6 +11,7 @@ export const CreateCardsGroup = ({ inputRef, groupTitle, clickOutHandler, addGro
       <div className='w-full text-center mb-4 font-bold text-lg'>{lang.creatingNewCardGroup}</div>
       <div className='text-left mb-2 font-semibold'>{lang.groupTitle}:</div>
       <Input
+        classProp='mb-8'
         inputRef={inputRef}
         value={groupTitle}
         onChangeHandler={(e) => addGroupTitleHandler(e.target.value)}
