@@ -294,14 +294,10 @@ export const Draggable = ({ boards, order, boardId, children }) => {
 
     const element = e.target;
     setMouseDownElement(element);
-    // e.target.offsetLeft - координата смещения окна по X относительно окна экрана
-    // e.target.offsetTop - координата смещения окна по Y относительно окна экрана
     setGlobalCoords({
       x: e.screenX,
       y: e.screenY
     });
-    // e.target.offsetLeft - координата смещения окна по X относительно родительского окна
-    // e.target.offsetTop - координата смещения окна по Y относительно родительского окна
     setWindowCoords({
       x: element.offsetLeft,
       y: element.offsetTop
@@ -434,8 +430,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
     domElements.map((board) => {
       if (board.id === phantomData.boardId) {
         findEnterCardElement = board.cards.filter((card) => {
-          // e.clientX - координата указателя мыши по оси X относительно окна
-          // e.clientY - координата указателя мыши по оси Y относительно окна
           if (card.left <= e.clientX && e.clientX <= card.right) {
             setNextFind(true);
             return true;
@@ -457,7 +451,6 @@ export const Draggable = ({ boards, order, boardId, children }) => {
           boardId: phantomData.boardId,
           sourceOrder: phantomData.order,
           destinationOrder: findEnterCardElement.order,
-          divided: mouseDownElement.dataset.divided,
           dividedMyself: mouseDownElement.dataset.divided,
           dividedOnTheLeft: findEnterCardElement !== undefined && findEnterCardElement.divided !== undefined ? findEnterCardElement.divided : false,
         })

@@ -177,7 +177,7 @@ export const Card = ({
               data-type={"card"}
             >
             </div>
-            {(card.divided === undefined || card.divided === 'false') && (
+            {(card.divided === undefined || card.divided === 'false' || !card.divided) && (
               <Divider
                 divider={undefined}
                 cardOrder={card.order}
