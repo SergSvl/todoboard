@@ -5,4 +5,9 @@ module.exports = {
       '@': path.resolve(__dirname, 'src'),
     },
   },
+	jest: {
+    moduleNameMapper: {
+			"^@/(.*)$": "<rootDir>/src/$1"
+		}
+  }
 };
