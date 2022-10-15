@@ -6,10 +6,7 @@ export const deleteCardFromBoard = (
   const filteredBoards = boards.map((board) => {
     if (board.id === boardId) {
       const newBoard = { ...board };
-      const newCards = newBoard.cards.filter((card) =>
-        card.id !== cardId ? true : false
-      );
-      newBoard.cards = newCards;
+      newBoard.cards = newBoard.cards.filter((card) => card.id !== cardId);
       let counter = 1;
       let prevCardOrder = 0;
 
@@ -17,7 +14,7 @@ export const deleteCardFromBoard = (
         prevCardOrder = cardOrder - 1;
       }
 
-      const orderedCards = newBoard.cards.map((card) => {
+      newBoard.cards = newBoard.cards.map((card) => {
         const newCard = { ...card };
 
         if (newCard.order === prevCardOrder) {
@@ -26,7 +23,6 @@ export const deleteCardFromBoard = (
         newCard.order = "" + counter++;
         return newCard;
       });
-      newBoard.cards = orderedCards;
       return newBoard;
     } else {
       return board;
@@ -53,9 +49,9 @@ export const updateCard = (
     removeListId
   }
 ) => {
-  const updatedBoards = boards.map((board) => {
+  return boards.map((board) => {
     if (board.id === boardId) {
-      const newBoard = board.cards.map((card) => {
+      board.cards = board.cards.map((card) => {
         if (card.id === cardId) {
           if (cardTitle !== undefined) {
             card.title = cardTitle;
@@ -67,22 +63,20 @@ export const updateCard = (
             card.tasks.push(task);
           }
           if (checked !== undefined) {
-            const newTasks = card.tasks.map((task) => {
+            card.tasks = card.tasks.map((task) => {
               if (task.id === taskId) {
-                const newList = task.list.map((listElem) => {
+                task.list = task.list.map((listElem) => {
                   if (listElem.id === listId) {
                     listElem.checked = checked;
                   }
                   return listElem;
                 });
-                task.list = newList;
               }
               return task;
             });
-            card.tasks = newTasks;
           }
           if (newTaskListText !== undefined) {
-            const newTasks = card.tasks.map((task) => {
+            card.tasks = card.tasks.map((task) => {
               if (task.id === taskId) {
                 task.list.push({
                   id: `${task.list.length + 1}`,
@@ -92,56 +86,45 @@ export const updateCard = (
               }
               return task;
             });
-            card.tasks = newTasks;
           }
           if (taskTitle !== undefined) {
-            const newTasks = card.tasks.map((task) => {
+            card.tasks = card.tasks.map((task) => {
               if (task.id === taskId) {
                 task.title = taskTitle;
               }
               return task;
             });
-            card.tasks = newTasks;
           }
           if (removeTaskId !== undefined) {
-            card.tasks = card.tasks.filter((task) =>
-              task.id !== removeTaskId ? true : false
-            );
+            card.tasks = card.tasks.filter((task) => task.id !== removeTaskId);
           }
           if (taskListElemText !== undefined) {
-            const newTasks = card.tasks.map((task) => {
+            card.tasks = card.tasks.map((task) => {
               if (task.id === taskId) {
-                const newList = task.list.map((listElem) => {
+                task.list = task.list.map((listElem) => {
                   if (listElem.id === listId) {
                     listElem.text = taskListElemText;
                   }
                   return listElem;
                 });
-                task.list = newList;
               }
               return task;
             });
-            card.tasks = newTasks;
           }
           if (removeListId !== undefined) {
-            const newTasks = card.tasks.map((task) => {
+            card.tasks = card.tasks.map((task) => {
               if (task.id === taskId) {
-                task.list = task.list.filter((listElem) =>
-                  listElem.id !== removeListId ? true : false
-                );
+                task.list = task.list.filter((listElem) => listElem.id !== removeListId);
               }
               return task;
             });
-            card.tasks = newTasks;
           }
         }
         return card;
       });
-      board.cards = newBoard;
     }
     return board;
   });
-  return updatedBoards;
 };
 
 export const addPhantom = (
@@ -202,11 +185,10 @@ export const moveElement = ({ elements, elementId, newElementOrder }) => {
 
 export const reorder = (elements) => {
   let index = 1;
-  const reorderedElements = elements.map((element) => {
+  return elements.map((element) => {
     element.order = index++;
     return element;
   });
-  return reorderedElements;
 };
 
 export const sortElements = (a, b) => {
